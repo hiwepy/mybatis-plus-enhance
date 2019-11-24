@@ -29,7 +29,6 @@ import org.apache.ibatis.utils.MetaObjectUtils;
 import org.apache.mybatis.dbi18n.annotation.I18nColumn;
 import org.apache.mybatis.dbi18n.annotation.I18nLocale;
 import org.apache.mybatis.dbi18n.annotation.I18nSwitch;
-import org.mybatis.spring.cache.BeanMethodDefinitionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -52,8 +51,11 @@ public abstract class AbstractDataI18nColumnInterceptor extends AbstractDataI18n
 			MetaObject metaBoundSql = MetaObjectUtils.forObject(boundSql);
 			// 获取当前上下文中的Locale对象
 			Locale locale = this.getLocale();
+			
+			Method method = metaStatementHandler.getMethod();
+			
 			//提取被国际化注解标记的方法
-			Method method = BeanMethodDefinitionFactory.getMethodDefinition(mappedStatement.getId());
+			//Method method = BeanMethodDefinitionFactory.getMethodDefinition(mappedStatement.getId());
 			//获取替换模式下的国际化注解标记
 			I18nSwitch i18nSwitch = AnnotationUtils.findAnnotation(method, I18nSwitch.class);
 			//解析注解映射关系
