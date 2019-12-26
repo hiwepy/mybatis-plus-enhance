@@ -25,7 +25,7 @@ import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.meta.MetaStatementHandler;
 import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.utils.MetaObjectUtils;
+import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.mybatis.dbi18n.annotation.I18nColumn;
 import org.apache.mybatis.dbi18n.annotation.I18nLocale;
 import org.apache.mybatis.dbi18n.annotation.I18nSwitch;
@@ -48,7 +48,7 @@ public abstract class AbstractDataI18nColumnInterceptor extends AbstractDataI18n
 						
 			// 获取对应的BoundSql，这个BoundSql其实跟我们利用StatementHandler获取到的BoundSql是同一个对象。
 			BoundSql boundSql = metaStatementHandler.getBoundSql();
-			MetaObject metaBoundSql = MetaObjectUtils.forObject(boundSql);
+			MetaObject metaBoundSql = SystemMetaObject.forObject(boundSql);
 			// 获取当前上下文中的Locale对象
 			Locale locale = this.getLocale();
 			
