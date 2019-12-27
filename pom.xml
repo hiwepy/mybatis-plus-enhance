@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.github.vindell</groupId>
+	<groupId>com.github.hiwepy</groupId>
 	<artifactId>mybatis-dbi18n</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<description>MyBatis 增强扩展 ： 实现基于注解的数据字段国际化组件 .</description>
@@ -26,7 +26,7 @@
 
 	<developers>
 		<developer>
-			<name>vindell</name>
+			<name>wandl</name>
 			<email>hnxyhcwdl1003@163.com</email>
 			<roles>
 				<role>developer</role>
@@ -511,7 +511,7 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>com.github.vindell</groupId>
+			<groupId>com.github.hiwepy</groupId>
 			<artifactId>mybatis-biz</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
