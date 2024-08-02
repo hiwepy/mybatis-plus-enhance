@@ -1,5 +1,5 @@
-# mybatis-dbi18n
+# mybatis-plus-enhance
 
-MyBatis 增强扩展 ： 实现基于注解的数据字段国际化组件 .
+MyBatis Plus 增强扩展 ： 实现基于注解的数据字段国际化组件 .
 
 
