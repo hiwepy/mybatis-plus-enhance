@@ -27,7 +27,7 @@
 	<developers>
 		<developer>
 			<name>wandl</name>
-			<email>hnxyhcwdl1003@163.com</email>
+			<email>hiwepy@gmail.com</email>
 			<roles>
 				<role>developer</role>
 			</roles>
@@ -371,7 +371,8 @@
 		<commons-collections4.version>4.1</commons-collections4.version>
 		<commons-lang3.version>3.7</commons-lang3.version>
 		<contiperf.version>2.3.4</contiperf.version>
-		<java.version>1.7</java.version>
+		<hutool.version>5.8.32</hutool.version>
+		<java.version>1.8</java.version>
 		<jsqlparser.version>4.9</jsqlparser.version>
 		<junit.version>4.12</junit.version>
 		<reflections.version>0.9.11</reflections.version>
@@ -405,6 +406,12 @@
 				<groupId>org.projectlombok</groupId>
 				<artifactId>lombok</artifactId>
 				<version>${lombok.version}</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/cn.hutool/hutool-all -->
+			<dependency>
+				<groupId>cn.hutool</groupId>
+				<artifactId>hutool-all</artifactId>
+				<version>${hutool.version}</version>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/com.github.jsqlparser/jsqlparser -->
 			<dependency>
@@ -473,6 +480,11 @@
 				<artifactId>mybatis-plus-extension</artifactId>
 				<version>${mybatis-plus.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>com.baomidou</groupId>
+				<artifactId>mybatis-plus-core</artifactId>
+				<version>${mybatis-plus.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -503,14 +515,14 @@
 			<scope>compile</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>cn.hutool</groupId>
+			<artifactId>hutool-all</artifactId>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.github.jsqlparser/jsqlparser -->
 		<dependency>
 			<groupId>com.github.jsqlparser</groupId>
 			<artifactId>jsqlparser</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-beanutils</groupId>
-			<artifactId>commons-beanutils</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -528,7 +540,6 @@
 		<dependency>
 			<groupId>com.baomidou</groupId>
 			<artifactId>mybatis-plus-core</artifactId>
-			<version>${mybatis-plus.version}</version>
 		</dependency>
 
 	</dependencies>

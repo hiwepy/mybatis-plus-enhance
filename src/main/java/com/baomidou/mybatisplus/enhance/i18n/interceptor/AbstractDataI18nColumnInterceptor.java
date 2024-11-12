@@ -12,27 +12,26 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
- */
+
 package com.baomidou.mybatisplus.enhance.i18n.interceptor;
 
 import java.lang.reflect.Method;
 import java.util.Locale;
 
+import com.baomidou.mybatisplus.core.toolkit.AnnotationUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.enhance.i18n.annotation.I18nColumn;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Plugin;
-import org.apache.ibatis.plugin.meta.MetaStatementHandler;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 import com.baomidou.mybatisplus.enhance.i18n.annotation.I18nLocale;
 import com.baomidou.mybatisplus.enhance.i18n.annotation.I18nSwitch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.util.StringUtils;
 
 public abstract class AbstractDataI18nColumnInterceptor extends AbstractDataI18nInterceptor {
 
@@ -57,7 +56,8 @@ public abstract class AbstractDataI18nColumnInterceptor extends AbstractDataI18n
 			//提取被国际化注解标记的方法
 			//Method method = BeanMethodDefinitionFactory.getMethodDefinition(mappedStatement.getId());
 			//获取替换模式下的国际化注解标记
-			I18nSwitch i18nSwitch = AnnotationUtils.findAnnotation(method, I18nSwitch.class);
+
+			I18nSwitch i18nSwitch = AnnotationUtils.findFirstAnnotation(I18nSwitch.class, method);
 			//解析注解映射关系
 			I18nColumn[] i18nColumns  = i18nSwitch.value();
 			if(i18nColumns != null && i18nColumns.length > 0){
@@ -90,13 +90,5 @@ public abstract class AbstractDataI18nColumnInterceptor extends AbstractDataI18n
 		return invocation.proceed();
 	}
 
-	@Override
-	public Object plugin(Object target) {
-		if (target instanceof StatementHandler) {
-            return Plugin.wrap(target, this);
-        } else {
-            return target;
-        }
-	}
-
 }
+ */
