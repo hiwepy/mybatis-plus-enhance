@@ -367,11 +367,13 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<caffeine.version>2.9.3</caffeine.version>
 		<commons-beanutils.version>1.9.3</commons-beanutils.version>
 		<commons-collections4.version>4.1</commons-collections4.version>
 		<commons-lang3.version>3.7</commons-lang3.version>
 		<contiperf.version>2.3.4</contiperf.version>
 		<hutool.version>5.8.32</hutool.version>
+		<jackson-bom.version>2.13.5</jackson-bom.version>
 		<java.version>1.8</java.version>
 		<jsqlparser.version>4.9</jsqlparser.version>
 		<junit.version>4.12</junit.version>
@@ -400,7 +402,12 @@
 
 	<dependencyManagement>
 		<dependencies>
-
+			<!-- https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine -->
+			<dependency>
+				<groupId>com.github.ben-manes.caffeine</groupId>
+				<artifactId>caffeine</artifactId>
+				<version>${caffeine.version}</version>
+			</dependency>
 			<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
 			<dependency>
 				<groupId>org.projectlombok</groupId>
@@ -412,6 +419,14 @@
 				<groupId>cn.hutool</groupId>
 				<artifactId>hutool-all</artifactId>
 				<version>${hutool.version}</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson/jackson-bom -->
+			<dependency>
+				<groupId>com.fasterxml.jackson</groupId>
+				<artifactId>jackson-bom</artifactId>
+				<version>${jackson-bom.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/com.github.jsqlparser/jsqlparser -->
 			<dependency>
@@ -515,6 +530,12 @@
 			<scope>compile</scope>
 		</dependency>
 
+		<!-- For Caffeine -->
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>caffeine</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>cn.hutool</groupId>
 			<artifactId>hutool-all</artifactId>
@@ -540,6 +561,16 @@
 		<dependency>
 			<groupId>com.baomidou</groupId>
 			<artifactId>mybatis-plus-core</artifactId>
+		</dependency>
+
+		<!-- For Jackson -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
 		</dependency>
 
 	</dependencies>
