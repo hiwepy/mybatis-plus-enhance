@@ -29,15 +29,16 @@ public class DefaultEncryptedFieldHandler implements EncryptedFieldHandler {
     private final String iv;
     private final boolean plainIsEncode;
 
-    public DefaultEncryptedFieldHandler(SymmetricAlgorithmType algorithmType, HmacAlgorithm hmacAlgorithm, Mode mode, Padding padding, String key) {
-        this(algorithmType, hmacAlgorithm, mode, padding, key, null, false);
+    public DefaultEncryptedFieldHandler(ObjectMapper objectMapper, SymmetricAlgorithmType algorithmType, HmacAlgorithm hmacAlgorithm, Mode mode, Padding padding, String key) {
+        this(objectMapper, algorithmType, hmacAlgorithm, mode, padding, key, null, false);
     }
 
-    public DefaultEncryptedFieldHandler(SymmetricAlgorithmType algorithmType, HmacAlgorithm hmacAlgorithm, Mode mode, Padding padding, String key, String iv) {
-        this(algorithmType, hmacAlgorithm, mode, padding, key, iv, false);
+    public DefaultEncryptedFieldHandler(ObjectMapper objectMapper, SymmetricAlgorithmType algorithmType, HmacAlgorithm hmacAlgorithm, Mode mode, Padding padding, String key, String iv) {
+        this(objectMapper, algorithmType, hmacAlgorithm, mode, padding, key, iv, false);
     }
 
-    public DefaultEncryptedFieldHandler(SymmetricAlgorithmType algorithmType, HmacAlgorithm hmacAlgorithm, Mode mode, Padding padding, String key, String iv, boolean plainIsEncode) {
+    public DefaultEncryptedFieldHandler(ObjectMapper objectMapper, SymmetricAlgorithmType algorithmType, HmacAlgorithm hmacAlgorithm, Mode mode, Padding padding, String key, String iv, boolean plainIsEncode) {
+        this.objectMapper = objectMapper;
         this.algorithmType = algorithmType;
         this.hmacAlgorithm = hmacAlgorithm;
         this.mode = mode;

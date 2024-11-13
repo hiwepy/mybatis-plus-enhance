@@ -15,6 +15,39 @@
  */
 package com.baomidou.mybatisplus.enhance.i18n;
 
+import cn.hutool.core.codec.Base64;
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.crypto.Mode;
+import cn.hutool.crypto.Padding;
+import cn.hutool.crypto.digest.HmacAlgorithm;
+import com.baomidou.mybatisplus.enhance.crypto.enums.SymmetricAlgorithmType;
+import com.baomidou.mybatisplus.enhance.crypto.handler.DefaultEncryptedFieldHandler;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.RandomStringUtils;
+
 public class Test {
+
+    public static void main(String[] args) {
+
+        // 随机生成sm4加密key
+        String sm4Key = RandomUtil.randomString(RandomUtil.BASE_CHAR_NUMBER, 16);
+        System.out.println("sm4Key:"+sm4Key);
+        sm4Key = Base64.encode(sm4Key.getBytes());
+        System.out.println("sm4Key-Base64:"+ sm4Key);
+
+        /**
+         * 偏移向量，加盐
+         */
+        String sm4Iv = RandomStringUtils.randomAscii(16);
+        System.out.println("sm4Iv:"+sm4Iv);
+        sm4Iv = Base64.encode(sm4Iv.getBytes());
+        System.out.println("sm4Iv-Base64:"+ sm4Iv);
+
+        DefaultEncryptedFieldHandler handler = new DefaultEncryptedFieldHandler( new ObjectMapper(),SymmetricAlgorithmType.SM4, HmacAlgorithm.HmacSM3,
+                Mode.CBC, Padding.PKCS5Padding, sm4Key, sm4Iv);
+
+
+        System.out.println(handler.encrypt("123"));
+    }
 
 }

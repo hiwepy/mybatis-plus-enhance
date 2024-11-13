@@ -1,11 +1,14 @@
-package com.baomidou.mybatisplus.enhance.crypto.interceptor;
+package com.baomidou.mybatisplus.enhance.interceptor.inner;
 
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ReflectUtil;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.Update;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
-import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.AnnotationUtils;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.enhance.crypto.annotation.EncryptedField;
 import com.baomidou.mybatisplus.enhance.crypto.annotation.EncryptedTable;
 import com.baomidou.mybatisplus.enhance.crypto.handler.EncryptedFieldHandler;
@@ -23,7 +26,6 @@ import org.apache.ibatis.type.SimpleTypeRegistry;
 import util.EncryptedFieldHelper;
 import util.EnhanceConstants;
 
-import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -31,10 +33,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * 字段加解密拦截器
+ * 字段加解密和签名拦截器
  */
 @Slf4j
-public class EncryptedFieldInnerInterceptor extends JsqlParserSupport implements InnerInterceptor {
+public class DataEncryptionInnerInterceptor extends JsqlParserSupport implements InnerInterceptor {
     /**
      * 变量占位符正则
      */
@@ -47,7 +49,7 @@ public class EncryptedFieldInnerInterceptor extends JsqlParserSupport implements
     @Getter
     private final EncryptedFieldHandler encryptedFieldHandler;
 
-    public EncryptedFieldInnerInterceptor(EncryptedFieldHandler encryptedFieldHandler) {
+    public DataEncryptionInnerInterceptor(EncryptedFieldHandler encryptedFieldHandler) {
         this.encryptedFieldHandler = encryptedFieldHandler;
     }
 

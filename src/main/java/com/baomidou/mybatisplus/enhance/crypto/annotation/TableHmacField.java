@@ -3,7 +3,7 @@ package com.baomidou.mybatisplus.enhance.crypto.annotation;
 import java.lang.annotation.*;
 
 /**
- * 该注解用于标记存储在数据库中的字段，用于加密和解密
+ * 需要存储HMAC的字段用这个注解
  * @author wandl
  */
 @Documented

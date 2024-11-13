@@ -1,7 +1,7 @@
 package com.baomidou.mybatisplus.enhance.crypto.annotation;
 
 /**
- * 用于标记数据表是否进行加密存储
+ * 需要加解密的实体类用这个注解
  * @author wandl
  */
 public @interface EncryptedTable {
