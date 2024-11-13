@@ -153,7 +153,7 @@ public class DataEncryptionInnerInterceptor extends JsqlParserSupport implements
         }
 
         // 4、遍历字段，对字段进行加密和签名处理
-        StringJoiner hmacJoiner = encryptedTable.hmac() ? new StringJoiner(Constants.COMMA) : null;
+        StringJoiner hmacJoiner = encryptedTable.hmac() ? new StringJoiner(Constants.PIPE) : null;
         for (TableFieldInfo fieldInfo : encryptedFieldInfos) {
             // 4.1、获取加密字段上的@EncryptedField注解
             EncryptedField encryptedField = AnnotationUtils.findFirstAnnotation(EncryptedField.class, fieldInfo.getField());
@@ -215,7 +215,7 @@ public class DataEncryptionInnerInterceptor extends JsqlParserSupport implements
         Map<String, String> propMap = Arrays.stream(sqlSetArr).map(el -> el.split(Constants.EQUALS)).collect(Collectors.toMap(el -> el[0], el -> el[1]));
 
         // 5、遍历字段，对字段进行加密和签名处理
-        StringJoiner hmacJoiner = encryptedTable.hmac() ? new StringJoiner(Constants.COMMA) : null;
+        StringJoiner hmacJoiner = encryptedTable.hmac() ? new StringJoiner(Constants.PIPE) : null;
         for (TableFieldInfo fieldInfo : encryptedFieldInfos) {
             // 5.1、获取字段上的@EncryptedField注解
             EncryptedField encryptedField = AnnotationUtils.findFirstAnnotation(EncryptedField.class, fieldInfo.getField());

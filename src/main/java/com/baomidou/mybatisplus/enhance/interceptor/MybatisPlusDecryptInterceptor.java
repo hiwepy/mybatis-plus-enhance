@@ -3,25 +3,24 @@ package com.baomidou.mybatisplus.enhance.interceptor;
 import cn.hutool.core.util.ReflectUtil;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
-import com.baomidou.mybatisplus.core.toolkit.AnnotationUtils;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.enhance.crypto.annotation.EncryptedField;
 import com.baomidou.mybatisplus.enhance.crypto.annotation.EncryptedTable;
 import com.baomidou.mybatisplus.enhance.crypto.annotation.TableHmacField;
 import com.baomidou.mybatisplus.enhance.crypto.handler.EncryptedFieldHandler;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
+import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.resultset.ResultSetHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.plugin.Intercepts;
-import org.apache.ibatis.plugin.Invocation;
-import org.apache.ibatis.plugin.Signature;
+import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.session.ResultContext;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
@@ -49,13 +48,10 @@ import java.util.*;
         @Signature(type = StatementHandler.class, method = "getBoundSql", args = {}),
         @Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class}),
         @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
-        @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class}),
-        @Signature(type = ResultHandler.class, method = "handleResult", args = {ResultContext.class}),
-        @Signature(type = ResultSetHandler.class, method = "handleResultSets", args = {Statement.class}),
-        @Signature(type = ResultSetHandler.class, method = "handleCursorResultSets", args = {Statement.class}),
+        @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class})
     }
 )
-public class MybatisPlusDecryptInterceptor extends MybatisPlusInterceptor {
+public class MybatisPlusDecryptInterceptor implements Interceptor {
 
     /**
      * 加解密处理器，加解密的情况都在该处理器中自行判断
@@ -75,25 +71,115 @@ public class MybatisPlusDecryptInterceptor extends MybatisPlusInterceptor {
         this.encryptedFieldHandler = encryptedFieldHandler;
     }
 
+
+    @Setter
+    private List<InnerInterceptor> interceptors = new ArrayList<>();
+
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
-        Object rtObject = super.intercept(invocation);
-        if (Objects.isNull(rtObject)) {
-            return null;
-        }
-        if( invocation.getTarget() instanceof ResultSetHandler || invocation.getTarget() instanceof ResultHandler){
-            if (rtObject instanceof Collection) {
-                // 基于selectList
-                for (Object object : ParameterUtils.toCollection(rtObject)) {
+        Object target = invocation.getTarget();
+        Object[] args = invocation.getArgs();
+        if (target instanceof Executor) {
+            final Executor executor = (Executor) target;
+            Object parameter = args[1];
+            boolean isUpdate = args.length == 2;
+            MappedStatement ms = (MappedStatement) args[0];
+            if (!isUpdate && ms.getSqlCommandType() == SqlCommandType.SELECT) {
+                RowBounds rowBounds = (RowBounds) args[2];
+                ResultHandler resultHandler = (ResultHandler) args[3];
+                BoundSql boundSql;
+                if (args.length == 4) {
+                    boundSql = ms.getBoundSql(parameter);
+                } else {
+                    // 几乎不可能走进这里面,除非使用Executor的代理对象调用query[args[6]]
+                    boundSql = (BoundSql) args[5];
+                }
+                for (InnerInterceptor query : interceptors) {
+                    if (!query.willDoQuery(executor, ms, parameter, rowBounds, resultHandler, boundSql)) {
+                        return Collections.emptyList();
+                    }
+                    query.beforeQuery(executor, ms, parameter, rowBounds, resultHandler, boundSql);
+                }
+                CacheKey cacheKey = executor.createCacheKey(ms, parameter, rowBounds, boundSql);
+                List<Object> rtObject = executor.query(ms, parameter, rowBounds, resultHandler, cacheKey, boundSql);
+                if (CollectionUtils.isEmpty(rtObject)) {
+                    return rtObject;
+                }
+                for (Object object : rtObject) {
                     // 逐一解密
                     handleResultSets(object);
                 }
+            } else if (isUpdate) {
+                for (InnerInterceptor update : interceptors) {
+                    if (!update.willDoUpdate(executor, ms, parameter)) {
+                        return -1;
+                    }
+                    update.beforeUpdate(executor, ms, parameter);
+                }
+            }
+        } else {
+            // StatementHandler
+            final StatementHandler sh = (StatementHandler) target;
+            // 目前只有StatementHandler.getBoundSql方法args才为null
+            if (null == args) {
+                for (InnerInterceptor innerInterceptor : interceptors) {
+                    innerInterceptor.beforeGetBoundSql(sh);
+                }
             } else {
-                // 基于selectOne
-                handleResultSets(rtObject);
+                Connection connections = (Connection) args[0];
+                Integer transactionTimeout = (Integer) args[1];
+                for (InnerInterceptor innerInterceptor : interceptors) {
+                    innerInterceptor.beforePrepare(sh, connections, transactionTimeout);
+                }
             }
         }
-        return rtObject;
+        return invocation.proceed();
+    }
+
+    @Override
+    public Object plugin(Object target) {
+        if (target instanceof Executor || target instanceof StatementHandler) {
+            return Plugin.wrap(target, this);
+        }
+        return target;
+    }
+
+    public void addInnerInterceptor(InnerInterceptor innerInterceptor) {
+        this.interceptors.add(innerInterceptor);
+    }
+
+    public List<InnerInterceptor> getInterceptors() {
+        return Collections.unmodifiableList(interceptors);
+    }
+
+    /**
+     * 使用内部规则,拿分页插件举个栗子:
+     * <p>
+     * - key: "@page" ,value: "com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor"
+     * - key: "page:limit" ,value: "100"
+     * <p>
+     * 解读1: key 以 "@" 开头定义了这是一个需要组装的 `InnerInterceptor`, 以 "page" 结尾表示别名
+     * value 是 `InnerInterceptor` 的具体的 class 全名
+     * 解读2: key 以上面定义的 "别名 + ':'" 开头指这个 `value` 是定义的该 `InnerInterceptor` 属性需要设置的值
+     * <p>
+     * 如果这个 `InnerInterceptor` 不需要配置属性也要加别名
+     */
+    @Override
+    public void setProperties(Properties properties) {
+        PropertyMapper pm = PropertyMapper.newInstance(properties);
+        Map<String, Properties> group = pm.group(StringPool.AT);
+        group.forEach((k, v) -> {
+            InnerInterceptor innerInterceptor = ClassUtils.newInstance(k);
+            innerInterceptor.setProperties(v);
+            addInnerInterceptor(innerInterceptor);
+        });
+    }
+
+    @Override
+    public String toString() {
+        return "MybatisPlusInterceptor{" +
+                "interceptors=" + interceptors +
+                '}';
     }
 
     /**
@@ -119,7 +205,7 @@ public class MybatisPlusDecryptInterceptor extends MybatisPlusInterceptor {
         }
 
         // 4、遍历字段，对字段进行加密和签名处理
-        StringJoiner hmacJoiner = checkHmac && encryptedTable.hmac() ? new StringJoiner(Constants.COMMA) : null;
+        StringJoiner hmacJoiner = checkHmac && encryptedTable.hmac() ? new StringJoiner(Constants.PIPE) : null;
         for (TableFieldInfo fieldInfo : encryptedFieldInfos) {
             // 4.1、获取字段上的@EncryptedField注解
             EncryptedField encryptedField = AnnotationUtils.findFirstAnnotation(EncryptedField.class, fieldInfo.getField());
@@ -154,7 +240,7 @@ public class MybatisPlusDecryptInterceptor extends MybatisPlusInterceptor {
                 // 5.2.3、对HMAC加密列表进行HMAC签名处理
                 String hmacValue = getEncryptedFieldHandler().hmac(hmacJoiner.toString());
                 // 5.2.4、如果HMAC签名不匹配，则抛出异常
-                ExceptionUtils.throwMpe(Objects.equals(hmacValue, hmacFieldValue),
+                ExceptionUtils.throwMpe(!Objects.equals(hmacValue, hmacFieldValue),
                         "表【%s】的数据列【%s】,数据存储完整性验证不通过，可能发生数据篡改，请检查数据完整性",
                         tableName.value(),
                         encryptedFieldInfos.stream().map(TableFieldInfo::getColumn).reduce((a, b) -> a + Constants.COMMA + b).orElse(Constants.EMPTY));
