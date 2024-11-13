@@ -75,7 +75,7 @@ public class MybatisPlusDecryptInterceptor extends MybatisPlusInterceptor {
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
-        Object rtObject = invocation.proceed();
+        Object rtObject = super.intercept(invocation);
         if (Objects.isNull(rtObject)) {
             return null;
         }
