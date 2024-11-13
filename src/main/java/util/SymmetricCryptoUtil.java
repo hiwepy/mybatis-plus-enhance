@@ -49,7 +49,7 @@ public class SymmetricCryptoUtil {
             byte[] ivBytes = StringUtils.isBlank(keyArr[4]) ? null : keyArr[4].getBytes(CharsetUtil.CHARSET_UTF_8);
             // 构造SM4加密器
             if(SM4.ALGORITHM_NAME.equalsIgnoreCase(algorithmType)){
-                return new SM4(Mode.valueOf(modeStr), Padding.valueOf(keyArr[2]), keyBytes, ivBytes);
+                return new SM4(modeStr, paddingStr, keyBytes, ivBytes);
             }
             // 构造AES加密器
             if(SymmetricAlgorithm.AES.name().equalsIgnoreCase(algorithmType)){

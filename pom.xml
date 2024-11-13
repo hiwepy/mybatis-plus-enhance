@@ -368,6 +368,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<caffeine.version>2.9.3</caffeine.version>
+		<bcprov.version>1.78.1</bcprov.version>
 		<commons-beanutils.version>1.9.3</commons-beanutils.version>
 		<commons-collections4.version>4.1</commons-collections4.version>
 		<commons-lang3.version>3.7</commons-lang3.version>
@@ -459,7 +460,12 @@
 				<version>${slf4j.version}</version>
 				<scope>test</scope>
 			</dependency>
-
+			<!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk18on -->
+			<dependency>
+				<groupId>org.bouncycastle</groupId>
+				<artifactId>bcprov-jdk18on</artifactId>
+				<version>${bcprov.version}</version>
+			</dependency>
 			<!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
 			<dependency>
 				<groupId>commons-beanutils</groupId>
@@ -541,21 +547,35 @@
 			<groupId>com.github.ben-manes.caffeine</groupId>
 			<artifactId>caffeine</artifactId>
 		</dependency>
-
-		<dependency>
-			<groupId>cn.hutool</groupId>
-			<artifactId>hutool-all</artifactId>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.github.jsqlparser/jsqlparser -->
+		<!-- For Jsqlparser -->
 		<dependency>
 			<groupId>com.github.jsqlparser</groupId>
 			<artifactId>jsqlparser</artifactId>
 		</dependency>
+		<!-- For Commons -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
-
+		<!-- For Crypto -->
+		<dependency>
+			<groupId>cn.hutool</groupId>
+			<artifactId>hutool-all</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk18on</artifactId>
+		</dependency>
+		<!-- For Jackson -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+		<!-- For Mybatis Plus -->
 		<dependency>
 			<groupId>com.baomidou</groupId>
 			<artifactId>mybatis-plus</artifactId>
@@ -567,16 +587,6 @@
 		<dependency>
 			<groupId>com.baomidou</groupId>
 			<artifactId>mybatis-plus-core</artifactId>
-		</dependency>
-
-		<!-- For Jackson -->
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
 		</dependency>
 
 	</dependencies>

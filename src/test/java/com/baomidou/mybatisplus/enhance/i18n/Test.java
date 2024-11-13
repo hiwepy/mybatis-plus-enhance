@@ -19,7 +19,9 @@ import cn.hutool.core.codec.Base64;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.Mode;
 import cn.hutool.crypto.Padding;
+import cn.hutool.crypto.SmUtil;
 import cn.hutool.crypto.digest.HmacAlgorithm;
+import cn.hutool.crypto.symmetric.SM4;
 import com.baomidou.mybatisplus.enhance.crypto.enums.SymmetricAlgorithmType;
 import com.baomidou.mybatisplus.enhance.crypto.handler.DefaultEncryptedFieldHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,16 +40,18 @@ public class Test {
         /**
          * 偏移向量，加盐
          */
-        String sm4Iv = RandomStringUtils.randomAscii(16);
+        String sm4Iv = RandomUtil.randomString(RandomUtil.BASE_CHAR_NUMBER, 16);
         System.out.println("sm4Iv:"+sm4Iv);
         sm4Iv = Base64.encode(sm4Iv.getBytes());
         System.out.println("sm4Iv-Base64:"+ sm4Iv);
+        SM4 sm4 = new SM4(Mode.CBC, Padding.PKCS5Padding, sm4Key.getBytes(), sm4Iv.getBytes());
+        System.out.println(sm4.encryptBase64("123"));
 
         DefaultEncryptedFieldHandler handler = new DefaultEncryptedFieldHandler( new ObjectMapper(),SymmetricAlgorithmType.SM4, HmacAlgorithm.HmacSM3,
                 Mode.CBC, Padding.PKCS5Padding, sm4Key, sm4Iv);
 
-
         System.out.println(handler.encrypt("123"));
+
     }
 
 }

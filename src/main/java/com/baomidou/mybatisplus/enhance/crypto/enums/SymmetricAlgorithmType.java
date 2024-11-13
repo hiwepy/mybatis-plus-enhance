@@ -1,6 +1,10 @@
 package com.baomidou.mybatisplus.enhance.crypto.enums;
 
+import cn.hutool.crypto.Mode;
+import cn.hutool.crypto.Padding;
 import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
+import cn.hutool.crypto.symmetric.SymmetricCrypto;
+import util.SymmetricCryptoUtil;
 
 public enum SymmetricAlgorithmType {
 
@@ -20,6 +24,25 @@ public enum SymmetricAlgorithmType {
 
     SymmetricAlgorithmType(String name) {
         this.name = name;
+    }
+
+    public SymmetricAlgorithmType getFor(String name) {
+        for (SymmetricAlgorithmType type : SymmetricAlgorithmType.values()) {
+            if (type.getName().equals(name)) {
+                return type;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 获取 SymmetricCrypto
+     * @param key 密钥
+     * @param iv 偏移向量，加盐
+     * @return SymmetricCrypto
+     */
+    public SymmetricCrypto getSymmetricCrypto(Mode mode, Padding padding, String key, String iv) {
+        return SymmetricCryptoUtil.getSymmetricCrypto(this.getName(), mode, padding, key, iv);
     }
 
     public String getName() {

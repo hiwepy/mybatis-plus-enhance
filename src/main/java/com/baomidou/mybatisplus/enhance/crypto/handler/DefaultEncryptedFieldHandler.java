@@ -54,7 +54,7 @@ public class DefaultEncryptedFieldHandler implements EncryptedFieldHandler {
             // 1、序列化Value
             String valueAsString = getObjectMapper().writeValueAsString(value);
             // 2、获取加密器
-            SymmetricCrypto crypto = SymmetricCryptoUtil.getSymmetricCrypto(algorithmType.getName(), mode, padding, key, iv);
+            SymmetricCrypto crypto = algorithmType.getSymmetricCrypto(mode, padding, key, iv);
             // 3、加密Value，如果 plainIsEncode =true 则对加密结果进行Base64
             if(plainIsEncode){
                 valueAsString = crypto.encryptBase64(valueAsString);
