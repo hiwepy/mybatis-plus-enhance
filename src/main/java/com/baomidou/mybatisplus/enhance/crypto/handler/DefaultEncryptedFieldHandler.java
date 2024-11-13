@@ -70,12 +70,12 @@ public class DefaultEncryptedFieldHandler implements EncryptedFieldHandler {
     }
 
     @Override
-    public <T> T decrypt(Object value, Class<T> rtType) {
+    public <T> T decrypt(String value, Class<T> rtType) {
         try {
             // 1、判断是否需要先解码，如果需要则先Base64解码
             String valueAsString;
             if(plainIsEncode){
-                valueAsString = Base64.decodeStr(Objects.toString(value));
+                valueAsString = Base64.decodeStr(value);
                 log.debug("Base64 Decode String : {}", value);
             } else {
                 valueAsString = Objects.toString(value);

@@ -17,7 +17,7 @@ public interface EncryptedFieldHandler {
      * @return T 解密后的字段值
      * @param <T> 字段类型
      */
-    <T> T decrypt(Object value, Class<T> rtType);
+    <T> T decrypt(String value, Class<T> rtType);
 
     /**
      * hmac 签名

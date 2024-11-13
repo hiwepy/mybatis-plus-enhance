@@ -128,7 +128,7 @@ public class MybatisPlusDecryptInterceptor extends MybatisPlusInterceptor {
             // 4.3、如果原始值不为空，则对原始值进行解密处理
             if (Objects.nonNull(fieldValue)) {
                 // 4.3.1、对原始值进行解密处理
-                fieldValue = getEncryptedFieldHandler().decrypt(fieldValue, fieldValue.getClass());
+                fieldValue = getEncryptedFieldHandler().decrypt(Objects.toString(fieldValue), fieldValue.getClass());
                 // 4.3.2、将解密后的值通过反射设置到字段上
                 ReflectUtil.setFieldValue(rtObject, fieldInfo.getField(), fieldValue);
             }
