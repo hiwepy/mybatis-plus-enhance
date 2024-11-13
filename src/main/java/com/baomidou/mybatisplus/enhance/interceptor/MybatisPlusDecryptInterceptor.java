@@ -79,18 +79,17 @@ public class MybatisPlusDecryptInterceptor extends MybatisPlusInterceptor {
         if (Objects.isNull(rtObject)) {
             return null;
         }
-        if(rtObject instanceof BoundSql){
-            BoundSql boundSql = (BoundSql) rtObject;
-        }
-        if (rtObject instanceof Collection) {
-            // 基于selectList
-            for (Object object : ParameterUtils.toCollection(rtObject)) {
-                // 逐一解密
-                doDecryptAndCheck(object);
+        if( invocation.getTarget() instanceof ResultSetHandler){
+            if (rtObject instanceof Collection) {
+                // 基于selectList
+                for (Object object : ParameterUtils.toCollection(rtObject)) {
+                    // 逐一解密
+                    handleResultSets(object);
+                }
+            } else {
+                // 基于selectOne
+                handleResultSets(rtObject);
             }
-        } else {
-            // 基于selectOne
-            doDecryptAndCheck(rtObject);
         }
         return rtObject;
     }
@@ -100,7 +99,7 @@ public class MybatisPlusDecryptInterceptor extends MybatisPlusInterceptor {
      * @param rtObject 单个对象
      * @param <T> 对象类型
      */
-    private <T> void doDecryptAndCheck(T rtObject) {
+    private <T> void handleResultSets(T rtObject) {
 
         // 1、判断加解密处理器不为空，为空则抛出异常
         ExceptionUtils.throwMpe(null == encryptedFieldHandler, "Please implement EncryptedFieldHandler processing logic");
