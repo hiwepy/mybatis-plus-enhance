@@ -22,6 +22,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Signature;
+import org.apache.ibatis.session.ResultContext;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import util.EncryptedFieldHelper;
@@ -49,6 +50,7 @@ import java.util.*;
         @Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class}),
         @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
         @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class}),
+        @Signature(type = ResultHandler.class, method = "handleResult", args = {ResultContext.class}),
         @Signature(type = ResultSetHandler.class, method = "handleResultSets", args = {Statement.class}),
         @Signature(type = ResultSetHandler.class, method = "handleCursorResultSets", args = {Statement.class}),
     }
@@ -79,7 +81,7 @@ public class MybatisPlusDecryptInterceptor extends MybatisPlusInterceptor {
         if (Objects.isNull(rtObject)) {
             return null;
         }
-        if( invocation.getTarget() instanceof ResultSetHandler){
+        if( invocation.getTarget() instanceof ResultSetHandler || invocation.getTarget() instanceof ResultHandler){
             if (rtObject instanceof Collection) {
                 // 基于selectList
                 for (Object object : ParameterUtils.toCollection(rtObject)) {
