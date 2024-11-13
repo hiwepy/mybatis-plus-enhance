@@ -30,11 +30,11 @@ public class DefaultEncryptedFieldHandler implements EncryptedFieldHandler {
     private final boolean plainIsEncode;
 
     public DefaultEncryptedFieldHandler(ObjectMapper objectMapper, SymmetricAlgorithmType algorithmType, HmacAlgorithm hmacAlgorithm, Mode mode, Padding padding, String key) {
-        this(objectMapper, algorithmType, hmacAlgorithm, mode, padding, key, null, false);
+        this(objectMapper, algorithmType, hmacAlgorithm, mode, padding, key, null, true);
     }
 
     public DefaultEncryptedFieldHandler(ObjectMapper objectMapper, SymmetricAlgorithmType algorithmType, HmacAlgorithm hmacAlgorithm, Mode mode, Padding padding, String key, String iv) {
-        this(objectMapper, algorithmType, hmacAlgorithm, mode, padding, key, iv, false);
+        this(objectMapper, algorithmType, hmacAlgorithm, mode, padding, key, iv, true);
     }
 
     public DefaultEncryptedFieldHandler(ObjectMapper objectMapper, SymmetricAlgorithmType algorithmType, HmacAlgorithm hmacAlgorithm, Mode mode, Padding padding, String key, String iv, boolean plainIsEncode) {

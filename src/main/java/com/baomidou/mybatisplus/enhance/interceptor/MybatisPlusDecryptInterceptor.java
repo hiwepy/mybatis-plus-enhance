@@ -79,6 +79,9 @@ public class MybatisPlusDecryptInterceptor extends MybatisPlusInterceptor {
         if (Objects.isNull(rtObject)) {
             return null;
         }
+        if(rtObject instanceof BoundSql){
+            BoundSql boundSql = (BoundSql) rtObject;
+        }
         if (rtObject instanceof Collection) {
             // 基于selectList
             for (Object object : ParameterUtils.toCollection(rtObject)) {
