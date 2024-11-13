@@ -53,13 +53,14 @@ public class DefaultEncryptedFieldHandler implements EncryptedFieldHandler {
         try {
             // 1、序列化Value
             String valueAsString = getObjectMapper().writeValueAsString(value);
+            log.debug("Plain Value To {} Encrypt: {}", algorithmType.getName(), valueAsString);
             // 2、获取加密器
             SymmetricCrypto crypto = algorithmType.getSymmetricCrypto(mode, padding, key, iv);
             // 3、加密Value，如果 plainIsEncode =true 则对加密结果进行Base64
             if(plainIsEncode){
                 valueAsString = crypto.encryptBase64(valueAsString);
             } else {
-                valueAsString = new String(crypto.encrypt(valueAsString), StandardCharsets.UTF_8);
+                valueAsString = crypto.encryptHex(valueAsString);
             }
             log.debug("{} Encrypt Value : {}", algorithmType.getName(), valueAsString);
             return valueAsString;
@@ -72,20 +73,13 @@ public class DefaultEncryptedFieldHandler implements EncryptedFieldHandler {
     @Override
     public <T> T decrypt(String value, Class<T> rtType) {
         try {
-            // 1、判断是否需要先解码，如果需要则先Base64解码
-            String valueAsString;
-            if(plainIsEncode){
-                valueAsString = Base64.decodeStr(value);
-                log.debug("Base64 Decode String : {}", value);
-            } else {
-                valueAsString = Objects.toString(value);
-            }
+            log.debug("Plain Value to {} Decrypt : {}", algorithmType.getName(), value);
             // 2、获取解密器
             SymmetricCrypto crypto = SymmetricCryptoUtil.getSymmetricCrypto(algorithmType.getName(), mode, padding, key, iv);
             // 3、解密请求体
-            valueAsString = crypto.decryptStr(valueAsString);
-            log.debug("{} Decrypt Value : {}", algorithmType.getName(), value);
-            return getObjectMapper().readValue(valueAsString, rtType);
+            String decryptStr = crypto.decryptStr(value);
+            log.debug("{} Decrypt Value : {}", algorithmType.getName(), decryptStr);
+            return getObjectMapper().readValue(decryptStr, rtType);
         } catch (Exception ex) {
             log.error("{} Decrypt Error : {}", algorithmType.getName(), ex.getMessage());
             throw ExceptionUtils.mpe("{} Encrypt Error", ex, algorithmType.getName());
@@ -95,7 +89,8 @@ public class DefaultEncryptedFieldHandler implements EncryptedFieldHandler {
     @Override
     public <T> String hmac(T value) {
         try {
-            HMac hMac = SymmetricCryptoUtil.getHmac(hmacAlgorithm, key);
+            log.debug("Plain Value to {} HMAC : {}", hmacAlgorithm.name(), value);
+            HMac hMac = SymmetricCryptoUtil.getHmac(hmacAlgorithm, Base64.decodeStr(key));
             String hmacValue;
             if(plainIsEncode){
                 hmacValue = hMac.digestBase64(getObjectMapper().writeValueAsString(value), StandardCharsets.UTF_8, Boolean.TRUE);

@@ -38,9 +38,9 @@ public class Test {
          * 偏移向量，加盐
          */
         String sm4Iv = RandomUtil.randomString(RandomUtil.BASE_CHAR_NUMBER, 16);
-        System.out.println("sm4Iv:"+sm4Iv);
+        System.out.println("sm4Iv:"+sm4Iv);/*
         SM4 sm4 = new SM4(Mode.CBC, Padding.PKCS5Padding, sm4Key.getBytes(), sm4Iv.getBytes());
-        System.out.println(sm4.encryptBase64("123"));
+        System.out.println(sm4.encryptBase64("123"));*/
 
         sm4Key = Base64.encode(sm4Key.getBytes());
         System.out.println("sm4Key-Base64:"+ sm4Key);
@@ -48,9 +48,11 @@ public class Test {
         System.out.println("sm4Iv-Base64:"+ sm4Iv);
 
         DefaultEncryptedFieldHandler handler = new DefaultEncryptedFieldHandler( new ObjectMapper(),SymmetricAlgorithmType.SM4, HmacAlgorithm.HmacSM3,
-                Mode.CBC, Padding.PKCS5Padding, sm4Key, sm4Iv);
+                Mode.CBC, Padding.PKCS5Padding, sm4Key, sm4Iv, true);
 
-        System.out.println(handler.encrypt("123"));
+        String encrypt = handler.encrypt("123");
+        System.out.println(encrypt);
+        System.out.println(handler.decrypt(encrypt, String.class));
 
     }
 
