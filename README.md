@@ -103,7 +103,12 @@ public interface EnhanceInnerInterceptor extends InnerInterceptor {
  * 需要加解密的实体类用这个注解
  * @author wandl
  */
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@Inherited
 public @interface EncryptedTable {
+
 }
 /**
  * 需要加解密的字段用这个注解
