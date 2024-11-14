@@ -1,10 +1,21 @@
 package util;
 
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import org.apache.ibatis.type.SimpleTypeRegistry;
 
 import java.util.*;
 
 public class ParameterUtils {
+
+    public static boolean isSwitchOff(boolean globalSwitch, Object parameterObject) {
+        return !globalSwitch || Objects.isNull(parameterObject) || SimpleTypeRegistry.isSimpleType(parameterObject.getClass());
+    }
+
+
+    public static boolean isSwitchOff(boolean globalSwitch, List<Object> rtObjectList) {
+        return !globalSwitch || Objects.isNull(rtObjectList) || CollectionUtils.isEmpty(rtObjectList);
+    }
 
     /**
      * 提取特殊key值 (只支持外层参数,嵌套参数不考虑)

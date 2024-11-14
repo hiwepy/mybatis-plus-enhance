@@ -1,11 +1,9 @@
 package com.baomidou.mybatisplus.enhance.interceptor.inner;
 
 import cn.hutool.core.util.ReflectUtil;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.toolkit.AnnotationUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.enhance.crypto.annotation.EncryptedField;
 import com.baomidou.mybatisplus.enhance.crypto.annotation.EncryptedTable;
@@ -17,15 +15,14 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import util.EncryptedFieldHelper;
+import util.ParameterUtils;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.StringJoiner;
 
 /**
- * 数据解密拦截器，用于对查询结果进行解密和验签操作
+ * 数据解密拦截器，用于对查询结果进行解密操作
  */
 public class DataDecryptionInnerInterceptor implements EnhanceInnerInterceptor {
 
@@ -35,23 +32,25 @@ public class DataDecryptionInnerInterceptor implements EnhanceInnerInterceptor {
     @Getter
     private final EncryptedFieldHandler encryptedFieldHandler;
     @Getter
-    private final boolean checkHmac;
+    private final boolean decryptSwitch;
 
     public DataDecryptionInnerInterceptor(EncryptedFieldHandler encryptedFieldHandler) {
         this(false, encryptedFieldHandler);
     }
 
-    public DataDecryptionInnerInterceptor(boolean checkHmac, EncryptedFieldHandler encryptedFieldHandler) {
+    public DataDecryptionInnerInterceptor(boolean decryptSwitch, EncryptedFieldHandler encryptedFieldHandler) {
         super();
-        this.checkHmac = checkHmac;
+        this.decryptSwitch = decryptSwitch;
         this.encryptedFieldHandler = encryptedFieldHandler;
     }
 
     @Override
-    public void afterQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql, List<Object> rtList) throws SQLException {
-        if (CollectionUtils.isEmpty(rtList)) {
+    public void afterQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler<?> resultHandler, BoundSql boundSql, List<Object> rtList) throws SQLException {
+        // 1、如果参数为空，或者参数元素为0，或全局未启用 则直接返回
+        if (ParameterUtils.isSwitchOff(decryptSwitch, rtList)) {
             return;
         }
+        // 2、对查询结果进行解密
         for (Object object : rtList) {
             // 逐一解密、验签
             handleResultSets(object);
@@ -75,15 +74,15 @@ public class DataDecryptionInnerInterceptor implements EnhanceInnerInterceptor {
         }
 
         // 3、获取该类的所有标记为加密字段的属性列表
-        List<TableFieldInfo> encryptedFieldInfos = EncryptedFieldHelper.getSortedEncryptedFieldInfos(rtObject.getClass());
+        List<TableFieldInfo> encryptedFieldInfos = EncryptedFieldHelper.getEncryptedFieldInfos(rtObject.getClass());
         if (CollectionUtils.isEmpty(encryptedFieldInfos)) {
             return;
         }
 
-        // 4、遍历字段，对字段进行加密和签名处理
-        StringJoiner hmacJoiner = checkHmac && encryptedTable.hmac() ? new StringJoiner(Constants.PIPE) : null;
+        // 4、遍历字段，对字段进行解密处理
         for (TableFieldInfo fieldInfo : encryptedFieldInfos) {
-            // 4.1、获取字段上的@EncryptedField注解
+
+            // 4.1、获取字段上的@EncryptedField注解，如果没有则跳过
             EncryptedField encryptedField = AnnotationUtils.findFirstAnnotation(EncryptedField.class, fieldInfo.getField());
             if (Objects.isNull(encryptedField)) {
                 continue;
@@ -98,31 +97,8 @@ public class DataDecryptionInnerInterceptor implements EnhanceInnerInterceptor {
                 // 4.3.2、将解密后的值通过反射设置到字段上
                 ReflectUtil.setFieldValue(rtObject, fieldInfo.getField(), fieldValue);
             }
-            // 4.4、如果加密字段需要进行HMAC签名验证，则将原始值加入到HMAC加密列表中
-            if (Objects.nonNull(hmacJoiner) && encryptedTable.hmac() && encryptedField.hmac()) {
-                hmacJoiner.add(Objects.toString(fieldValue, Constants.EMPTY));
-            }
         }
-        // 5、如果数据表需要进行单表数据存储完整性验证，则对数据表进行HMAC签名处理
-        if (checkHmac && encryptedTable.hmac() && Objects.nonNull(hmacJoiner)){
-            // 5.1、获取数据表的HMAC字段
-            Optional<TableFieldInfo> hmacFieldInfo = EncryptedFieldHelper.getTableHmacFieldInfo(rtObject.getClass());
-            // 5.2、如果数据表的HMAC字段存在，则将HMAC签名值通过反射设置到HMAC字段上
-            if(hmacFieldInfo.isPresent()){
-                // 5.2.1、获取数据表的HMAC字段的值
-                Object hmacFieldValue = ReflectUtil.getFieldValue(rtObject, hmacFieldInfo.get().getProperty());
-                // 5.2.2、如果签名验证不通过，则抛出异常
-                TableName tableName = AnnotationUtils.findFirstAnnotation(TableName.class, rtObject.getClass());
-                // 5.2.3、对HMAC加密列表进行HMAC签名处理
-                String hmacValue = getEncryptedFieldHandler().hmac(hmacJoiner.toString());
-                // 5.2.4、如果HMAC签名不匹配，则抛出异常
-                ExceptionUtils.throwMpe(!Objects.equals(hmacValue, hmacFieldValue),
-                        "表【%s】的数据列【%s】,数据存储完整性验证不通过，可能发生数据篡改，请检查数据完整性",
-                        tableName.value(),
-                        encryptedFieldInfos.stream().map(TableFieldInfo::getColumn).reduce((a, b) -> a + Constants.COMMA + b).orElse(Constants.EMPTY));
-            }
-        }
-    }
 
+    }
 
 }

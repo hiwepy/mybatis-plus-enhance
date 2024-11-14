@@ -2,7 +2,7 @@ package com.baomidou.mybatisplus.enhance.interceptor;
 
 import com.baomidou.mybatisplus.enhance.crypto.annotation.EncryptedField;
 import com.baomidou.mybatisplus.enhance.crypto.annotation.EncryptedTable;
-import com.baomidou.mybatisplus.enhance.crypto.annotation.TableHmacField;
+import com.baomidou.mybatisplus.enhance.crypto.annotation.TableSignatureField;
 import com.baomidou.mybatisplus.enhance.crypto.handler.EncryptedFieldHandler;
 import com.baomidou.mybatisplus.enhance.interceptor.inner.EnhanceInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
@@ -25,12 +25,6 @@ import java.util.List;
 
 /**
  * MybatisPlus 解密和签名验证拦截器，用于替代 MybatisPlus 的原生拦截器，实现对数据库字段的解密和签名验证操作
- * - 该拦截器会拦截 MybatisPlus 的所有操作，对查询结果进行解密操作
- * - 该拦截器需要配合 {@link EncryptedTable} 注解使用，用于标记需要解密的实体类
- * - 该拦截器需要配合 {@link EncryptedField} 注解使用，用于标记需要解密的字段
- * - 该该拦截器需要配合 {@link TableHmacField} 注解使用，用于标记需要存储HMAC签名的字段
- * - 该拦截器需要实现 {@link EncryptedFieldHandler} 接口，用于实现解密和签名逻辑
- * - 该拦截器会对所有查询结果进行解密操作，如果查询结果中存在加密字段，会对加密字段进行解密操作
  * 参考：
  * - https://blog.csdn.net/tianmaxingkonger/article/details/130986784
  */
@@ -56,7 +50,7 @@ public class MybatisPlusEnhanceInterceptor extends MybatisPlusInterceptor {
             MappedStatement ms = (MappedStatement) args[0];
             if (!isUpdate && ms.getSqlCommandType() == SqlCommandType.SELECT) {
                 RowBounds rowBounds = (RowBounds) args[2];
-                ResultHandler resultHandler = (ResultHandler) args[3];
+                ResultHandler<?> resultHandler = (ResultHandler<?>) args[3];
                 BoundSql boundSql;
                 if (args.length == 4) {
                     boundSql = ms.getBoundSql(parameter);

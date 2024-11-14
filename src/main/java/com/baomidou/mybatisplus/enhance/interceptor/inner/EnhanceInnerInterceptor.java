@@ -27,7 +27,7 @@ public interface EnhanceInnerInterceptor extends InnerInterceptor {
      * @param boundSql      boundSql
      * @return 新的 boundSql
      */
-    default boolean willDoAfterQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql, List<Object> rtList) throws SQLException {
+    default boolean willDoAfterQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler<?> resultHandler, BoundSql boundSql, List<Object> rtList) throws SQLException {
         return true;
     }
 
@@ -43,7 +43,7 @@ public interface EnhanceInnerInterceptor extends InnerInterceptor {
      * @param resultHandler resultHandler
      * @param boundSql      boundSql
      */
-    default void afterQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql, List<Object> rtList) throws SQLException {
+    default void afterQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler<?> resultHandler, BoundSql boundSql, List<Object> rtList) throws SQLException {
         // do nothing
     }
 
