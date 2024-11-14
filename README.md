@@ -1,3 +1,5 @@
+## Mybatis-Plus-Enhance
+
 ### 项目介绍
 
 > 基于 [MyBatis Plus](https://baomidou.com/introduce/) 的 `数据加解密(Data Encryption And Decryption)`、`数据签名与验签(Data Signature)`、`数据脱敏(Data Masking)`、`数据权限(Data Permission)`、`多租户数据隔离(Multi Tenant Data Isolation)`、`数据国际化(Data Internationalized)` 增强扩展。
@@ -59,23 +61,6 @@ dependencies {
 
 ```java
 public interface EnhanceInnerInterceptor extends InnerInterceptor {
-
-    /**
-     * 判断是否执行 {@link Executor#query(MappedStatement, Object, RowBounds, ResultHandler, CacheKey, BoundSql)}
-     * <p>
-     * 如果不执行query操作,则返回 {@link Collections#emptyList()}
-     *
-     * @param executor      Executor(可能是代理对象)
-     * @param ms            MappedStatement
-     * @param parameter     parameter
-     * @param rowBounds     rowBounds
-     * @param resultHandler resultHandler
-     * @param boundSql      boundSql
-     * @return 新的 boundSql
-     */
-    default boolean willDoAfterQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql, List<Object> rtList) throws SQLException {
-        return true;
-    }
 
     /**
      * {@link Executor#query(MappedStatement, Object, RowBounds, ResultHandler, CacheKey, BoundSql)} 操作前置处理
@@ -177,23 +162,6 @@ public class MybatisPlusEnhanceInterceptor extends MybatisPlusInterceptor {
 
 ```java
 public interface EnhanceInnerInterceptor extends InnerInterceptor {
-
-    /**
-     * 判断是否执行 {@link Executor#query(MappedStatement, Object, RowBounds, ResultHandler, CacheKey, BoundSql)}
-     * <p>
-     * 如果不执行query操作,则返回 {@link Collections#emptyList()}
-     *
-     * @param executor      Executor(可能是代理对象)
-     * @param ms            MappedStatement
-     * @param parameter     parameter
-     * @param rowBounds     rowBounds
-     * @param resultHandler resultHandler
-     * @param boundSql      boundSql
-     * @return 新的 boundSql
-     */
-    default boolean willDoAfterQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql, List<Object> rtList) throws SQLException {
-        return true;
-    }
 
     /**
      * {@link Executor#query(MappedStatement, Object, RowBounds, ResultHandler, CacheKey, BoundSql)} 操作前置处理
