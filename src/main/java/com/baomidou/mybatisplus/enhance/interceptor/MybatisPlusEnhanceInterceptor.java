@@ -71,7 +71,7 @@ public class MybatisPlusEnhanceInterceptor extends MybatisPlusInterceptor {
                     if(interceptor instanceof EnhanceInnerInterceptor){
                         EnhanceInnerInterceptor innerInterceptor = (EnhanceInnerInterceptor) interceptor;
                         if (!innerInterceptor.willDoAfterQuery(executor, ms, parameter, rowBounds, resultHandler, boundSql, rtList)) {
-                            return Collections.emptyList();
+                            return rtList;
                         }
                         innerInterceptor.afterQuery(executor, ms, parameter, rowBounds, resultHandler, boundSql, rtList);
                     }
