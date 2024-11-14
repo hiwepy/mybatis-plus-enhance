@@ -33,10 +33,11 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * 字段加解密和签名拦截器
+ * 数据加解密和签名拦截器，用于对新增/更新数据进行加密和签名操作
  */
 @Slf4j
 public class DataEncryptionInnerInterceptor extends JsqlParserSupport implements InnerInterceptor {
+
     /**
      * 变量占位符正则
      */

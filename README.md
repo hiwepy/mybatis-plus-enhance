@@ -1,8 +1,10 @@
-# mybatis-plus-enhance
+## Mybatis-Plus-Enhance
 
 ### 项目介绍
 
 > 基于 [MyBatis Plus](https://baomidou.com/introduce/) 的 `数据加解密(Data Encryption And Decryption)`、`数据签名与验签(Data Signature)`、`数据脱敏(Data Masking)`、`数据权限(Data Permission)`、`多租户数据隔离(Multi Tenant Data Isolation)`、`数据国际化(Data Internationalized)` 增强扩展。
+
+Github： https://github.com/hiwepy/mybatis-plus-enhance
 
 **MyBatis Plus 增强扩展计划提供以下支持：**
 
@@ -95,9 +97,8 @@ public @interface EncryptedField {
 2、自定义 `MyBatis Plus` 插件 `DataEncryptionInnerInterceptor`，用于拦截数据库查询和更新操作，对数据进行加密和签名。
 
 ```java
-
 /**
- * 字段加解密拦截器
+ * 数据加解密和签名拦截器，用于对新增/更新数据进行加密和签名操作
  */
 @Slf4j
 public class DataEncryptionInnerInterceptor extends JsqlParserSupport implements InnerInterceptor {
@@ -158,7 +159,48 @@ public @interface TableHmacField {
 
 ```
 
-2、自定义 `MyBatis Plus` 插件 `MybatisPlusDecryptInterceptor`，用于拦截数据库查询操作，对数据进解密和签名验证。
+2、增强 `MyBatis Plus` 拦截器逻辑，新增 `EnhanceInnerInterceptor`，用于处理`数据库查询`完成后的逻辑；。
+
+```java
+public interface EnhanceInnerInterceptor extends InnerInterceptor {
+
+    /**
+     * 判断是否执行 {@link Executor#query(MappedStatement, Object, RowBounds, ResultHandler, CacheKey, BoundSql)}
+     * <p>
+     * 如果不执行query操作,则返回 {@link Collections#emptyList()}
+     *
+     * @param executor      Executor(可能是代理对象)
+     * @param ms            MappedStatement
+     * @param parameter     parameter
+     * @param rowBounds     rowBounds
+     * @param resultHandler resultHandler
+     * @param boundSql      boundSql
+     * @return 新的 boundSql
+     */
+    default boolean willDoAfterQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql, List<Object> rtList) throws SQLException {
+        return true;
+    }
+
+    /**
+     * {@link Executor#query(MappedStatement, Object, RowBounds, ResultHandler, CacheKey, BoundSql)} 操作前置处理
+     * <p>
+     * 改改sql啥的
+     *
+     * @param executor      Executor(可能是代理对象)
+     * @param ms            MappedStatement
+     * @param parameter     parameter
+     * @param rowBounds     rowBounds
+     * @param resultHandler resultHandler
+     * @param boundSql      boundSql
+     */
+    default void afterQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql, List<Object> rtList) throws SQLException {
+        // do nothing
+    }
+
+}
+```
+
+3、自定义 `MyBatis Plus` 插件 `MybatisPlusEnhanceInterceptor` 替代默认的 `MybatisPlusInterceptor`，在原有的基础上增强了查询后的数据处理能力。
 
 ```java
 /**
@@ -173,12 +215,25 @@ public @interface TableHmacField {
  * - https://blog.csdn.net/tianmaxingkonger/article/details/130986784
  */
 @Slf4j
-public class MybatisPlusDecryptInterceptor extends MybatisPlusInterceptor {
+public class MybatisPlusEnhanceInterceptor{
     // 详细实现请参考源码
 }
 ```
 
-3、特别说明
+4、自定义 `MyBatis Plus` 插件 `DataDecryptionInnerInterceptor`，用于拦截`数据库查询`操作，对数据进行解密和验签。
+
+```java
+
+/**
+ * 数据解密拦截器，用于对查询结果进行解密和验签操作
+ */
+@Slf4j
+public class DataDecryptionInnerInterceptor implements EnhanceInnerInterceptor {
+    // 详细实现请参考源码
+}
+```
+
+5、特别说明
 
 - 数据 `签名`和`签名验证`
 > 对于需要进行`数据签名`的字段，需要在数据库表中添加`HMAC`字段，用于存储`HMAC`签名值，以保证数据的完整性。
@@ -693,7 +748,7 @@ public class UserController {
 ```
 
 #### 三、基于 MyBatis Plus 插件的 `数据脱敏(Data Masking)` 使用指南
- 
+
 
 #### 四、基于 MyBatis Plus 插件的 `数据权限(Data Permission)` 使用指南
 
