@@ -1,4 +1,4 @@
-package util;
+package com.baomidou.mybatisplus.enhance.util;
 
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 

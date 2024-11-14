@@ -1,4 +1,4 @@
-package util;
+package com.baomidou.mybatisplus.enhance.util;
 
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.crypto.Mode;

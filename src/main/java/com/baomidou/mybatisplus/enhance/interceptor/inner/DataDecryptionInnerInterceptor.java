@@ -14,8 +14,8 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
-import util.EncryptedFieldHelper;
-import util.ParameterUtils;
+import com.baomidou.mybatisplus.enhance.util.EncryptedFieldHelper;
+import com.baomidou.mybatisplus.enhance.util.ParameterUtils;
 
 import java.sql.SQLException;
 import java.util.List;

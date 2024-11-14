@@ -4,7 +4,7 @@ import cn.hutool.crypto.Mode;
 import cn.hutool.crypto.Padding;
 import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
 import cn.hutool.crypto.symmetric.SymmetricCrypto;
-import util.SymmetricCryptoUtil;
+import com.baomidou.mybatisplus.enhance.util.SymmetricCryptoUtil;
 
 public enum SymmetricAlgorithmType {
 

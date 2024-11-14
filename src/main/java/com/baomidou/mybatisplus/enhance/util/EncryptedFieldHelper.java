@@ -1,7 +1,5 @@
-package util;
+package com.baomidou.mybatisplus.enhance.util;
 
-import cn.hutool.core.util.ReflectUtil;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.core.handlers.AnnotationHandler;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
