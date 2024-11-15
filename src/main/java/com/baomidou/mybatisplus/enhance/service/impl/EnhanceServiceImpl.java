@@ -48,7 +48,7 @@ public abstract class EnhanceServiceImpl<M extends BaseMapper<T>, T> extends Ser
 
     @Override
     public <RT> void doSignatureVerification(RT rowObject) {
-        getDataSignatureHandler().doSignatureVerification(rowObject);
+        getDataSignatureHandler().doSignatureVerification(rowObject, rowObject.getClass());
     }
 
     @Override
@@ -137,7 +137,7 @@ public abstract class EnhanceServiceImpl<M extends BaseMapper<T>, T> extends Ser
             return Optional.empty();
         }
         // 2、验证签名
-        getDataSignatureHandler().doSignatureVerification(entity);
+        getDataSignatureHandler().doSignatureVerification(entity, entity.getClass());
         // 3、返回数据
         return Optional.of(entity);
     }

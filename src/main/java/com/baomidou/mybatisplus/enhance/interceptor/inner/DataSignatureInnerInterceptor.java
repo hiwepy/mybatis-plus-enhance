@@ -144,9 +144,8 @@ public class DataSignatureInnerInterceptor extends JsqlParserSupport implements 
         if (ParameterUtils.isSwitchOff(signVerify, rtList)) {
             return;
         }
-        for (Object object : rtList) {
-            // 逐一验签
-            getDataSignatureHandler().doSignatureVerification(object);
+        for (Object rowObject : rtList) {
+            getDataSignatureHandler().doSignatureVerification(rowObject, rowObject.getClass());
         }
     }
 

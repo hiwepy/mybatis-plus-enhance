@@ -2,8 +2,6 @@ package com.baomidou.mybatisplus.enhance.crypto.handler;
 
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 
-import java.util.Map;
-
 public interface DataSignatureHandler {
 
     /**
@@ -23,16 +21,9 @@ public interface DataSignatureHandler {
 
     /**
      * 对单个对象进行验签
-     * @param rowObject 单个对象
+     * @param rawObject 单个对象
      * @param <T> 对象类型
      */
-    <T> void doSignatureVerification(T rowObject);
-
-    /**
-     * 对单个对象进行验签
-     * @param rowMap 单个对象
-     * @param <T> 对象类型
-     */
-    <T> void doSignatureVerification(Map<String, Object> rowMap, Class<T> entityClass);
+    <T> void doSignatureVerification(Object rawObject, Class<T> entityClass);
 
 }
