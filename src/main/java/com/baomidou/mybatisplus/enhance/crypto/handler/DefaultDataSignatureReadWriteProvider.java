@@ -50,7 +50,7 @@ public class DefaultDataSignatureReadWriteProvider implements DataSignatureReadW
         // 6.2、获取存储的签名结果的字段
         Optional<TableFieldInfo> signatureStoreFieldInfo = EncryptedFieldHelper.getTableSignatureStoreFieldInfo(rawObject.getClass());
         // 6.3、如果存储的签名结果的字段存在，则将签名值通过反射设置到字段上
-        signatureStoreFieldInfo.ifPresent(fieldInfo -> ReflectUtil.setFieldValue(rawObject, fieldInfo.getField(), hmacValue));
+        signatureStoreFieldInfo.ifPresent(fieldInfo -> ReflectUtil.setFieldValue(rawObject, fieldInfo.getField(), signValue));
     }
 
 }
