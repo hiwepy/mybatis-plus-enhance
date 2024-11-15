@@ -2,11 +2,16 @@ package com.baomidou.mybatisplus.enhance.crypto.handler;
 
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ReflectUtil;
+import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.enhance.util.EncryptedFieldHelper;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Matcher;
+
+import static com.baomidou.mybatisplus.enhance.crypto.handler.DefaultDataSignatureHandler.PARAM_PAIRS_RE;
 
 /**
  * 默认的数据签名读写提供者，直接通过反射读写签名字段
@@ -46,11 +51,49 @@ public class DefaultDataSignatureReadWriteProvider implements DataSignatureReadW
      * @param <T> 对象类型
      */
     @Override
-    public <T> void writeSignature(T rawObject, String signValue) {
-        // 6.2、获取存储的签名结果的字段
-        Optional<TableFieldInfo> signatureStoreFieldInfo = EncryptedFieldHelper.getTableSignatureStoreFieldInfo(rawObject.getClass());
-        // 6.3、如果存储的签名结果的字段存在，则将签名值通过反射设置到字段上
+    public <T> void writeSignature(Object rawObject, Class<T> entityClass, AbstractWrapper<?,?,?> updateWrapper, String signValue) {
+        // 1、获取存储的签名结果的字段
+        Optional<TableFieldInfo> signatureStoreFieldInfo = EncryptedFieldHelper.getTableSignatureStoreFieldInfo(entityClass);
         signatureStoreFieldInfo.ifPresent(fieldInfo -> ReflectUtil.setFieldValue(rawObject, fieldInfo.getField(), signValue));
+        // 3、如果数据表的HMAC字段存在，则将HMAC签名值通过反射设置到HMAC字段上
+        if(signatureStoreFieldInfo.isPresent()){
+            // 3.1、如果存储签名结果的字段是Map类型，则从Map中获取签名值
+            if(rawObject instanceof Map) {
+                Map propMap = (Map) rawObject;
+                if(Objects.nonNull(updateWrapper)){
+                    // 3.1.1、获取字段的原始值
+                    String el = MapUtil.getStr(propMap, signatureStoreFieldInfo.get().getProperty());
+                    // 3.1.2、进行参数正则匹配，如果匹配成功，则对参数进行签名处理
+                    Matcher matcher = PARAM_PAIRS_RE.matcher(el);
+                    if (matcher.matches()) {
+                        // 3.1.2.1、获取参数变量名
+                        String valueKey = matcher.group(1);
+                        // 3.1.2.2、替换参数变量值为签名后的值
+                        updateWrapper.getParamNameValuePairs().put(valueKey, signValue);
+                    }
+                } else {
+                    // 3.1.3、将签名值写入Map中
+                    propMap.put(signatureStoreFieldInfo.get().getProperty(), signValue);
+                }
+            } else {
+                if(Objects.nonNull(updateWrapper)){
+                    // 3.2、如果存储签名结果的字段是对象类型，则从对象中获取签名值
+                    String el = (String) ReflectUtil.getFieldValue(rawObject, signatureStoreFieldInfo.get().getProperty());
+                    // 3.2.1、进行参数正则匹配，如果匹配成功，则对参数进行签名处理
+                    Matcher matcher = PARAM_PAIRS_RE.matcher(el);
+                    if (matcher.matches()) {
+                        // 3.1.2.1、获取参数变量名
+                        String valueKey = matcher.group(1);
+                        // 3.1.2.2、替换参数变量值为签名后的值
+                        updateWrapper.getParamNameValuePairs().put(valueKey, signValue);
+                    }
+                } else {
+                    // 3.3、将签名值写入对象中
+                    ReflectUtil.setFieldValue(rawObject, signatureStoreFieldInfo.get().getField(), signValue);
+                }
+            }
+
+        }
     }
 
 }

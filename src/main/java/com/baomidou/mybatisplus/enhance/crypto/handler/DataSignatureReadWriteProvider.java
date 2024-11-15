@@ -1,5 +1,7 @@
 package com.baomidou.mybatisplus.enhance.crypto.handler;
 
+import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
+
 import java.util.Optional;
 
 /**
@@ -19,9 +21,10 @@ public interface DataSignatureReadWriteProvider {
     /**
      * 将签名值写出
      * @param rawObject 数据对象
+     * @param entityClass 对象类型
      * @param signValue 签名值
      * @param <T> 对象类型
      */
-    <T> void writeSignature(T rawObject, String signValue);
+    <T> void writeSignature(Object rawObject, Class<T> entityClass, AbstractWrapper<?,?,?> updateWrapper, String signValue);
 
 }
