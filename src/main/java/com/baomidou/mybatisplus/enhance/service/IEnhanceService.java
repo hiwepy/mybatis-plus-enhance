@@ -32,14 +32,7 @@ public interface IEnhanceService<T> extends IService<T> {
      * @param rowObject 单个对象
      * @param <RT> 对象类型
      */
-    <RT> void doSignatureVerification(RT rowObject);
-
-    /**
-     * 对单个对象进行验签
-     * @param rowMap 单个对象
-     * @param <RT> 对象类型
-     */
-    <RT> void doSignatureVerification(Map<String, Object> rowMap, Class<?> entityClass);
+    <RT> void doSignatureVerification(RT rowObject, Class<?> entityClass);
 
     /**
      * 插入一条记录（选择字段，策略插入）
@@ -133,7 +126,7 @@ public interface IEnhanceService<T> extends IService<T> {
             return null;
         }
         // 2、验证签名
-        doSignatureVerification(entity);
+        doSignatureVerification(entity, entity.getClass());
         // 3、返回数据
         return entity;
     }
@@ -158,7 +151,7 @@ public interface IEnhanceService<T> extends IService<T> {
         List<T> rtList = getBaseMapper().selectBatchIds(idList);
         // 2、验证签名
         if (CollectionUtils.isNotEmpty(rtList)) {
-            rtList.forEach(this::doSignatureVerification);
+            rtList.forEach(rowObject -> doSignatureVerification(rowObject, rowObject.getClass()));
         }
         return rtList;
     }
@@ -176,7 +169,7 @@ public interface IEnhanceService<T> extends IService<T> {
             // 2、调用结果处理器
             resultHandler.handleResult(context);
             // 3、验证签名
-            doSignatureVerification(context.getResultObject());
+            doSignatureVerification(context.getResultObject(), context.getResultObject().getClass());
         };
         // 4、调用selectBatchIds查询数据
         getBaseMapper().selectBatchIds(idList, wapperHandler);
@@ -192,7 +185,7 @@ public interface IEnhanceService<T> extends IService<T> {
         List<T> rtList = getBaseMapper().selectByMap(columnMap);
         // 2、验证签名
         if (CollectionUtils.isNotEmpty(rtList)) {
-            rtList.forEach(this::doSignatureVerification);
+            rtList.forEach(rowObject -> doSignatureVerification(rowObject, rowObject.getClass()));
         }
         return rtList;
     }
@@ -210,7 +203,7 @@ public interface IEnhanceService<T> extends IService<T> {
             // 2、调用结果处理器
             resultHandler.handleResult(context);
             // 3、验证签名
-            doSignatureVerification(context.getResultObject());
+            doSignatureVerification(context.getResultObject(), context.getResultObject().getClass());
         };
         // 4、调用selectByMap查询数据
         getBaseMapper().selectByMap(columnMap, wapperHandler);
@@ -279,7 +272,7 @@ public interface IEnhanceService<T> extends IService<T> {
         List<T> rtList = getBaseMapper().selectList(queryWrapper);
         // 2、验证签名
         if (CollectionUtils.isNotEmpty(rtList)) {
-            rtList.forEach(this::doSignatureVerification);
+            rtList.forEach(rowObject -> doSignatureVerification(rowObject, rowObject.getClass()));
         }
         return rtList;
     }
@@ -297,7 +290,7 @@ public interface IEnhanceService<T> extends IService<T> {
             // 2、调用结果处理器
             resultHandler.handleResult(context);
             // 3、验证签名
-            doSignatureVerification(context.getResultObject());
+            doSignatureVerification(context.getResultObject(), context.getResultObject().getClass());
         };
         // 4、调用selectList查询数据
         getBaseMapper().selectList(queryWrapper, wapperHandler);
@@ -316,7 +309,7 @@ public interface IEnhanceService<T> extends IService<T> {
         List<T> rtList = getBaseMapper().selectList(page, queryWrapper);
         // 2、验证签名
         if (CollectionUtils.isNotEmpty(rtList)) {
-            rtList.forEach(this::doSignatureVerification);
+            rtList.forEach(rowObject -> doSignatureVerification(rowObject, rowObject.getClass()));
         }
         return rtList;
     }
@@ -334,7 +327,7 @@ public interface IEnhanceService<T> extends IService<T> {
             // 2、调用结果处理器
             resultHandler.handleResult(context);
             // 3、验证签名
-            doSignatureVerification(context.getResultObject());
+            doSignatureVerification(context.getResultObject(), context.getResultObject().getClass());
         };
         // 4、调用selectList查询数据
         getBaseMapper().selectList(page, queryWrapper, wapperHandler);
@@ -371,7 +364,7 @@ public interface IEnhanceService<T> extends IService<T> {
         page.setRecords(getBaseMapper().selectList(page, queryWrapper));
         // 2、验证签名
         if (CollectionUtils.isNotEmpty(page.getRecords())) {
-            page.getRecords().forEach(this::doSignatureVerification);
+            page.getRecords().forEach(rowObject -> doSignatureVerification(rowObject, rowObject.getClass()));
         }
         return page;
     }
@@ -485,7 +478,7 @@ public interface IEnhanceService<T> extends IService<T> {
         List<E> rtList = getBaseMapper().selectObjs(null);
         // 2、验证签名
         if (CollectionUtils.isNotEmpty(rtList)) {
-            rtList.forEach(this::doSignatureVerification);
+            rtList.forEach(rowObject -> doSignatureVerification(rowObject, rowObject.getClass()));
         }
         return rtList;
     }
@@ -509,7 +502,7 @@ public interface IEnhanceService<T> extends IService<T> {
         List<E> rtList = getBaseMapper().selectObjs(queryWrapper);
         // 2、验证签名
         if (CollectionUtils.isNotEmpty(rtList)) {
-            rtList.forEach(this::doSignatureVerification);
+            rtList.forEach(rowObject -> doSignatureVerification(rowObject, rowObject.getClass()));
         }
         return rtList;
     }
@@ -538,7 +531,7 @@ public interface IEnhanceService<T> extends IService<T> {
             // 2、调用结果处理器
             resultHandler.handleResult(context);
             // 3、验证签名
-            doSignatureVerification(context.getResultObject());
+            doSignatureVerification(context.getResultObject(), context.getResultObject().getClass());
         };
         // 3、调用selectObjs查询数据
         getBaseMapper().selectObjs(queryWrapper, wapperHandler);
@@ -650,7 +643,7 @@ public interface IEnhanceService<T> extends IService<T> {
         // 2、如果原始数据不为空，则对原始数据进行验签
         if (Objects.nonNull(entity)) {
             // 2.1、对原始数据进行验签
-            this.doSignatureVerification(entity);
+            this.doSignatureVerification(entity, entity.getClass());
         }
     }
 
@@ -664,7 +657,7 @@ public interface IEnhanceService<T> extends IService<T> {
         List<T> rtList = getBaseMapper().selectBatchIds(idList);
         if(CollectionUtils.isNotEmpty(rtList)){
             // 2、对原始数据进行验签
-            rtList.forEach(this::doSignatureVerification);
+            rtList.forEach(rowObject -> doSignatureVerification(rowObject, rowObject.getClass()));
         }
     }
 
@@ -678,7 +671,7 @@ public interface IEnhanceService<T> extends IService<T> {
         List<T> rtList = getBaseMapper().selectByMap(columnMap);
         if(CollectionUtils.isNotEmpty(rtList)){
             // 2、对原始数据进行验签
-            rtList.forEach(this::doSignatureVerification);
+            rtList.forEach(rowObject -> doSignatureVerification(rowObject, rowObject.getClass()));
         }
     }
 
@@ -692,10 +685,9 @@ public interface IEnhanceService<T> extends IService<T> {
             List<T> rtList = getBaseMapper().selectList(queryWrapper);
             if(CollectionUtils.isNotEmpty(rtList)){
                 // 2、对原始数据进行验签
-                rtList.forEach(this::doSignatureVerification);
+                rtList.forEach(rowObject -> doSignatureVerification(rowObject, rowObject.getClass()));
             }
         }
     }
-
 
 }

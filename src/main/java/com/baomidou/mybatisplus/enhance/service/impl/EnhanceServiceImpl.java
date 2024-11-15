@@ -47,13 +47,8 @@ public abstract class EnhanceServiceImpl<M extends BaseMapper<T>, T> extends Ser
     }
 
     @Override
-    public <RT> void doSignatureVerification(RT rowObject) {
-        getDataSignatureHandler().doSignatureVerification(rowObject, rowObject.getClass());
-    }
-
-    @Override
-    public <RT> void doSignatureVerification(Map<String, Object> rowMap, Class<?> entityClass) {
-        getDataSignatureHandler().doSignatureVerification(rowMap, entityClass);
+    public <RT> void doSignatureVerification(RT rowObject, Class<?> entityClass) {
+        getDataSignatureHandler().doSignatureVerification(rowObject, entityClass);
     }
 
     /**
@@ -124,7 +119,7 @@ public abstract class EnhanceServiceImpl<M extends BaseMapper<T>, T> extends Ser
             return null;
         }
         // 2、验证签名
-        doSignatureVerification(entity);
+        doSignatureVerification(entity, entity.getClass());
         // 3、返回数据
         return entity;
     }
@@ -137,7 +132,7 @@ public abstract class EnhanceServiceImpl<M extends BaseMapper<T>, T> extends Ser
             return Optional.empty();
         }
         // 2、验证签名
-        getDataSignatureHandler().doSignatureVerification(entity, entity.getClass());
+        doSignatureVerification(entity, entity.getClass());
         // 3、返回数据
         return Optional.of(entity);
     }
