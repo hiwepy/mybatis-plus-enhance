@@ -14,7 +14,6 @@ import com.baomidou.mybatisplus.enhance.crypto.annotation.TableSignature;
 import com.baomidou.mybatisplus.enhance.crypto.annotation.TableSignatureField;
 import com.baomidou.mybatisplus.enhance.util.TableFieldHelper;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -37,11 +36,15 @@ public class DefaultDataSignatureHandler implements DataSignatureHandler {
     private final EncryptedFieldHandler encryptedFieldHandler;
 
     @Getter
-    @Setter
-    private DataSignatureReadWriteProvider signatureReadWriteProvider = new DefaultDataSignatureReadWriteProvider();
+    private final DataSignatureReadWriteProvider signatureReadWriteProvider;
 
     public DefaultDataSignatureHandler(EncryptedFieldHandler encryptedFieldHandler) {
+        this(encryptedFieldHandler, new DefaultDataSignatureReadWriteProvider());
+    }
+
+    public DefaultDataSignatureHandler(EncryptedFieldHandler encryptedFieldHandler, DataSignatureReadWriteProvider signatureReadWriteProvider) {
         this.encryptedFieldHandler = encryptedFieldHandler;
+        this.signatureReadWriteProvider = signatureReadWriteProvider;
     }
 
     /**
