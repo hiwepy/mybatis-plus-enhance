@@ -1,9 +1,5 @@
 package com.baomidou.mybatisplus.enhance.interceptor;
 
-import com.baomidou.mybatisplus.enhance.crypto.annotation.EncryptedField;
-import com.baomidou.mybatisplus.enhance.crypto.annotation.EncryptedTable;
-import com.baomidou.mybatisplus.enhance.crypto.annotation.TableSignatureField;
-import com.baomidou.mybatisplus.enhance.crypto.handler.EncryptedFieldHandler;
 import com.baomidou.mybatisplus.enhance.interceptor.inner.EnhanceInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;

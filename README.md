@@ -152,7 +152,7 @@ public class MybatisPlusEnhanceInterceptor extends MybatisPlusInterceptor {
 }
 ```
 
-#### 二、基于 MyBatis Plus 插件的 `数据签名与验签(Data Signature)` 实现原理
+#### 二、基于 MyBatis Plus 插件的 `数据签名与验签(Data Signature)` 实现原理（基于注解的自动签名和验签，适用于新项目）
 
 > `数据签名与验签(Data Signature)` 是对数据进行完整性验证的一种方式，通过对数据进行签名`签名`和`验签`，可以保证数据在传输和存储过程中的完整性。
 - 此方案逻辑是通过 `MyBatis Plus` 自定义插件和`自定义注解`实现对数据库中的数据进行`签名`和`验签`。
@@ -260,8 +260,34 @@ public class MybatisPlusEnhanceInterceptor extends MybatisPlusInterceptor {
 }
 ```
 
+#### 三、基于 MyBatis `接口增强` 的 `数据签名与验签(Data Signature)` 实现原理（手动调用签名和验签，适用于老项目改造）
 
-#### 三、基于 MyBatis Plus 插件的 `数据脱敏(Data Masking)` 实现原理
+1、自定义增强接口和抽象实现 `IEnhanceService`、`EnhanceServiceImpl` 和 `BaseEnhanceMapper`，替代默认的 `IService`、`ServiceImpl` 和 `BaseMapper`，并定义查询和更新接口和实现。
+
+```java
+/**
+ * 增强 Service 接口
+ * @param <T> 实体类
+ */
+public interface IEnhanceService<T> extends IService<T> {
+    // 详细实现请参考源码
+}
+/**
+ * EnhanceServiceImpl
+ * <p>
+ * 1. 数据签名和验签
+ * 2. 重写 getSignedOne、getSignedOneOpt、getSignedMap、getSignedObj
+ * 3. 重写 getBaseEnhanceMapper、getDataSignatureHandler
+ *
+ * @param <M> Mapper
+ * @param <T> Entity
+ */
+public abstract class EnhanceServiceImpl<M extends BaseEnhanceMapper<T>, T> extends ServiceImpl<M, T> implements IEnhanceService<T> {
+    // 详细实现请参考源码
+}
+```
+
+#### 四、基于 MyBatis Plus 插件的 `数据脱敏(Data Masking)` 实现原理
 
 > 通过 `MyBatis Plus` 插件实现数据写入或读取时对数据进行`脱敏`，保证数据在数据库中的存储安全性。
 
@@ -277,12 +303,11 @@ public class MybatisPlusEnhanceInterceptor extends MybatisPlusInterceptor {
 * ‌加密‌：使用哈希函数如MD5或SHA-256将敏感数据转换为密文。
 
 
+#### 五、基于 MyBatis Plus 插件的 `数据权限(Data Permission)` 实现原理
 
-#### 四、基于 MyBatis Plus 插件的 `数据权限(Data Permission)` 实现原理
+#### 六、基于 MyBatis Plus 插件的 `多租户数据隔离(Multi Tenant Data Isolation)` 实现原理
 
-#### 五、基于 MyBatis Plus 插件的 `多租户数据隔离(Multi Tenant Data Isolation)` 实现原理
-
-#### 六、基于 MyBatis Plus 插件的 `数据国际化(Data Internationalized)` 实现原理
+#### 七、基于 MyBatis Plus 插件的 `数据国际化(Data Internationalized)` 实现原理
 
 
 ### 使用指南
@@ -573,7 +598,7 @@ public class UserController {
 }
 ```
 
-#### 二、基于 MyBatis Plus 插件的 `数据签名与验签(Data Signature)` 使用指南
+#### 二、基于 MyBatis Plus 插件的 `数据签名与验签(Data Signature)` 使用指南（基于注解的自动签名和验签，适用于新项目）
 
 
 1、实现 `EncryptedFieldHandler` 的接口的加解密和签名逻辑或使用默认实现 `DefaultEncryptedFieldHandler` 创建Handler实例。
@@ -846,11 +871,135 @@ public class UserController {
 }
 ```
 
-#### 三、基于 MyBatis Plus 插件的 `数据脱敏(Data Masking)` 使用指南
+#### 三、基于 MyBatis 接口增强 的 `数据签名与验签(Data Signature)` 使用指南（手动调用签名和验签，适用于老项目改造）
 
+1、定义业务接口 `UserServiceImpl` 和 `UserService`，并继承 `EnhanceServiceImpl` 和 `IEnhanceService` 接口。
 
-#### 四、基于 MyBatis Plus 插件的 `数据权限(Data Permission)` 使用指南
+UserService 继承 `IEnhanceService` 接口。
 
-#### 五、基于 MyBatis Plus 插件的 `多租户数据隔离(Multi Tenant Data Isolation)` 使用指南
+```java
+import com.baomidou.mybatisplus.enhance.service.IEnhanceService;
 
-#### 六、基于 MyBatis Plus 插件的 `数据国际化(Data Internationalized)` 使用指南
+public interface UserService extends IEnhanceService<MyEntity> {
+
+}
+```
+
+UserServiceImpl 继承 `EnhanceServiceImpl` 接口，实现 `UserService` 接口。
+
+```java
+import com.baomidou.mybatisplus.enhance.service.impl.EnhanceServiceImpl;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserServiceImpl extends EnhanceServiceImpl<UserMapper, UserEntity> implements MyService {
+
+}
+```
+
+UserMapper 和默认用法一样，继承 `BaseMapper` 接口。
+
+```java
+@Mapper
+public interface UserMapper extends BaseMapper<UserEntity> {
+
+}
+```
+
+2、定义PO类，使用 `@TableSignature` 和 `@TableSignatureField`注解
+
+> 实体类上使用自定义注解，来标记需要进行加解密
+
+```java
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.enhance.crypto.annotation.TableSignature;
+import com.baomidou.mybatisplus.enhance.crypto.annotation.TableSignatureField;
+import lombok.Data;
+
+import java.io.Serializable;
+
+@Data
+@TableSignature
+@TableName(value = "my_entity")
+public class MyEntity implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
+    private String name;
+    // 使用@TableSignatureField 注解
+    @TableSignatureField(order = 1)
+    private String mobile;
+    // 使用@TableSignatureField 注解
+    @TableSignatureField(order = 2)
+    private String email;
+    // 需要存储HMAC的字段用这个注解
+    @TableSignatureField(stored = true)
+    private String hamc;
+}
+```
+
+3、定义API接口
+
+> 通过`Mybatis Plus` 提供的 `BaseMapper` API、Lambda、自定义mapper接口三种方式进行使用
+
+```java
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+/**
+ * 用户表控制器
+ */
+@RestController
+@RequestMapping("/user")
+public class UserController {
+
+    @Resource
+    private IUserService userService;
+
+    /**
+     * 测试验签
+     */
+    @GetMapping(name = "测试查询签名验证", value = "/detail")
+    public UserEntity detail(Long id) {
+        // 测试MP API（查询结果并验签）
+        UserEntity entity = userService.getSignedById(id);
+        if (null == entity) {
+            return new UserEntity();
+        }
+        return entity;
+    }
+
+    /**
+     * 新增用户表，测试加密
+     */
+    @GetMapping(name = "新增用户表，测试加密", value = "/add")
+    public UserEntity add(UserEntity entity) {
+        // 测试MP API
+        userService.saveSigned(entity);
+        return entity;
+    }
+
+    /**
+     * 修改用户表
+     */
+    @GetMapping(name = "修改用户表", value = "/update")
+    public UserEntity update(UserEntity entity) {
+        // 测试MP API
+        userService.updateSignedById(entity);
+        return entity;
+    }
+}
+```
+
+#### 四、基于 MyBatis Plus 插件的 `数据脱敏(Data Masking)` 使用指南
+
+#### 五、基于 MyBatis Plus 插件的 `数据权限(Data Permission)` 使用指南
+
+#### 六、基于 MyBatis Plus 插件的 `多租户数据隔离(Multi Tenant Data Isolation)` 使用指南
+
+#### 七、基于 MyBatis Plus 插件的 `数据国际化(Data Internationalized)` 使用指南
