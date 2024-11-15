@@ -2,9 +2,10 @@ package com.baomidou.mybatisplus.enhance.crypto.handler;
 
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ReflectUtil;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.AnnotationUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
@@ -60,7 +61,8 @@ public class DefaultDataSignatureHandler implements DataSignatureHandler {
         }
 
         // 4、获取自定义Entity类联合签名的字段信息列表（排序后）
-        List<TableFieldInfo> signatureFieldInfos = EncryptedFieldHelper.getSortedSignatureFieldInfos(parameter.getClass());
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(parameter.getClass());
+        List<TableFieldInfo> signatureFieldInfos = EncryptedFieldHelper.getSortedSignatureFieldInfos(tableInfo);
         if (CollectionUtils.isEmpty(signatureFieldInfos)) {
             return;
         }
@@ -84,7 +86,7 @@ public class DefaultDataSignatureHandler implements DataSignatureHandler {
             // 6.1、对数据进行签名处理
             String hmacValue = getEncryptedFieldHandler().hmac(hmacJoiner.toString());
             // 6.2、调用签名读写提供者，将签名值写入到实体类中或外部存储
-            getSignatureReadWriteProvider().writeSignature(parameter, parameter.getClass(), null, hmacValue);
+            getSignatureReadWriteProvider().writeSignature(parameter, tableInfo, null, hmacValue);
         }
     }
 
@@ -108,7 +110,8 @@ public class DefaultDataSignatureHandler implements DataSignatureHandler {
         }
 
         // 3、获取自定义Entity类联合签名的字段信息列表（排序后）
-        List<TableFieldInfo> signatureFieldInfos = EncryptedFieldHelper.getSortedSignatureFieldInfos(entityClass);
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+        List<TableFieldInfo> signatureFieldInfos = EncryptedFieldHelper.getSortedSignatureFieldInfos(tableInfo);
         if (CollectionUtils.isEmpty(signatureFieldInfos)) {
             return;
         }
@@ -146,7 +149,7 @@ public class DefaultDataSignatureHandler implements DataSignatureHandler {
             // 6.1、对数据进行签名处理
             String hmacValue = getEncryptedFieldHandler().hmac(hmacJoiner.toString());
             // 6.2、调用签名读写提供者，将签名值写入到实体类中或外部存储
-            getSignatureReadWriteProvider().writeSignature(propMap, entityClass, updateWrapper, hmacValue);
+            getSignatureReadWriteProvider().writeSignature(propMap, tableInfo, updateWrapper, hmacValue);
         }
     }
 
@@ -169,7 +172,8 @@ public class DefaultDataSignatureHandler implements DataSignatureHandler {
         }
 
         // 4、获取自定义Entity类联合签名的字段信息列表（排序后）
-        List<TableFieldInfo> signatureFieldInfos = EncryptedFieldHelper.getSortedSignatureFieldInfos(entityClass);
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+        List<TableFieldInfo> signatureFieldInfos = EncryptedFieldHelper.getSortedSignatureFieldInfos(tableInfo);
         if (CollectionUtils.isEmpty(signatureFieldInfos)) {
             return;
         }
@@ -195,19 +199,17 @@ public class DefaultDataSignatureHandler implements DataSignatureHandler {
         }
 
         // 6、对联合签名字符串进行签名处理，获取签名值，并进行签名验证
-        this.doSignatureVerification(signatureFieldInfos, hmacJoiner, rawObject, entityClass);
+        this.doSignatureVerification(tableInfo, signatureFieldInfos, hmacJoiner, rawObject);
 
     }
 
-   protected <T> void doSignatureVerification(List<TableFieldInfo> signatureFieldInfos, StringJoiner hmacJoiner, Object rawObject, Class<T> entityClass){
+   protected <T> void doSignatureVerification(TableInfo tableInfo, List<TableFieldInfo> signatureFieldInfos, StringJoiner hmacJoiner, Object rawObject){
         // 1、如果实体类需要进行单表数据存储完整性验证，则对数据表进行签名处理
-        if (Objects.isNull(rawObject) || Objects.isNull(entityClass) || CollectionUtils.isEmpty(signatureFieldInfos) || Objects.isNull(hmacJoiner) || hmacJoiner.length() == 0) {
+        if (Objects.isNull(rawObject) || CollectionUtils.isEmpty(signatureFieldInfos) || Objects.isNull(hmacJoiner) || hmacJoiner.length() == 0) {
             return;
         }
         // 6.1、获取之前存储的签名
-        Optional<Object> signatureValue = getSignatureReadWriteProvider().readSignature(rawObject, entityClass);
-        // 6.2.2、获取表名，用于异常提示
-        TableName tableName = AnnotationUtils.findFirstAnnotation(TableName.class, entityClass);
+        Optional<Object> signatureValue = getSignatureReadWriteProvider().readSignature(rawObject, tableInfo);
         // 6.2、如果签名结果存在，则进行签名验证
         if(signatureValue.isPresent()){
             // 6.2.3、对联合签名字符串进行签名处理，获取签名值
@@ -215,12 +217,12 @@ public class DefaultDataSignatureHandler implements DataSignatureHandler {
             // 6.2.4、对比签名值，如果不一致，则抛出异常
             ExceptionUtils.throwMpe(!Objects.equals(hmacValue, signatureValue.get()),
                     "表【%s】的数据列【%s】,数据签名不匹配，数据存储完整性验证不通过，请检查数据完整性",
-                    tableName.value(),
+                    tableInfo.getTableName(),
                     signatureFieldInfos.stream().map(TableFieldInfo::getColumn).reduce((a, b) -> a + Constants.COMMA + b).orElse(Constants.EMPTY));
         } else {
             // 6.3、如果签名结果不存在，则抛出异常
             throw ExceptionUtils.mpe("表【%s】的数据列【%s】,原来签名不存在，数据存储完整性验证不通过，请先进行数据签名",
-                    tableName.value(),
+                    tableInfo.getTableName(),
                     signatureFieldInfos.stream().map(TableFieldInfo::getColumn).reduce((a, b) -> a + Constants.COMMA + b).orElse(Constants.EMPTY));
         }
     }

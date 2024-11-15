@@ -4,6 +4,7 @@ import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ReflectUtil;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.enhance.util.EncryptedFieldHelper;
 
 import java.util.Map;
@@ -21,13 +22,13 @@ public class DefaultDataSignatureReadWriteProvider implements DataSignatureReadW
     /**
      * 从对象中读取签名值
      * @param rawObject 数据对象
+     * @param tableInfo 对象表信息
      * @return 签名值
-     * @param <T> 对象类型
      */
     @Override
-    public <T> Optional<Object> readSignature(Object rawObject, Class<T> entityClass) {
+    public Optional<Object> readSignature(Object rawObject, TableInfo tableInfo) {
         // 1、获取存储签名结果的字段
-        Optional<TableFieldInfo> signatureStoreFieldInfo = EncryptedFieldHelper.getTableSignatureStoreFieldInfo(rawObject.getClass());
+        Optional<TableFieldInfo> signatureStoreFieldInfo = EncryptedFieldHelper.getTableSignatureStoreFieldInfo(tableInfo);
         // 2、如果存储签名结果的字段存在，则进行签名验证
         if(signatureStoreFieldInfo.isPresent()) {
             // 2.1、如果存储签名结果的字段是Map类型，则从Map中获取签名值
@@ -47,14 +48,14 @@ public class DefaultDataSignatureReadWriteProvider implements DataSignatureReadW
     /**
      * 将签名值写到对象中
      * @param rawObject 数据对象
+     * @param tableInfo 对象表信息
      * @param signValue 签名值
      * @param <T> 对象类型
      */
     @Override
-    public <T> void writeSignature(Object rawObject, Class<T> entityClass, AbstractWrapper<?,?,?> updateWrapper, String signValue) {
+    public <T> void writeSignature(Object rawObject, TableInfo tableInfo, AbstractWrapper<?,?,?> updateWrapper, String signValue) {
         // 1、获取存储的签名结果的字段
-        Optional<TableFieldInfo> signatureStoreFieldInfo = EncryptedFieldHelper.getTableSignatureStoreFieldInfo(entityClass);
-        signatureStoreFieldInfo.ifPresent(fieldInfo -> ReflectUtil.setFieldValue(rawObject, fieldInfo.getField(), signValue));
+        Optional<TableFieldInfo> signatureStoreFieldInfo = EncryptedFieldHelper.getTableSignatureStoreFieldInfo(tableInfo);
         // 3、如果数据表的HMAC字段存在，则将HMAC签名值通过反射设置到HMAC字段上
         if(signatureStoreFieldInfo.isPresent()){
             // 3.1、如果存储签名结果的字段是Map类型，则从Map中获取签名值
