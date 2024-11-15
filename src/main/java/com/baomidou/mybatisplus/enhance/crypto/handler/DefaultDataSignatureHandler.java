@@ -12,7 +12,7 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.enhance.crypto.annotation.TableSignature;
 import com.baomidou.mybatisplus.enhance.crypto.annotation.TableSignatureField;
-import com.baomidou.mybatisplus.enhance.util.EncryptedFieldHelper;
+import com.baomidou.mybatisplus.enhance.util.TableFieldHelper;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -62,7 +62,7 @@ public class DefaultDataSignatureHandler implements DataSignatureHandler {
 
         // 4、获取自定义Entity类联合签名的字段信息列表（排序后）
         TableInfo tableInfo = TableInfoHelper.getTableInfo(parameter.getClass());
-        List<TableFieldInfo> signatureFieldInfos = EncryptedFieldHelper.getSortedSignatureFieldInfos(tableInfo);
+        List<TableFieldInfo> signatureFieldInfos = TableFieldHelper.getSortedSignatureFieldInfos(tableInfo);
         if (CollectionUtils.isEmpty(signatureFieldInfos)) {
             return;
         }
@@ -111,7 +111,7 @@ public class DefaultDataSignatureHandler implements DataSignatureHandler {
 
         // 3、获取自定义Entity类联合签名的字段信息列表（排序后）
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
-        List<TableFieldInfo> signatureFieldInfos = EncryptedFieldHelper.getSortedSignatureFieldInfos(tableInfo);
+        List<TableFieldInfo> signatureFieldInfos = TableFieldHelper.getSortedSignatureFieldInfos(tableInfo);
         if (CollectionUtils.isEmpty(signatureFieldInfos)) {
             return;
         }
@@ -173,7 +173,7 @@ public class DefaultDataSignatureHandler implements DataSignatureHandler {
 
         // 4、获取自定义Entity类联合签名的字段信息列表（排序后）
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
-        List<TableFieldInfo> signatureFieldInfos = EncryptedFieldHelper.getSortedSignatureFieldInfos(tableInfo);
+        List<TableFieldInfo> signatureFieldInfos = TableFieldHelper.getSortedSignatureFieldInfos(tableInfo);
         if (CollectionUtils.isEmpty(signatureFieldInfos)) {
             return;
         }

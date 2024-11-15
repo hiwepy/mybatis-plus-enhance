@@ -1,5 +1,7 @@
 package com.baomidou.mybatisplus.enhance.util;
 
+import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.util.ReflectUtil;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.core.handlers.AnnotationHandler;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
@@ -12,13 +14,10 @@ import com.baomidou.mybatisplus.enhance.crypto.annotation.TableSignature;
 import com.baomidou.mybatisplus.enhance.crypto.annotation.TableSignatureField;
 
 import java.lang.reflect.Field;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
-public class EncryptedFieldHelper {
+public class TableFieldHelper {
 
     /**
      * 校验该实例的类是否被 @EncryptedTable所注解
@@ -185,6 +184,21 @@ public class EncryptedFieldHelper {
             TableSignatureField tableSignatureField = AnnotationUtils.findFirstAnnotation(TableSignatureField.class, fieldInfo.getField());
             return Objects.nonNull(tableSignatureField) && tableSignatureField.stored();
         }).findFirst();
+    }
+
+    public static Object getKeyValue(Object rawObject, TableInfo tableInfo) {
+        // 1、获取主键值
+        Object keyValue;
+        // 1.1、如果源数据是Map类型，则从Map中获取主键值
+        if(rawObject instanceof Map) {
+            Map<?,?> rawMap = (Map<?,?>) rawObject;
+            keyValue = MapUtil.getStr(rawMap, tableInfo.getKeyProperty());
+        }
+        // 1.2、如果源数据是对象类型，则从对象中获取主键值
+        else {
+            keyValue = ReflectUtil.getFieldValue(rawObject, tableInfo.getKeyProperty());
+        }
+        return keyValue;
     }
 
 }

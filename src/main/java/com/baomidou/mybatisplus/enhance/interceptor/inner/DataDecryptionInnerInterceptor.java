@@ -14,7 +14,7 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
-import com.baomidou.mybatisplus.enhance.util.EncryptedFieldHelper;
+import com.baomidou.mybatisplus.enhance.util.TableFieldHelper;
 import com.baomidou.mybatisplus.enhance.util.ParameterUtils;
 
 import java.sql.SQLException;
@@ -74,7 +74,7 @@ public class DataDecryptionInnerInterceptor implements EnhanceInnerInterceptor {
         }
 
         // 3、获取该类的所有标记为加密字段的属性列表
-        List<TableFieldInfo> encryptedFieldInfos = EncryptedFieldHelper.getEncryptedFieldInfos(rtObject.getClass());
+        List<TableFieldInfo> encryptedFieldInfos = TableFieldHelper.getEncryptedFieldInfos(rtObject.getClass());
         if (CollectionUtils.isEmpty(encryptedFieldInfos)) {
             return;
         }

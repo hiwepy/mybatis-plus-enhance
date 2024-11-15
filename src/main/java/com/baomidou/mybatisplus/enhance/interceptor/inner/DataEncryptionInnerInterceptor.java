@@ -23,7 +23,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.SimpleTypeRegistry;
-import com.baomidou.mybatisplus.enhance.util.EncryptedFieldHelper;
+import com.baomidou.mybatisplus.enhance.util.TableFieldHelper;
 import com.baomidou.mybatisplus.enhance.util.EnhanceConstants;
 import com.baomidou.mybatisplus.enhance.util.ParameterUtils;
 
@@ -158,7 +158,7 @@ public class DataEncryptionInnerInterceptor extends JsqlParserSupport implements
         }
 
         // 3、获取该类的所有标记为加密字段的属性列表
-        List<TableFieldInfo> encryptedFieldInfos = EncryptedFieldHelper.getEncryptedFieldInfos(parameter.getClass());
+        List<TableFieldInfo> encryptedFieldInfos = TableFieldHelper.getEncryptedFieldInfos(parameter.getClass());
         if (CollectionUtils.isEmpty(encryptedFieldInfos)) {
             return;
         }
@@ -200,7 +200,7 @@ public class DataEncryptionInnerInterceptor extends JsqlParserSupport implements
         }
 
         // 3、获取该类的所有标记为加密字段的属性列表
-        List<TableFieldInfo> encryptedFieldInfos = EncryptedFieldHelper.getEncryptedFieldInfos(entityClass);
+        List<TableFieldInfo> encryptedFieldInfos = TableFieldHelper.getEncryptedFieldInfos(entityClass);
         if (CollectionUtils.isEmpty(encryptedFieldInfos)) {
             return;
         }
