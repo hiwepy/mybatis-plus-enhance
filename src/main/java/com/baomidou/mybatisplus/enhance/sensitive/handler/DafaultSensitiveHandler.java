@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.enhance.sensitive.handler;
 
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.enhance.sensitive.annotation.SensitiveType;
 
 /**
@@ -10,7 +11,6 @@ public class DafaultSensitiveHandler implements SensitiveTypeHandler {
 
     private static final int SIZE = 6;
     private static final int TWO =2;
-    private static final String SYMBOL = "*";
 
     @Override
     public SensitiveType getSensitiveType() {
@@ -31,34 +31,34 @@ public class DafaultSensitiveHandler implements SensitiveTypeHandler {
         StringBuilder stringBuilder = new StringBuilder();
         if (len <= TWO) {
             if (pamathree == 1) {
-                return SYMBOL;
+                return StringPool.ASTERISK;
             }
-            stringBuilder.append(SYMBOL);
+            stringBuilder.append(StringPool.ASTERISK);
             stringBuilder.append(value.charAt(len - 1));
         } else {
             if (pamatwo <= 0) {
-                stringBuilder.append(value.substring(0, 1));
-                stringBuilder.append(SYMBOL);
-                stringBuilder.append(value.substring(len - 1, len));
+                stringBuilder.append(value.charAt(0));
+                stringBuilder.append(StringPool.ASTERISK);
+                stringBuilder.append(value.charAt(len - 1));
 
             } else if (pamatwo >= SIZE / TWO && SIZE + 1 != len) {
                 int pamafive = (len - SIZE) / 2;
-                stringBuilder.append(value.substring(0, pamafive));
+                stringBuilder.append(value, 0, pamafive);
                 for (int i = 0; i < SIZE; i++) {
-                    stringBuilder.append(SYMBOL);
+                    stringBuilder.append(StringPool.ASTERISK);
                 }
                 if (ispamaThree(pamathree)) {
-                    stringBuilder.append(value.substring(len - pamafive, len));
+                    stringBuilder.append(value, len - pamafive, len);
                 } else {
-                    stringBuilder.append(value.substring(len - (pamafive + 1), len));
+                    stringBuilder.append(value, len - (pamafive + 1), len);
                 }
             } else {
                 int pamafour = len - 2;
-                stringBuilder.append(value.substring(0, 1));
+                stringBuilder.append(value.charAt(0));
                 for (int i = 0; i < pamafour; i++) {
-                    stringBuilder.append(SYMBOL);
+                    stringBuilder.append(StringPool.ASTERISK);
                 }
-                stringBuilder.append(value.substring(len - 1, len));
+                stringBuilder.append(value.charAt(len - 1));
             }
         }
         return stringBuilder.toString();

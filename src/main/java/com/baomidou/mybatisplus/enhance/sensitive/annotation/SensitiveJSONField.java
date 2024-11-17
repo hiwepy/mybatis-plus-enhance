@@ -1,11 +1,6 @@
 package com.baomidou.mybatisplus.enhance.sensitive.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * 对json内的key_value进行脱敏
@@ -16,9 +11,23 @@ import java.lang.annotation.Target;
 @Inherited
 @Documented
 public @interface SensitiveJSONField {
+
+    /**
+     * 是否在get时脱敏
+     * @return boolean 默认false
+     */
+    boolean maskingWhenGet() default false;
+
+    /**
+     * 是否在set时脱敏
+     * @return boolean 默认false
+     */
+    boolean maskingWhenSet() default false;
+
     /**
      * 需要脱敏的字段的数组
      * @return 返回结果
      */
     SensitiveJSONFieldKey[] sensitivelist();
+
 }

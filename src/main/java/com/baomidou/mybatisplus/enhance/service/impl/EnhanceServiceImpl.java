@@ -106,6 +106,7 @@ public abstract class EnhanceServiceImpl<M extends BaseMapper<T>, T> extends Ser
      * @return boolean
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean saveOrUpdateSigned(T entity) {
         doEntitySignature(entity);
         return getBaseMapper().insertOrUpdate(entity);

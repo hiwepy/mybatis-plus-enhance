@@ -18,10 +18,24 @@ import java.lang.annotation.Target;
 @Inherited
 @Documented
 public @interface SensitiveField {
+
     /**
      * 脱敏类型
      * 不同的脱敏类型置换*的方式不同
      * @return SensitiveType
      */
     SensitiveType value();
+
+    /**
+     * 是否在get时脱敏
+     * @return boolean 默认false
+     */
+    boolean maskingWhenGet() default false;
+
+    /**
+     * 是否在set时脱敏
+     * @return boolean 默认false
+     */
+    boolean maskingWhenSet() default false;
+
 }

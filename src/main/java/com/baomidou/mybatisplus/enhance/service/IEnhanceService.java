@@ -39,6 +39,7 @@ public interface IEnhanceService<T> extends IService<T> {
      *
      * @param entity 实体对象
      */
+    @Transactional(rollbackFor = Exception.class)
     default boolean saveSigned(T entity) {
         doEntitySignature(entity);
         return SqlHelper.retBool(getBaseMapper().insert(entity));
@@ -85,6 +86,7 @@ public interface IEnhanceService<T> extends IService<T> {
      *
      * @param entity 实体对象
      */
+    @Transactional(rollbackFor = Exception.class)
     default boolean updateSignedById(T entity) {
         doEntitySignature(entity);
         return SqlHelper.retBool(getBaseMapper().updateById(entity));
