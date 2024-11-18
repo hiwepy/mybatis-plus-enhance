@@ -120,7 +120,7 @@ public abstract class EnhanceServiceImpl<M extends BaseMapper<T>, T> extends Ser
             return null;
         }
         // 2、验证签名
-        doSignatureVerification(entity, entity.getClass());
+        this.doSignatureVerification(entity, entity.getClass());
         // 3、返回数据
         return entity;
     }
@@ -133,7 +133,7 @@ public abstract class EnhanceServiceImpl<M extends BaseMapper<T>, T> extends Ser
             return Optional.empty();
         }
         // 2、验证签名
-        doSignatureVerification(entity, entity.getClass());
+        this.doSignatureVerification(entity, entity.getClass());
         // 3、返回数据
         return Optional.of(entity);
     }
@@ -144,7 +144,7 @@ public abstract class EnhanceServiceImpl<M extends BaseMapper<T>, T> extends Ser
         List<Map<String, Object>> rtList = getBaseMapper().selectMaps(queryWrapper);
         // 2、验证签名
         if (CollectionUtils.isNotEmpty(rtList)) {
-            rtList.forEach( rowMap -> getDataSignatureHandler().doSignatureVerification(rowMap, queryWrapper.getEntity().getClass()));
+            rtList.forEach( rowMap -> this.doSignatureVerification(rowMap, queryWrapper.getEntity().getClass()));
         }
         return SqlHelper.getObject(log, rtList);
     }
