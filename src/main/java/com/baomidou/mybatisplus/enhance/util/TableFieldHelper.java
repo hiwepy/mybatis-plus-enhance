@@ -15,6 +15,7 @@ import com.baomidou.mybatisplus.enhance.crypto.annotation.TableSignatureField;
 import com.baomidou.mybatisplus.enhance.sensitive.annotation.SensitiveField;
 import com.baomidou.mybatisplus.enhance.sensitive.annotation.SensitiveJSONField;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -245,9 +246,13 @@ public class TableFieldHelper {
         }).findFirst();
     }
 
-    public static Object getKeyValue(Object rawObject, TableInfo tableInfo) {
+    public static Serializable getKeyValue(Object rawObject) {
+        return getKeyValue(rawObject, TableInfoHelper.getTableInfo(rawObject.getClass()));
+    }
+
+    public static Serializable getKeyValue(Object rawObject, TableInfo tableInfo) {
         // 1、获取主键值
-        Object keyValue;
+        Serializable keyValue;
         // 1.1、如果源数据是Map类型，则从Map中获取主键值
         if(rawObject instanceof Map) {
             Map<?,?> rawMap = (Map<?,?>) rawObject;
@@ -255,7 +260,7 @@ public class TableFieldHelper {
         }
         // 1.2、如果源数据是对象类型，则从对象中获取主键值
         else {
-            keyValue = ReflectUtil.getFieldValue(rawObject, tableInfo.getKeyProperty());
+            keyValue = (Serializable) ReflectUtil.getFieldValue(rawObject, tableInfo.getKeyProperty());
         }
         return keyValue;
     }

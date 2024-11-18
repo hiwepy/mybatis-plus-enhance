@@ -11,16 +11,15 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.enhance.crypto.handler.DataSignatureHandler;
 import com.baomidou.mybatisplus.enhance.service.IEnhanceService;
+import com.baomidou.mybatisplus.enhance.util.TableFieldHelper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import org.apache.ibatis.binding.MapperMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.io.Serializable;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -42,8 +41,8 @@ public abstract class EnhanceServiceImpl<M extends BaseMapper<T>, T> extends Ser
     protected DataSignatureHandler dataSignatureHandler;
 
     @Override
-    public <RT> void doEntitySignature(RT entity) {
-        getDataSignatureHandler().doEntitySignature(entity);
+    public <RT> boolean doEntitySignature(RT entity) {
+        return getDataSignatureHandler().doEntitySignature(entity);
     }
 
     @Override
@@ -62,10 +61,18 @@ public abstract class EnhanceServiceImpl<M extends BaseMapper<T>, T> extends Ser
     @Override
     public boolean saveBatchSigned(Collection<T> entityList, int batchSize) {
         String sqlStatement = getSqlStatement(SqlMethod.INSERT_ONE);
-        return executeBatch(entityList, batchSize, (sqlSession, entity) -> {
-            doEntitySignature(entity);
-            sqlSession.insert(sqlStatement, entity);
-        });
+        Set<Serializable> idSet = new HashSet<>(entityList.size());
+        try {
+            return executeBatch(entityList, batchSize, (sqlSession, entity) -> {
+                // 保存数据
+                sqlSession.insert(sqlStatement, entity);
+                // 获取主键值
+                idSet.add(TableFieldHelper.getKeyValue(entity));
+            });
+        } finally {
+            // 批量签名
+            this.doSignatureByBatchIds(idSet);
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -75,28 +82,49 @@ public abstract class EnhanceServiceImpl<M extends BaseMapper<T>, T> extends Ser
         Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
         String keyProperty = tableInfo.getKeyProperty();
         Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
-        return SqlHelper.saveOrUpdateBatch(getSqlSessionFactory(), this.currentMapperClass(), this.log, entityList, batchSize, (sqlSession, entity) -> {
-            Object idVal = tableInfo.getPropertyValue(entity, keyProperty);
-            return StringUtils.checkValNull(idVal)
-                    || CollectionUtils.isEmpty(sqlSession.selectList(getSqlStatement(SqlMethod.SELECT_BY_ID), entity));
-        }, (sqlSession, entity) -> {
-            doEntitySignature(entity);
-            MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
-            param.put(Constants.ENTITY, entity);
-            sqlSession.update(getSqlStatement(SqlMethod.UPDATE_BY_ID), param);
-        });
+        Set<Serializable> idSet = new HashSet<>(entityList.size());
+        try {
+            return SqlHelper.saveOrUpdateBatch(getSqlSessionFactory(), this.currentMapperClass(), this.log, entityList, batchSize, (sqlSession, entity) -> {
+                Object idVal = tableInfo.getPropertyValue(entity, keyProperty);
+                idSet.add((Serializable) idVal);
+                return StringUtils.checkValNull(idVal)
+                        || CollectionUtils.isEmpty(sqlSession.selectList(getSqlStatement(SqlMethod.SELECT_BY_ID), entity));
+            }, (sqlSession, entity) -> {
+                MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
+                param.put(Constants.ENTITY, entity);
+                sqlSession.update(getSqlStatement(SqlMethod.UPDATE_BY_ID), param);
+                Object idVal = tableInfo.getPropertyValue(entity, keyProperty);
+                idSet.add((Serializable) idVal);
+            });
+        } finally {
+            // 批量签名
+            this.doSignatureByBatchIds(idSet);
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean updateBatchSignedById(Collection<T> entityList, int batchSize) {
-        String sqlStatement = getSqlStatement(SqlMethod.UPDATE_BY_ID);
-        return executeBatch(entityList, batchSize, (sqlSession, entity) -> {
-            doEntitySignature(entity);
-            MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
-            param.put(Constants.ENTITY, entity);
-            sqlSession.update(sqlStatement, param);
-        });
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(this.getEntityClass());
+        Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
+        String keyProperty = tableInfo.getKeyProperty();
+        Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
+        Set<Serializable> idSet = new HashSet<>(entityList.size());
+        try {
+            String sqlStatement = getSqlStatement(SqlMethod.UPDATE_BY_ID);
+            return executeBatch(entityList, batchSize, (sqlSession, entity) -> {
+                doEntitySignature(entity);
+                MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
+                param.put(Constants.ENTITY, entity);
+                sqlSession.update(sqlStatement, param);
+
+                Object idVal = tableInfo.getPropertyValue(entity, keyProperty);
+                idSet.add((Serializable) idVal);
+            });
+        } finally {
+            // 批量签名
+            this.doSignatureByBatchIds(idSet);
+        }
     }
 
     /**
@@ -108,8 +136,11 @@ public abstract class EnhanceServiceImpl<M extends BaseMapper<T>, T> extends Ser
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean saveOrUpdateSigned(T entity) {
-        doEntitySignature(entity);
-        return getBaseMapper().insertOrUpdate(entity);
+        boolean result = getBaseMapper().insertOrUpdate(entity);
+        if (result) {
+            this.doSignatureById(TableFieldHelper.getKeyValue(entity));
+        }
+        return result;
     }
 
     @Override

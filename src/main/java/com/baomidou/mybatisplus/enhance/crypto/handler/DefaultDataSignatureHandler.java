@@ -50,9 +50,10 @@ public class DefaultDataSignatureHandler implements DataSignatureHandler {
     /**
      * 通过API（save、updateById等）修改数据库时
      * @param parameter 参数
+     * @return 签名完成后是否继续执行数据更新操作
      */
     @Override
-    public void doEntitySignature(Object parameter) {
+    public boolean doEntitySignature(Object parameter) {
 
         // 1、判断加解密处理器不为空，为空则抛出异常
         ExceptionUtils.throwMpe(null == encryptedFieldHandler, "Please implement EncryptedFieldHandler processing logic");
@@ -60,14 +61,14 @@ public class DefaultDataSignatureHandler implements DataSignatureHandler {
         // 3、判断自定义Entity类是否被@TableSignature所注解
         TableSignature tableSignature = AnnotationUtils.findFirstAnnotation(TableSignature.class, parameter.getClass());
         if(Objects.isNull(tableSignature)){
-            return;
+            return Boolean.FALSE;
         }
 
         // 4、获取自定义Entity类联合签名的字段信息列表（排序后）
         TableInfo tableInfo = TableInfoHelper.getTableInfo(parameter.getClass());
         List<TableFieldInfo> signatureFieldInfos = TableFieldHelper.getSortedSignatureFieldInfos(tableInfo);
         if (CollectionUtils.isEmpty(signatureFieldInfos)) {
-            return;
+            return Boolean.FALSE;
         }
 
         // 5、遍历字段，对字段进行签名处理
@@ -89,8 +90,9 @@ public class DefaultDataSignatureHandler implements DataSignatureHandler {
             // 6.1、对数据进行签名处理
             String hmacValue = getEncryptedFieldHandler().hmac(hmacJoiner.toString());
             // 6.2、调用签名读写提供者，将签名值写入到实体类中或外部存储
-            getSignatureReadWriteProvider().writeSignature(parameter, tableInfo, null, hmacValue);
+            return getSignatureReadWriteProvider().writeSignature(parameter, tableInfo, null, hmacValue);
         }
+        return Boolean.FALSE;
     }
 
     /**
@@ -98,10 +100,10 @@ public class DefaultDataSignatureHandler implements DataSignatureHandler {
      *
      * @param entityClass   实体类
      * @param updateWrapper 更新条件
+     * @return 签名完成后是否继续执行数据更新操作
      */
-
     @Override
-    public void doWrapperSignature(Class<?> entityClass, AbstractWrapper<?,?,?> updateWrapper) {
+    public boolean doWrapperSignature(Class<?> entityClass, AbstractWrapper<?,?,?> updateWrapper) {
 
         // 1、判断加解密处理器不为空，为空则抛出异常
         ExceptionUtils.throwMpe(null == encryptedFieldHandler, "Please implement EncryptedFieldHandler processing logic");
@@ -109,14 +111,14 @@ public class DefaultDataSignatureHandler implements DataSignatureHandler {
         // 2、判断自定义Entity的类是否被@EncryptedTable所注解
         TableSignature tableSignature = AnnotationUtils.findFirstAnnotation(TableSignature.class, entityClass);
         if(Objects.isNull(tableSignature)){
-            return;
+            return Boolean.FALSE;
         }
 
         // 3、获取自定义Entity类联合签名的字段信息列表（排序后）
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
         List<TableFieldInfo> signatureFieldInfos = TableFieldHelper.getSortedSignatureFieldInfos(tableInfo);
         if (CollectionUtils.isEmpty(signatureFieldInfos)) {
-            return;
+            return Boolean.FALSE;
         }
 
         // 4、获取 SQL 更新字段内容，例如：name='1', age=2
@@ -152,8 +154,9 @@ public class DefaultDataSignatureHandler implements DataSignatureHandler {
             // 6.1、对数据进行签名处理
             String hmacValue = getEncryptedFieldHandler().hmac(hmacJoiner.toString());
             // 6.2、调用签名读写提供者，将签名值写入到实体类中或外部存储
-            getSignatureReadWriteProvider().writeSignature(propMap, tableInfo, updateWrapper, hmacValue);
+            return getSignatureReadWriteProvider().writeSignature(propMap, tableInfo, updateWrapper, hmacValue);
         }
+        return Boolean.FALSE;
     }
 
     /**

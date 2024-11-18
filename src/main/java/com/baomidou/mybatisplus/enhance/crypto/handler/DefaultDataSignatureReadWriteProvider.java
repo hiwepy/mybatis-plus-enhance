@@ -51,9 +51,10 @@ public class DefaultDataSignatureReadWriteProvider implements DataSignatureReadW
      * @param tableInfo 对象表信息
      * @param signValue 签名值
      * @param <T> 对象类型
+     * @return 签名写出后是否继续执行数据更新操作
      */
     @Override
-    public <T> void writeSignature(Object rawObject, TableInfo tableInfo, AbstractWrapper<?,?,?> updateWrapper, String signValue) {
+    public <T> boolean writeSignature(Object rawObject, TableInfo tableInfo, AbstractWrapper<?,?,?> updateWrapper, String signValue) {
         // 1、获取存储的签名结果的字段
         Optional<TableFieldInfo> signatureStoreFieldInfo = TableFieldHelper.getTableSignatureStoreFieldInfo(tableInfo);
         // 3、如果数据表的HMAC字段存在，则将HMAC签名值通过反射设置到HMAC字段上
@@ -93,8 +94,11 @@ public class DefaultDataSignatureReadWriteProvider implements DataSignatureReadW
                     ReflectUtil.setFieldValue(rawObject, signatureStoreFieldInfo.get().getField(), signValue);
                 }
             }
-
+            // 4、签名写出后继续执行数据更新操作
+            return Boolean.TRUE;
         }
+        // 5、未进行签名，不继续执行数据更新操作
+        return Boolean.FALSE;
     }
 
 }

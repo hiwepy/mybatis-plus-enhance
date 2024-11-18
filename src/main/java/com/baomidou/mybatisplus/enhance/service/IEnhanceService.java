@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.enhance.util.TableFieldHelper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import org.apache.ibatis.session.ResultHandler;
@@ -25,7 +26,7 @@ public interface IEnhanceService<T> extends IService<T> {
      * @param entity 参数
      * @param <RT> 对象类型
      */
-    <RT> void doEntitySignature(RT entity);
+    <RT> boolean doEntitySignature(RT entity);
 
     /**
      * 对单个对象进行验签
@@ -41,8 +42,11 @@ public interface IEnhanceService<T> extends IService<T> {
      */
     @Transactional(rollbackFor = Exception.class)
     default boolean saveSigned(T entity) {
-        this.doEntitySignature(entity);
-        return SqlHelper.retBool(getBaseMapper().insert(entity));
+        boolean result = SqlHelper.retBool(getBaseMapper().insert(entity));
+        if (result) {
+            this.doSignatureById(TableFieldHelper.getKeyValue(entity));
+        }
+        return result;
     }
 
     /**
@@ -88,8 +92,11 @@ public interface IEnhanceService<T> extends IService<T> {
      */
     @Transactional(rollbackFor = Exception.class)
     default boolean updateSignedById(T entity) {
-        this.doEntitySignature(entity);
-        return SqlHelper.retBool(getBaseMapper().updateById(entity));
+        boolean result = SqlHelper.retBool(getBaseMapper().updateById(entity));
+        if (result) {
+            this.doSignatureById(TableFieldHelper.getKeyValue(entity));
+        }
+        return result;
     }
 
     /**
@@ -576,9 +583,11 @@ public interface IEnhanceService<T> extends IService<T> {
         // 2、如果原始数据不为空，则对原始数据进行签名
         if (Objects.nonNull(entity)) {
             // 2.1、对原始数据进行签名
-            this.doEntitySignature(entity);
-            // 2.2、更新数据
-            this.updateById(entity);
+            boolean doUpdate = this.doEntitySignature(entity);
+            // 2.2、如果 doUpdate = true, 则更新数据
+            if(doUpdate){
+                this.updateById(entity);
+            }
         }
     }
 
@@ -591,12 +600,8 @@ public interface IEnhanceService<T> extends IService<T> {
     default void doSignatureByBatchIds(Collection<? extends Serializable> idList) {
         // 1、根据 ID 批量查询原始数据
         List<T> rtList = getBaseMapper().selectBatchIds(idList);
-        if(CollectionUtils.isNotEmpty(rtList)){
-            // 2、对原始数据进行签名
-            rtList.forEach(this::doEntitySignature);
-            // 3、批量更新数据
-            this.updateBatchById(rtList);
-        }
+        // 2、批量对原始数据进行签名
+        this.doSignatureByEntitys(rtList);
     }
 
     /**
@@ -608,12 +613,8 @@ public interface IEnhanceService<T> extends IService<T> {
     default void doSignatureByMap(Map<String, Object> columnMap) {
         // 1、根据 columnMap 查询原始数据
         List<T> rtList = getBaseMapper().selectByMap(columnMap);
-        if(CollectionUtils.isNotEmpty(rtList)){
-            // 2、对原始数据进行签名
-            rtList.forEach(this::doEntitySignature);
-            // 3、批量更新数据
-            this.updateBatchById(rtList);
-        }
+        // 2、批量对原始数据进行签名
+        this.doSignatureByEntitys(rtList);
     }
 
     /**
@@ -625,12 +626,28 @@ public interface IEnhanceService<T> extends IService<T> {
         for (Wrapper<T> queryWrapper : queryWrappers) {
             // 1、根据 Wrapper 条件查询原始数据
             List<T> rtList = getBaseMapper().selectList(queryWrapper);
-            if(CollectionUtils.isNotEmpty(rtList)){
-                // 2、对原始数据进行签名
-                rtList.forEach(this::doEntitySignature);
-                // 3、批量更新数据
-                this.updateBatchById(rtList);
+            // 2、批量对原始数据进行签名
+            this.doSignatureByEntitys(rtList);
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    default void doSignatureByEntitys(List<T> entityList){
+        if(CollectionUtils.isNotEmpty(entityList)){
+            return;
+        }
+        // 2、对原始数据进行签名
+        for (T entity : entityList) {
+            // 2.1、对原始数据进行签名
+            boolean doUpdate = this.doEntitySignature(entity);
+            // 2.2、如果 doUpdate = true, 则更新数据
+            if(!doUpdate){
+                entityList.removeIf(rowObject -> TableFieldHelper.getKeyValue(entity).equals(TableFieldHelper.getKeyValue(rowObject)));
             }
+        }
+        // 3、批量更新数据
+        if(CollectionUtils.isNotEmpty(entityList)){
+            this.updateBatchById(entityList);
         }
     }
 
