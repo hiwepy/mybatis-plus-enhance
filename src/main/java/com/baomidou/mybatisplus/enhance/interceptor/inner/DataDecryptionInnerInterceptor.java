@@ -5,18 +5,22 @@ import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.toolkit.AnnotationUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.enhance.crypto.annotation.EncryptedField;
 import com.baomidou.mybatisplus.enhance.crypto.annotation.EncryptedTable;
+import com.baomidou.mybatisplus.enhance.crypto.annotation.IgnoreEncrypted;
 import com.baomidou.mybatisplus.enhance.crypto.handler.EncryptedFieldHandler;
+import com.baomidou.mybatisplus.enhance.util.ParameterUtils;
+import com.baomidou.mybatisplus.enhance.util.TableFieldHelper;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
-import com.baomidou.mybatisplus.enhance.util.TableFieldHelper;
-import com.baomidou.mybatisplus.enhance.util.ParameterUtils;
 
+import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
@@ -24,6 +28,7 @@ import java.util.Objects;
 /**
  * 数据解密拦截器，用于对查询结果进行解密操作
  */
+@Slf4j
 public class DataDecryptionInnerInterceptor implements EnhanceInnerInterceptor {
 
     /**
@@ -50,7 +55,23 @@ public class DataDecryptionInnerInterceptor implements EnhanceInnerInterceptor {
         if (ParameterUtils.isSwitchOff(decryptSwitch, rtList)) {
             return;
         }
-        // 2、对查询结果进行解密
+        // 2、检查Mapper接口类和方法名
+        try {
+            String mappedStatementId = ms.getId();
+            Class<?> mapperClazz = Class.forName(mappedStatementId.substring(0, mappedStatementId.lastIndexOf(".")));
+            String methodName = mappedStatementId.substring(mappedStatementId.lastIndexOf(".") + 1);
+            Method method = ReflectUtil.getMethodByName(mapperClazz, methodName);
+            if (Objects.nonNull(method)) {
+                // 获取 @EncryptedTable 注解
+                IgnoreEncrypted ignoreEncrypted = AnnotationUtils.findFirstAnnotation(IgnoreEncrypted.class, method);
+                if (ObjectUtils.isNotEmpty(ignoreEncrypted)) {
+                    return;
+                }
+            }
+        } catch (ClassNotFoundException e) {
+            log.error("DataDecryptionInnerInterceptor.afterQuery ClassNotFoundException", e);
+        }
+        // 3、对查询结果进行解密
         for (Object object : rtList) {
             // 逐一解密、验签
             handleResultSets(object);

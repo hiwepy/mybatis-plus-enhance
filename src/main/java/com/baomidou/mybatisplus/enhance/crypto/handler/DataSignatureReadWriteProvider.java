@@ -26,6 +26,6 @@ public interface DataSignatureReadWriteProvider {
      * @param <T> 对象类型
      * @return 签名写出后是否继续执行数据更新操作
      */
-    <T> boolean writeSignature(Object rawObject, TableInfo tableInfo, AbstractWrapper<?,?,?> updateWrapper, String signValue);
+    boolean writeSignature(Object rawObject, TableInfo tableInfo, AbstractWrapper<?,?,?> updateWrapper, String signValue);
 
 }

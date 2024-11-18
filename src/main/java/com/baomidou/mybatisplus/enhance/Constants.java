@@ -3,6 +3,13 @@ package com.baomidou.mybatisplus.enhance;
 public final class Constants {
 
     /**
+     *
+     */
+    public static class Injector {
+
+    }
+
+    /**
      * 数据权限常量类
      */
     public static class DataScope {

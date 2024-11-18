@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.enhance.mapper.EnhanceMapper;
 import com.baomidou.mybatisplus.enhance.util.TableFieldHelper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
@@ -577,19 +578,8 @@ public interface IEnhanceService<T> extends IService<T> {
      *
      * @param id 主键ID
      */
-    default void doSignatureById(Serializable id){
-        // 1、根据 ID 查询原始数据
-        T entity = getBaseMapper().selectById(id);
-        // 2、如果原始数据不为空，则对原始数据进行签名
-        if (Objects.nonNull(entity)) {
-            // 2.1、对原始数据进行签名
-            boolean doUpdate = this.doEntitySignature(entity);
-            // 2.2、如果 doUpdate = true, 则更新数据
-            if(doUpdate){
-                this.updateById(entity);
-            }
-        }
-    }
+    @Transactional(rollbackFor = Exception.class)
+    void doSignatureById(Serializable id);
 
     /**
      * 根据 ID 批量对匹配的实体进行表签名
@@ -597,12 +587,7 @@ public interface IEnhanceService<T> extends IService<T> {
      * @param idList 主键ID列表(不能为 null 以及 empty)
      */
     @Transactional(rollbackFor = Exception.class)
-    default void doSignatureByBatchIds(Collection<? extends Serializable> idList) {
-        // 1、根据 ID 批量查询原始数据
-        List<T> rtList = getBaseMapper().selectBatchIds(idList);
-        // 2、批量对原始数据进行签名
-        this.doSignatureByEntitys(rtList);
-    }
+    void doSignatureByBatchIds(Collection<? extends Serializable> idList);
 
     /**
      * 查询（根据 columnMap 条件）匹配的实体进行表签名
@@ -610,103 +595,51 @@ public interface IEnhanceService<T> extends IService<T> {
      * @param columnMap 表字段 map 对象
      */
     @Transactional(rollbackFor = Exception.class)
-    default void doSignatureByMap(Map<String, Object> columnMap) {
-        // 1、根据 columnMap 查询原始数据
-        List<T> rtList = getBaseMapper().selectByMap(columnMap);
-        // 2、批量对原始数据进行签名
-        this.doSignatureByEntitys(rtList);
-    }
+    void doSignatureByMap(Map<String, Object> columnMap);
 
     /**
      * 根据 Wrapper 条件，对匹配的实体进行表签名
      * @param queryWrappers 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     @Transactional(rollbackFor = Exception.class)
-    default void doSignatureByWrappers(List<Wrapper<T>> queryWrappers) {
-        for (Wrapper<T> queryWrapper : queryWrappers) {
-            // 1、根据 Wrapper 条件查询原始数据
-            List<T> rtList = getBaseMapper().selectList(queryWrapper);
-            // 2、批量对原始数据进行签名
-            this.doSignatureByEntitys(rtList);
-        }
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    default void doSignatureByEntitys(List<T> entityList){
-        if(CollectionUtils.isNotEmpty(entityList)){
-            return;
-        }
-        // 2、对原始数据进行签名
-        for (T entity : entityList) {
-            // 2.1、对原始数据进行签名
-            boolean doUpdate = this.doEntitySignature(entity);
-            // 2.2、如果 doUpdate = true, 则更新数据
-            if(!doUpdate){
-                entityList.removeIf(rowObject -> TableFieldHelper.getKeyValue(entity).equals(TableFieldHelper.getKeyValue(rowObject)));
-            }
-        }
-        // 3、批量更新数据
-        if(CollectionUtils.isNotEmpty(entityList)){
-            this.updateBatchById(entityList);
-        }
-    }
+    void doSignatureByWrappers(List<Wrapper<T>> queryWrappers);
 
     /**
      * 根据 ID 对匹配的实体进行表签名
      *
      * @param id 主键ID
      */
-    default void doSignatureVerificationById(Serializable id){
-        // 1、根据 ID 查询原始数据
-        T entity = getBaseMapper().selectById(id);
-        // 2、如果原始数据不为空，则对原始数据进行验签
-        if (Objects.nonNull(entity)) {
-            // 2.1、对原始数据进行验签
-            this.doSignatureVerification(entity, entity.getClass());
-        }
-    }
+    @Transactional(rollbackFor = Exception.class)
+    void doSignatureVerificationById(Serializable id);
 
     /**
      * 根据 ID 批量对匹配的实体进行表签名
      *
      * @param idList 主键ID列表(不能为 null 以及 empty)
      */
-    default void doSignatureVerificationByBatchIds(Collection<? extends Serializable> idList){
-        // 1、根据 ID 批量查询原始数据
-        List<T> rtList = getBaseMapper().selectBatchIds(idList);
-        if(CollectionUtils.isNotEmpty(rtList)){
-            // 2、对原始数据进行验签
-            rtList.forEach(rowObject -> this.doSignatureVerification(rowObject, rowObject.getClass()));
-        }
-    }
+    @Transactional(rollbackFor = Exception.class)
+    void doSignatureVerificationByBatchIds(Collection<? extends Serializable> idList);
 
     /**
      * 查询（根据 columnMap 条件）匹配的实体进行表签名
      *
      * @param columnMap 表字段 map 对象
      */
-    default void doSignatureVerificationByMap(Map<String, Object> columnMap){
-        // 1、根据 columnMap 查询原始数据
-        List<T> rtList = getBaseMapper().selectByMap(columnMap);
-        if(CollectionUtils.isNotEmpty(rtList)){
-            // 2、对原始数据进行验签
-            rtList.forEach(rowObject -> this.doSignatureVerification(rowObject, rowObject.getClass()));
-        }
-    }
+    @Transactional(rollbackFor = Exception.class)
+    void doSignatureVerificationByMap(Map<String, Object> columnMap);
 
     /**
      * 根据 Wrapper 条件，对匹配的实体进行表签名
      * @param queryWrappers 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    default void doSignatureVerificationByWrappers(List<Wrapper<T>> queryWrappers){
-        for (Wrapper<T> queryWrapper : queryWrappers) {
-            // 1、根据 Wrapper 条件查询原始数据
-            List<T> rtList = getBaseMapper().selectList(queryWrapper);
-            if(CollectionUtils.isNotEmpty(rtList)){
-                // 2、对原始数据进行验签
-                rtList.forEach(rowObject -> this.doSignatureVerification(rowObject, rowObject.getClass()));
-            }
-        }
-    }
+    @Transactional(rollbackFor = Exception.class)
+    void doSignatureVerificationByWrappers(List<Wrapper<T>> queryWrappers);
+
+    /**
+     * 获取对应 entity 的 BaseMapper
+     *
+     * @return BaseMapper
+     */
+    EnhanceMapper<T> getEnhanceMapper();
 
 }

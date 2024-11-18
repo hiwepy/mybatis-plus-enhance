@@ -2,7 +2,6 @@ package com.baomidou.mybatisplus.enhance.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
@@ -10,10 +9,12 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.enhance.crypto.handler.DataSignatureHandler;
+import com.baomidou.mybatisplus.enhance.mapper.EnhanceMapper;
 import com.baomidou.mybatisplus.enhance.service.IEnhanceService;
 import com.baomidou.mybatisplus.enhance.util.TableFieldHelper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import lombok.Getter;
 import org.apache.ibatis.binding.MapperMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,12 +33,22 @@ import java.util.function.Function;
  * @param <M> Mapper
  * @param <T> Entity
  */
-public abstract class EnhanceServiceImpl<M extends BaseMapper<T>, T> extends ServiceImpl<M, T> implements IEnhanceService<T> {
+public abstract class EnhanceServiceImpl<M extends EnhanceMapper<T>, T> extends ServiceImpl<M, T> implements IEnhanceService<T> {
+
+    @Autowired
+    protected M enhanceMapper;
+
+    @Override
+    public M getEnhanceMapper() {
+        Assert.notNull(this.enhanceMapper, "enhanceMapper can not be null");
+        return this.enhanceMapper;
+    }
 
     /**
      * 数据签名和验签 Handler
      */
     @Autowired
+    @Getter
     protected DataSignatureHandler dataSignatureHandler;
 
     @Override
@@ -75,8 +86,8 @@ public abstract class EnhanceServiceImpl<M extends BaseMapper<T>, T> extends Ser
         }
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean saveOrUpdateBatchSigned(Collection<T> entityList, int batchSize) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(this.getEntityClass());
         Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
@@ -84,7 +95,7 @@ public abstract class EnhanceServiceImpl<M extends BaseMapper<T>, T> extends Ser
         Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
         Set<Serializable> idSet = new HashSet<>(entityList.size());
         try {
-            return SqlHelper.saveOrUpdateBatch(getSqlSessionFactory(), this.currentMapperClass(), this.log, entityList, batchSize, (sqlSession, entity) -> {
+            return SqlHelper.saveOrUpdateBatch(getSqlSessionFactory(), this.getMapperClass(), this.log, entityList, batchSize, (sqlSession, entity) -> {
                 Object idVal = tableInfo.getPropertyValue(entity, keyProperty);
                 idSet.add((Serializable) idVal);
                 return StringUtils.checkValNull(idVal)
@@ -185,8 +196,154 @@ public abstract class EnhanceServiceImpl<M extends BaseMapper<T>, T> extends Ser
         return SqlHelper.getObject(log, listSignedObjs(queryWrapper, mapper));
     }
 
-    public DataSignatureHandler getDataSignatureHandler() {
-        return dataSignatureHandler;
+    /**
+     * 根据 ID 对匹配的实体进行表签名
+     *
+     * @param id 主键ID
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void doSignatureById(Serializable id){
+        // 1、根据 ID 查询原始数据
+        T entity = getBaseMapper().selectIgnoreDecryptById(id);
+        // 2、如果原始数据不为空，则对原始数据进行签名
+        if (Objects.nonNull(entity)) {
+            // 2.1、对原始数据进行签名
+            boolean doUpdate = this.doEntitySignature(entity);
+            // 2.2、如果 doUpdate = true, 则更新数据
+            if(doUpdate){
+                this.updateById(entity);
+            }
+        }
+    }
+
+    /**
+     * 根据 ID 批量对匹配的实体进行表签名
+     *
+     * @param idList 主键ID列表(不能为 null 以及 empty)
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void doSignatureByBatchIds(Collection<? extends Serializable> idList) {
+        // 1、根据 ID 批量查询原始数据
+        List<T> rtList = getEnhanceMapper().selectIgnoreDecryptBatchIds(idList);
+        // 2、批量对原始数据进行签名
+        this.doSignatureByEntitys(rtList);
+    }
+
+    /**
+     * 查询（根据 columnMap 条件）匹配的实体进行表签名
+     *
+     * @param columnMap 表字段 map 对象
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void doSignatureByMap(Map<String, Object> columnMap) {
+        // 1、根据 columnMap 查询原始数据
+        List<T> rtList = getBaseMapper().selectIgnoreDecryptByMap(columnMap);
+        // 2、批量对原始数据进行签名
+        this.doSignatureByEntitys(rtList);
+    }
+
+    /**
+     * 根据 Wrapper 条件，对匹配的实体进行表签名
+     * @param queryWrappers 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void doSignatureByWrappers(List<Wrapper<T>> queryWrappers) {
+        for (Wrapper<T> queryWrapper : queryWrappers) {
+            // 1、根据 Wrapper 条件查询原始数据
+            List<T> rtList = getBaseMapper().selectIgnoreDecryptList(queryWrapper);
+            // 2、批量对原始数据进行签名
+            this.doSignatureByEntitys(rtList);
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void doSignatureByEntitys(List<T> entityList){
+        if(CollectionUtils.isEmpty(entityList)){
+            return;
+        }
+        // 2、对原始数据进行签名
+        for (T entity : entityList) {
+            // 2.1、对原始数据进行签名
+            boolean doUpdate = this.doEntitySignature(entity);
+            // 2.2、如果 doUpdate = true, 则更新数据
+            if(!doUpdate){
+                entityList.removeIf(rowObject -> TableFieldHelper.getKeyValue(entity).equals(TableFieldHelper.getKeyValue(rowObject)));
+            }
+        }
+        // 3、批量更新数据
+        if(CollectionUtils.isNotEmpty(entityList)){
+            this.updateBatchById(entityList);
+        }
+    }
+
+    /**
+     * 根据 ID 对匹配的实体进行表签名
+     *
+     * @param id 主键ID
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void doSignatureVerificationById(Serializable id){
+        // 1、根据 ID 查询原始数据
+        T entity = getEnhanceMapper().selectIgnoreDecryptById(id);
+        // 2、如果原始数据不为空，则对原始数据进行验签
+        if (Objects.nonNull(entity)) {
+            // 2.1、对原始数据进行验签
+            this.doSignatureVerification(entity, entity.getClass());
+        }
+    }
+
+    /**
+     * 根据 ID 批量对匹配的实体进行表签名
+     *
+     * @param idList 主键ID列表(不能为 null 以及 empty)
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void doSignatureVerificationByBatchIds(Collection<? extends Serializable> idList){
+        // 1、根据 ID 批量查询原始数据
+        List<T> rtList = getEnhanceMapper().selectIgnoreDecryptBatchIds(idList);
+        if(CollectionUtils.isNotEmpty(rtList)){
+            // 2、对原始数据进行验签
+            rtList.forEach(rowObject -> this.doSignatureVerification(rowObject, rowObject.getClass()));
+        }
+    }
+
+    /**
+     * 查询（根据 columnMap 条件）匹配的实体进行表签名
+     *
+     * @param columnMap 表字段 map 对象
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void doSignatureVerificationByMap(Map<String, Object> columnMap){
+        // 1、根据 columnMap 查询原始数据
+        List<T> rtList = getEnhanceMapper().selectIgnoreDecryptByMap(columnMap);
+        if(CollectionUtils.isNotEmpty(rtList)){
+            // 2、对原始数据进行验签
+            rtList.forEach(rowObject -> this.doSignatureVerification(rowObject, rowObject.getClass()));
+        }
+    }
+
+    /**
+     * 根据 Wrapper 条件，对匹配的实体进行表签名
+     * @param queryWrappers 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void doSignatureVerificationByWrappers(List<Wrapper<T>> queryWrappers){
+        for (Wrapper<T> queryWrapper : queryWrappers) {
+            // 1、根据 Wrapper 条件查询原始数据
+            List<T> rtList = getEnhanceMapper().selectIgnoreDecryptList(queryWrapper);
+            if(CollectionUtils.isNotEmpty(rtList)){
+                // 2、对原始数据进行验签
+                rtList.forEach(rowObject -> this.doSignatureVerification(rowObject, rowObject.getClass()));
+            }
+        }
     }
 
 }

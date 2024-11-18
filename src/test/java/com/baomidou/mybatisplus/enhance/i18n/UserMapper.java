@@ -1,9 +1,9 @@
 package com.baomidou.mybatisplus.enhance.i18n;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.enhance.mapper.EnhanceMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
-public interface UserMapper extends BaseMapper<UserEntity> {
+public interface UserMapper extends EnhanceMapper<UserEntity> {
 
 }
