@@ -228,7 +228,7 @@ public abstract class EnhanceServiceImpl<M extends EnhanceMapper<T>, T> extends 
         // 1、根据 ID 批量查询原始数据
         List<T> rtList = getEnhanceMapper().selectIgnoreDecryptBatchIds(idList);
         // 2、批量对原始数据进行签名
-        this.doSignatureByEntitys(rtList);
+        this.doSignatureByList(rtList, Constants.DEFAULT_BATCH_SIZE);
     }
 
     /**
@@ -242,26 +242,32 @@ public abstract class EnhanceServiceImpl<M extends EnhanceMapper<T>, T> extends 
         // 1、根据 columnMap 查询原始数据
         List<T> rtList = getBaseMapper().selectIgnoreDecryptByMap(columnMap);
         // 2、批量对原始数据进行签名
-        this.doSignatureByEntitys(rtList);
+        this.doSignatureByList(rtList, Constants.DEFAULT_BATCH_SIZE);
     }
 
     /**
      * 根据 Wrapper 条件，对匹配的实体进行表签名
      * @param queryWrappers 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    @Transactional(rollbackFor = Exception.class)
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void doSignatureByWrappers(List<Wrapper<T>> queryWrappers) {
         for (Wrapper<T> queryWrapper : queryWrappers) {
             // 1、根据 Wrapper 条件查询原始数据
             List<T> rtList = getBaseMapper().selectIgnoreDecryptList(queryWrapper);
             // 2、批量对原始数据进行签名
-            this.doSignatureByEntitys(rtList);
+            this.doSignatureByList(rtList, Constants.DEFAULT_BATCH_SIZE);
         }
     }
 
+    /**
+     * 对匹配的实体进行表签名
+     * @param entityList 实体对象集合
+     * @param batchSize 每次的数量
+     */
+    @Override
     @Transactional(rollbackFor = Exception.class)
-    public void doSignatureByEntitys(List<T> entityList){
+    public void doSignatureByList(List<T> entityList, int batchSize){
         if(CollectionUtils.isEmpty(entityList)){
             return;
         }
@@ -276,7 +282,7 @@ public abstract class EnhanceServiceImpl<M extends EnhanceMapper<T>, T> extends 
         }
         // 3、批量更新数据
         if(CollectionUtils.isNotEmpty(entityList)){
-            this.updateBatchById(entityList);
+            this.updateBatchById(entityList, batchSize);
         }
     }
 

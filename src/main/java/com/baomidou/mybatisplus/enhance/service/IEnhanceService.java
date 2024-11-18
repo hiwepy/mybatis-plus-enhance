@@ -605,6 +605,14 @@ public interface IEnhanceService<T> extends IService<T> {
     void doSignatureByWrappers(List<Wrapper<T>> queryWrappers);
 
     /**
+     * 对匹配的实体进行表签名
+     * @param entityList 实体对象集合
+     * @param batchSize 每次的数量
+     */
+    @Transactional(rollbackFor = Exception.class)
+    void doSignatureByList(List<T> entityList, int batchSize);
+
+    /**
      * 根据 ID 对匹配的实体进行表签名
      *
      * @param id 主键ID

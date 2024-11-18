@@ -1,37 +1,33 @@
 package com.baomidou.mybatisplus.enhance.interceptor.inner;
 
-import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ReflectUtil;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.Update;
-import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.toolkit.AnnotationUtils;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.enhance.crypto.annotation.EncryptedField;
-import com.baomidou.mybatisplus.enhance.crypto.annotation.EncryptedTable;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.baomidou.mybatisplus.enhance.crypto.annotation.IgnoreEncrypted;
+import com.baomidou.mybatisplus.enhance.crypto.handler.DataEncryptionHandler;
+import com.baomidou.mybatisplus.enhance.crypto.handler.DefaultDataEncryptionHandler;
 import com.baomidou.mybatisplus.enhance.crypto.handler.EncryptedFieldHandler;
+import com.baomidou.mybatisplus.enhance.util.EnhanceConstants;
+import com.baomidou.mybatisplus.enhance.util.ParameterUtils;
 import com.baomidou.mybatisplus.extension.parser.JsqlParserSupport;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
-import org.apache.ibatis.type.SimpleTypeRegistry;
-import com.baomidou.mybatisplus.enhance.util.TableFieldHelper;
-import com.baomidou.mybatisplus.enhance.util.EnhanceConstants;
-import com.baomidou.mybatisplus.enhance.util.ParameterUtils;
 
+import java.lang.reflect.Method;
 import java.sql.SQLException;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * 数据加解密拦截器，用于对新增/更新数据进行加密操作
@@ -39,16 +35,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DataEncryptionInnerInterceptor extends JsqlParserSupport implements InnerInterceptor {
 
-    /**
-     * 变量占位符正则
-     */
-    private static final Pattern PARAM_PAIRS_RE = Pattern.compile("#\\{ew\\.paramNameValuePairs\\.(" + Constants.WRAPPER_PARAM + "\\d+)\\}");
-
-    /**
-     * 加解密处理器，加解密的情况都在该处理器中自行判断
-     */
     @Getter
-    private final EncryptedFieldHandler encryptedFieldHandler;
+    private final DataEncryptionHandler dataEncryptionHandler;
     /**
      * 是否开启数据加密
      */
@@ -56,11 +44,19 @@ public class DataEncryptionInnerInterceptor extends JsqlParserSupport implements
     private final boolean encryptSwitch;
 
     public DataEncryptionInnerInterceptor(EncryptedFieldHandler encryptedFieldHandler) {
-        this(encryptedFieldHandler, true);
+        this(new DefaultDataEncryptionHandler(encryptedFieldHandler), true);
     }
 
     public DataEncryptionInnerInterceptor(EncryptedFieldHandler encryptedFieldHandler, boolean encryptSwitch) {
-        this.encryptedFieldHandler = encryptedFieldHandler;
+        this(new DefaultDataEncryptionHandler(encryptedFieldHandler), encryptSwitch);
+    }
+
+    public DataEncryptionInnerInterceptor(DataEncryptionHandler dataEncryptionHandler) {
+        this(dataEncryptionHandler, true);
+    }
+
+    public DataEncryptionInnerInterceptor(DataEncryptionHandler dataEncryptionHandler, boolean encryptSwitch) {
+        this.dataEncryptionHandler = dataEncryptionHandler;
         this.encryptSwitch = encryptSwitch;
     }
 
@@ -70,12 +66,32 @@ public class DataEncryptionInnerInterceptor extends JsqlParserSupport implements
      */
     @Override
     public void beforeQuery(Executor executor, MappedStatement ms, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
-        // 1、如果参数为空，或者参数是简单类型，则直接返回
-        if (!encryptSwitch || Objects.isNull(parameterObject) || SimpleTypeRegistry.isSimpleType(parameterObject.getClass())) {
+        // 1、如果参数为空，或者参数元素为0，或全局未启用 则直接返回
+        if (ParameterUtils.isSwitchOff(encryptSwitch, parameterObject)) {
+            log.debug("DataEncryptionInnerInterceptor.beforeQuery encryptSwitch is off, return directly.");
             return;
+        }
+        // 2、检查Mapper接口类和方法名
+        try {
+            String mappedStatementId = ms.getId();
+            Class<?> mapperClazz = Class.forName(mappedStatementId.substring(0, mappedStatementId.lastIndexOf(".")));
+            String methodName = mappedStatementId.substring(mappedStatementId.lastIndexOf(".") + 1);
+            Method method = ReflectUtil.getMethodByName(mapperClazz, methodName);
+            if (Objects.nonNull(method)) {
+                // 获取 @EncryptedTable 注解
+                IgnoreEncrypted ignoreEncrypted = AnnotationUtils.findFirstAnnotation(IgnoreEncrypted.class, method);
+                if (ObjectUtils.isNotEmpty(ignoreEncrypted)) {
+                    log.debug("mappedStatementId：{}, ignoreEncrypted is on, return directly.", mappedStatementId);
+                    return;
+                }
+            }
+        } catch (ClassNotFoundException e) {
+            log.error("DataDecryptionInnerInterceptor.afterQuery ClassNotFoundException", e);
         }
         // 2、如果参数
         if (!(parameterObject instanceof Map)) {
+            // 对参数进行加密处理
+            getDataEncryptionHandler().doEntityEncrypt(parameterObject);
             return;
         }
         // 3、Map类型参数
@@ -98,7 +114,7 @@ public class DataEncryptionInnerInterceptor extends JsqlParserSupport implements
                 continue;
             }
             // 对参数进行加密处理
-            this.doEntityEncrypt(param);
+            getDataEncryptionHandler().doEntityEncrypt(param);
         }
     }
 
@@ -106,15 +122,33 @@ public class DataEncryptionInnerInterceptor extends JsqlParserSupport implements
      * 新增、更新数据时，如果包含隐私数据，则进行加密
      */
     @Override
-    public void beforeUpdate(Executor executor, MappedStatement mappedStatement, Object parameterObject) throws SQLException {
-        // 1、如果参数为空，或者参数是简单类型，或全局未启用 则直接返回
+    public void beforeUpdate(Executor executor, MappedStatement ms, Object parameterObject) throws SQLException {
+        // 1、如果参数为空，或者参数元素为0，或全局未启用 则直接返回
         if (ParameterUtils.isSwitchOff(encryptSwitch, parameterObject)) {
+            log.debug("DataEncryptionInnerInterceptor.beforeUpdate encryptSwitch is off, return directly.");
             return;
+        }
+        // 2、检查Mapper接口类和方法名
+        try {
+            String mappedStatementId = ms.getId();
+            Class<?> mapperClazz = Class.forName(mappedStatementId.substring(0, mappedStatementId.lastIndexOf(".")));
+            String methodName = mappedStatementId.substring(mappedStatementId.lastIndexOf(".") + 1);
+            Method method = ReflectUtil.getMethodByName(mapperClazz, methodName);
+            if (Objects.nonNull(method)) {
+                // 获取 @EncryptedTable 注解
+                IgnoreEncrypted ignoreEncrypted = AnnotationUtils.findFirstAnnotation(IgnoreEncrypted.class, method);
+                if (ObjectUtils.isNotEmpty(ignoreEncrypted)) {
+                    log.debug("mappedStatementId：{}, ignoreEncrypted is on, return directly.", mappedStatementId);
+                    return;
+                }
+            }
+        } catch (ClassNotFoundException e) {
+            log.error("DataDecryptionInnerInterceptor.afterQuery ClassNotFoundException", e);
         }
         // 2、通过MybatisPlus自带API（save、insert等）新增数据库时
         if (!(parameterObject instanceof Map)) {
             // 对参数进行加密处理
-            this.doEntityEncrypt(parameterObject);
+            getDataEncryptionHandler().doEntityEncrypt(parameterObject);
             return;
         }
         // 3、Map类型参数
@@ -123,117 +157,21 @@ public class DataEncryptionInnerInterceptor extends JsqlParserSupport implements
         // 4、通过MybatisPlus自带API（update、updateById等）修改数据库时
         if (paramMap.containsKey(Constants.ENTITY) && null != (param = paramMap.get(Constants.ENTITY))) {
             // 对参数进行加密处理
-            doEntityEncrypt(param);
+            getDataEncryptionHandler().doEntityEncrypt(param);
             return;
         }
         // 5、通过在mapper.xml中自定义API修改数据库时
         if (paramMap.containsKey(EnhanceConstants.CUSTOM_ENTITY) && null != (param = paramMap.get(EnhanceConstants.CUSTOM_ENTITY))) {
             // 对参数进行加密处理
-            doEntityEncrypt(param);
+            getDataEncryptionHandler().doEntityEncrypt(param);
             return;
         }
         // 6、通过UpdateWrapper、LambdaUpdateWrapper修改数据库时
         if (paramMap.containsKey(Constants.WRAPPER) && null != (param = paramMap.get(Constants.WRAPPER))) {
             // 6.1、判断是否是UpdateWrapper、LambdaUpdateWrapper类型
             if (param instanceof Update && param instanceof AbstractWrapper) {
-                Class<?> entityClass = mappedStatement.getParameterMap().getType();
-                doWrapperEncrypt(entityClass, (AbstractWrapper<?,?,?>) param);
-            }
-        }
-    }
-
-    /**
-     * 通过API（save、updateById等）修改数据库时
-     * @param parameter 参数
-     */
-    private void doEntityEncrypt(Object parameter) {
-
-        // 1、判断加解密处理器不为空，为空则抛出异常
-        ExceptionUtils.throwMpe(null == encryptedFieldHandler, "Please implement EncryptedFieldHandler processing logic");
-
-        // 2、判断自定义Entity的类是否被@EncryptedTable所注解
-        EncryptedTable encryptedTable = AnnotationUtils.findFirstAnnotation(EncryptedTable.class, parameter.getClass());
-        if(Objects.isNull(encryptedTable)){
-            return;
-        }
-
-        // 3、获取该类的所有标记为加密字段的属性列表
-        List<TableFieldInfo> encryptedFieldInfos = TableFieldHelper.getEncryptedFieldInfos(parameter.getClass());
-        if (CollectionUtils.isEmpty(encryptedFieldInfos)) {
-            return;
-        }
-
-        // 4、遍历字段，对字段进行加密处理
-        for (TableFieldInfo fieldInfo : encryptedFieldInfos) {
-            // 4.1、获取字段上的@EncryptedField注解，如果没有则跳过
-            EncryptedField encryptedField = AnnotationUtils.findFirstAnnotation(EncryptedField.class, fieldInfo.getField());
-            if (Objects.isNull(encryptedField)) {
-                continue;
-            }
-            // 4.2、获取加密字段的原始值
-            Object oldValue = ReflectUtil.getFieldValue(parameter, fieldInfo.getField());
-            // 4.4、如果原始值不为空，则对原始值进行加密处理
-            if (Objects.nonNull(oldValue)) {
-                // 4.4.1、对原始值进行加密处理
-                String newValue = getEncryptedFieldHandler().encrypt(oldValue);
-                // 4.4.2、将加密后的值通过反射设置到字段上
-                ReflectUtil.setFieldValue(parameter, fieldInfo.getField(), newValue);
-            }
-        }
-    }
-
-    /**
-     * 通过UpdateWrapper、LambdaUpdateWrapper修改数据库时
-     *
-     * @param entityClass   实体类
-     * @param updateWrapper 更新条件
-     */
-    private void doWrapperEncrypt(Class<?> entityClass, AbstractWrapper<?,?,?> updateWrapper) {
-
-        // 1、判断加解密处理器不为空，为空则抛出异常
-        ExceptionUtils.throwMpe(null == encryptedFieldHandler, "Please implement EncryptedFieldHandler processing logic");
-
-        // 2、判断自定义Entity的类是否被@EncryptedTable所注解
-        EncryptedTable encryptedTable = AnnotationUtils.findFirstAnnotation(EncryptedTable.class, entityClass);
-        if(Objects.isNull(encryptedTable)){
-            return;
-        }
-
-        // 3、获取该类的所有标记为加密字段的属性列表
-        List<TableFieldInfo> encryptedFieldInfos = TableFieldHelper.getEncryptedFieldInfos(entityClass);
-        if (CollectionUtils.isEmpty(encryptedFieldInfos)) {
-            return;
-        }
-
-        // 4、获取 SQL 更新字段内容，例如：name='1', age=2
-        String sqlSet = updateWrapper.getSqlSet();
-        // 4.1、解析SQL更新字段内容，例如：name='1', age=2，解析为Map 对象
-        String[] sqlSetArr = StringUtils.split(sqlSet, Constants.COMMA);
-        Map<String, String> propMap = Arrays.stream(sqlSetArr).map(el -> el.split(Constants.EQUALS)).collect(Collectors.toMap(el -> el[0], el -> el[1]));
-
-        // 5、遍历字段，对字段进行加密处理
-        for (TableFieldInfo fieldInfo : encryptedFieldInfos) {
-            // 5.1、获取字段上的@EncryptedField注解，如果没有则跳过
-            EncryptedField encryptedField = AnnotationUtils.findFirstAnnotation(EncryptedField.class, fieldInfo.getField());
-            if (Objects.isNull(encryptedField)) {
-                continue;
-            }
-            // 5.2、获取字段的原始值
-            String el = MapUtil.getStr(propMap, fieldInfo.getProperty());
-            // 5.3、进行参数正则匹配，如果匹配成功，则对参数进行加密处理
-            Matcher matcher = PARAM_PAIRS_RE.matcher(el);
-            if (matcher.matches()) {
-                // 5.3.1、获取参数变量名
-                String valueKey = matcher.group(1);
-                // 5.3.2、获取参数变量值
-                Object value = updateWrapper.getParamNameValuePairs().get(valueKey);
-                // 5.3.4、如果参数变量值不为空，则对参数变量值进行加密处理
-                if (Objects.nonNull(value)) {
-                    // 5.3.4.1、对原始值进行加密处理
-                    String newValue = getEncryptedFieldHandler().encrypt(value);
-                    // 5.3.4.2、替换参数变量值为加密后的值
-                    updateWrapper.getParamNameValuePairs().put(valueKey, newValue);
-                }
+                Class<?> entityClass = ms.getParameterMap().getType();
+                getDataEncryptionHandler().doWrapperEncrypt(entityClass, (AbstractWrapper<?,?,?>) param);
             }
         }
     }

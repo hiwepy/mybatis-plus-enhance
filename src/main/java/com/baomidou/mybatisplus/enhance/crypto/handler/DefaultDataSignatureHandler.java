@@ -171,7 +171,7 @@ public class DefaultDataSignatureHandler implements DataSignatureHandler {
         // 1、判断加解密处理器不为空，为空则抛出异常
         ExceptionUtils.throwMpe(null == encryptedFieldHandler, "Please implement EncryptedFieldHandler processing logic");
 
-        // 3、判断自定义Entity的类是否被@EncryptedTable所注解
+        // 3、判断自定义Entity的类是否被@TableSignature所注解
         TableSignature tableSignature = AnnotationUtils.findFirstAnnotation(TableSignature.class, entityClass);
         if(Objects.isNull(tableSignature)){
             return;
