@@ -82,7 +82,7 @@ public class DefaultEncryptedFieldHandler implements EncryptedFieldHandler {
             return getObjectMapper().readValue(decryptStr, rtType);
         } catch (Exception ex) {
             log.error("{} Decrypt Error : {}", algorithmType.getName(), ex.getMessage());
-            throw ExceptionUtils.mpe("{} Encrypt Error", ex, algorithmType.getName());
+            throw ExceptionUtils.mpe("{} Decrypt Error", ex, algorithmType.getName());
         }
     }
 
