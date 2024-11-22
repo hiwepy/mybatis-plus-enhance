@@ -13,6 +13,7 @@ import com.baomidou.mybatisplus.enhance.crypto.annotation.EncryptedTable;
 import com.baomidou.mybatisplus.enhance.util.TableFieldHelper;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.type.SimpleTypeRegistry;
 
 import java.util.Arrays;
 import java.util.List;
@@ -43,6 +44,12 @@ public class DefaultDataEncryptionHandler implements DataEncryptionHandler {
      */
     @Override
     public <T> boolean doEntityEncrypt(T entity) {
+
+        // 0、判断是否为空或者是否为简单类型
+        if(Objects.isNull(entity) || SimpleTypeRegistry.isSimpleType(entity.getClass())){
+            return Boolean.FALSE;
+        }
+
         // 1、判断加解密处理器不为空，为空则抛出异常
         ExceptionUtils.throwMpe(null == encryptedFieldHandler, "Please implement EncryptedFieldHandler processing logic");
 
@@ -80,6 +87,7 @@ public class DefaultDataEncryptionHandler implements DataEncryptionHandler {
 
     @Override
     public boolean doWrapperEncrypt(Class<?> entityClass, AbstractWrapper<?, ?, ?> updateWrapper) {
+
         // 1、判断加解密处理器不为空，为空则抛出异常
         ExceptionUtils.throwMpe(null == encryptedFieldHandler, "Please implement EncryptedFieldHandler processing logic");
 
@@ -131,6 +139,11 @@ public class DefaultDataEncryptionHandler implements DataEncryptionHandler {
 
     @Override
     public <T> void doRawObjectDecrypt(Object rawObject, Class<T> entityClass) {
+
+        // 0、判断是否为空或者是否为简单类型
+        if(Objects.isNull(rawObject) || SimpleTypeRegistry.isSimpleType(rawObject.getClass())){
+            return;
+        }
 
         // 1、判断加解密处理器不为空，为空则抛出异常
         ExceptionUtils.throwMpe(null == encryptedFieldHandler, "Please implement EncryptedFieldHandler processing logic");

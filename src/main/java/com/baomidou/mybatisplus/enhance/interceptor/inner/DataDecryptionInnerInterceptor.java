@@ -15,6 +15,7 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
+import org.apache.ibatis.type.SimpleTypeRegistry;
 
 import java.lang.reflect.Method;
 import java.sql.SQLException;
@@ -75,9 +76,12 @@ public class DataDecryptionInnerInterceptor implements EnhanceInnerInterceptor {
             log.error("DataDecryptionInnerInterceptor.afterQuery ClassNotFoundException", e);
         }
         // 3、对查询结果进行解密
-        for (Object object : rtList) {
+        for (Object rawObject : rtList) {
+            if(Objects.isNull(rawObject) || SimpleTypeRegistry.isSimpleType(rawObject.getClass())){
+                continue;
+            }
             // 逐一解密
-            getDataEncryptionHandler().doRawObjectDecrypt(object, object.getClass());
+            getDataEncryptionHandler().doRawObjectDecrypt(rawObject, rawObject.getClass());
         }
     }
 

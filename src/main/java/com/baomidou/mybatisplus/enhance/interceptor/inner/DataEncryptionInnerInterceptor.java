@@ -21,6 +21,7 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
+import org.apache.ibatis.type.SimpleTypeRegistry;
 
 import java.lang.reflect.Method;
 import java.sql.SQLException;
@@ -109,7 +110,7 @@ public class DataEncryptionInnerInterceptor extends JsqlParserSupport implements
              *  不支持：findOne(@Param(value = "mobile") String mobile);
              *  不支持：findList(QueryWrapper wrapper);
              */
-            if (param instanceof AbstractWrapper || param instanceof String) {
+            if (Objects.isNull(param) || SimpleTypeRegistry.isSimpleType(param.getClass()) || param instanceof AbstractWrapper) {
                 // Wrapper、String类型查询参数，无法获取参数变量上的注解，无法确认是否需要加密，因此不做判断
                 continue;
             }
