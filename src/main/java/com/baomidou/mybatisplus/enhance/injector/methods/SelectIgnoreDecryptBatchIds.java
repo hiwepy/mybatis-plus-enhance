@@ -12,18 +12,6 @@ import org.apache.ibatis.mapping.SqlSource;
  */
 public class SelectIgnoreDecryptBatchIds extends SelectBatchByIds {
 
-    public SelectIgnoreDecryptBatchIds() {
-        this(EnhanceSqlMethod.SELECT_IGNORE_DECRYPT_BATCH_BY_IDS.getMethod());
-    }
-
-    /**
-     * @param name 方法名
-     * @since 3.5.0
-     */
-    public SelectIgnoreDecryptBatchIds(String name) {
-        super(name);
-    }
-
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         EnhanceSqlMethod sqlMethod = EnhanceSqlMethod.SELECT_IGNORE_DECRYPT_BATCH_BY_IDS;

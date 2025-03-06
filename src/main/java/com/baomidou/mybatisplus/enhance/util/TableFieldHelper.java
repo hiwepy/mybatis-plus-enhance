@@ -27,6 +27,11 @@ public class TableFieldHelper {
      */
     public static boolean isExistEncryptedTable(Object object) {
         Class<?> objectClass = object.getClass();
+/*
+        ReflectUtils.doWithFields(objectClass, field -> {
+            EncryptedTable encryptedTable = AnnotationUtils.findFirstAnnotation(EncryptedTable.class, field);
+            return Objects.nonNull(encryptedTable);
+        });*/
         return isExistEncryptedTable(objectClass);
     }
 
