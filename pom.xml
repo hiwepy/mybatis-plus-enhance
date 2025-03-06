@@ -160,6 +160,108 @@
 						</execution>
 					</executions>
 				</plugin>
+
+				<!-- Spring Boot 代码质量检查 -->
+
+				<!-- 代码格式检查  -->
+				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-checkstyle-plugin -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-checkstyle-plugin</artifactId>
+					<version>${maven-checkstyle-plugin.version}</version>
+				</plugin>
+				<!-- 代码覆盖率 -->
+				<!-- https://mvnrepository.com/artifact/org.codehaus.mojo/cobertura-maven-plugin -->
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>cobertura-maven-plugin</artifactId>
+					<version>${maven-cobertura-plugin.version}</version>
+					<configuration>
+						<formats>
+							<format>html</format>
+							<format>xml</format>
+						</formats>
+						<check>
+							<branchRate>85</branchRate>
+							<lineRate>85</lineRate>
+							<haltOnFailure>true</haltOnFailure>
+							<totalBranchRate>85</totalBranchRate>
+							<totalLineRate>85</totalLineRate>
+							<packageLineRate>85</packageLineRate>
+							<packageBranchRate>85</packageBranchRate>
+							<regexes>
+								<regex>
+									<pattern>com.tianyin.*</pattern>
+									<branchRate>90</branchRate>
+									<lineRate>80</lineRate>
+								</regex>
+							</regexes>
+						</check>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>clean</goal>
+								<goal>check</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<!-- 依赖检查：检查是否有依赖有漏洞的第三方包 -->
+				<!-- https://mvnrepository.com/artifact/org.owasp/dependency-check-maven -->
+				<plugin>
+					<groupId>org.owasp</groupId>
+					<artifactId>dependency-check-maven</artifactId>
+					<version>${maven-dependency-check-plugin.version}</version>
+					<configuration>
+						<!-- 项目中不涉及 JavaScript 依赖项或无需检查相关漏洞，通过以下方式禁用 RetireJS 扫描 -->
+						<retireJsAnalyzerEnabled>false</retireJsAnalyzerEnabled>
+						<assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
+						<format>HTML</format>
+						<outputDirectory>${project.build.directory}/dependency-check</outputDirectory>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>check</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<!-- 代码Bug检查：检查类或者 JAR 文件 -->
+				<!-- https://mvnrepository.com/artifact/org.codehaus.mojo/findbugs-maven-plugin -->
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>findbugs-maven-plugin</artifactId>
+					<version>${maven-findbugs-plugin.version}</version>
+					<configuration>
+						<!-- 设置分析工作的等级，可以为Min、Default和Max -->
+						<effort>Low</effort>
+						<!-- Low、Medium和High (Low最严格) -->
+						<threshold>Medium</threshold>
+						<failOnError>true</failOnError>
+						<includeTests>true</includeTests>
+						<!--findbugs需要忽略的错误的配置文件
+                        <excludeFilterFile>findbugs/findbugs-exclude-filter.xml</excludeFilterFile>-->
+					</configuration>
+					<executions>
+						<execution>
+							<id>run-findbugs</id>
+							<!-- 在package 阶段触发执行findbugs检查，比如执行 mvn clean package -->
+							<phase>package</phase>
+							<goals>
+								<goal>check</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<!-- 源码分析  -->
+				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-pmd-plugin -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-pmd-plugin</artifactId>
+					<version>${maven-pmd-plugin.version}</version>
+				</plugin>
 				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -244,14 +346,20 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
 			</plugin>
+			<!-- findbugs插件 ：代码检查
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+            </plugin> -->
+			<!-- dependency-check 插件 ：依赖检查-->
+			<plugin>
+				<groupId>org.owasp</groupId>
+				<artifactId>dependency-check-maven</artifactId>
+			</plugin>
 			<!-- 编译插件：编译主代码至主输出目录 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>8</source>
-					<target>8</target>
-				</configuration>
 			</plugin>
 			<!-- 资源插件：复制主资源文件至主输出目录 -->
 			<plugin>
@@ -304,6 +412,16 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-enforcer-plugin</artifactId>
+					</plugin>
+					<!-- findbugs插件 ：代码检查
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>findbugs-maven-plugin</artifactId>
+                    </plugin> -->
+					<!-- dependency-check 插件 ：依赖检查-->
+					<plugin>
+						<groupId>org.owasp</groupId>
+						<artifactId>dependency-check-maven</artifactId>
 					</plugin>
 					<!-- 编译插件：编译主代码至主输出目录 -->
 					<plugin>
@@ -371,14 +489,19 @@
 		<!-- Maven Plugin versions -->
 		<maven.version>3.0</maven.version>
 		<maven-clean-plugin.version>3.0.0</maven-clean-plugin.version>
+		<maven-cobertura-plugin.version>2.7</maven-cobertura-plugin.version>
 		<maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
+		<maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
 		<maven-dependency-plugin.version>3.0.1</maven-dependency-plugin.version>
+		<maven-dependency-check-plugin.version>10.0.4</maven-dependency-check-plugin.version>
 		<maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
 		<maven-enforcer-plugin.version>3.0.0-M1</maven-enforcer-plugin.version>
+		<maven-findbugs-plugin.version>3.0.5</maven-findbugs-plugin.version>
 		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
 		<maven-install-plugin.version>2.5.2</maven-install-plugin.version>
 		<maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
 		<maven-javadoc-plugin.version>3.0.0</maven-javadoc-plugin.version>
+		<maven-pmd-plugin.version>3.11.0</maven-pmd-plugin.version>
 		<maven-release-plugin.version>2.5.3</maven-release-plugin.version>
 		<maven-resources-plugin.version>3.0.2</maven-resources-plugin.version>
 		<maven-surefire-plugin.vertsion>2.21.0</maven-surefire-plugin.vertsion>
@@ -387,17 +510,18 @@
 		<!-- Dependency versions -->
 		<caffeine.version>2.9.3</caffeine.version>
 		<bcprov.version>1.78.1</bcprov.version>
-		<commons-beanutils.version>1.9.3</commons-beanutils.version>
-		<commons-collections4.version>4.1</commons-collections4.version>
-		<commons-lang3.version>3.7</commons-lang3.version>
+		<commons-beanutils.version>1.9.4</commons-beanutils.version>
+		<commons-collections4.version>4.5.0-M2</commons-collections4.version>
+		<commons-lang3.version>3.17.0</commons-lang3.version>
 		<contiperf.version>2.3.4</contiperf.version>
 		<hutool.version>5.8.36</hutool.version>
-		<jackson-bom.version>2.13.5</jackson-bom.version>
+		<!--<jackson-bom.version>2.12.7.20240502</jackson-bom.version>-->
+		<jackson-bom.version>2.18.3</jackson-bom.version>
 		<jsqlparser.version>4.9</jsqlparser.version>
 		<junit.version>4.13.2</junit.version>
 		<reflections.version>0.9.11</reflections.version>
 		<slf4j.version>1.7.36</slf4j.version>
-		<spring-framework.version>5.2.15.RELEASE</spring-framework.version>
+		<spring-framework.version>5.3.39</spring-framework.version>
 		<lombok.version>1.18.10</lombok.version>
 		<mybatis.version>3.5.16</mybatis.version>
 		<mybatis-spring.version>2.1.2</mybatis-spring.version>
