@@ -517,9 +517,11 @@
 		<hutool.version>5.8.36</hutool.version>
 		<!--<jackson-bom.version>2.12.7.20240502</jackson-bom.version>-->
 		<jackson-bom.version>2.18.3</jackson-bom.version>
+		<json-path.version>2.9.0</json-path.version>
+		<json-smart.version>2.5.2</json-smart.version>
 		<jsqlparser.version>4.9</jsqlparser.version>
 		<junit.version>4.13.2</junit.version>
-		<reflections.version>0.9.11</reflections.version>
+		<reflections.version>0.9.12</reflections.version>
 		<slf4j.version>1.7.36</slf4j.version>
 		<spring-framework.version>5.3.39</spring-framework.version>
 		<lombok.version>1.18.10</lombok.version>
