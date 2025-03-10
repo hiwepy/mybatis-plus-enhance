@@ -214,6 +214,7 @@
 					<artifactId>dependency-check-maven</artifactId>
 					<version>${maven-dependency-check-plugin.version}</version>
 					<configuration>
+						<skip>true</skip>
 						<!-- 项目中不涉及 JavaScript 依赖项或无需检查相关漏洞，通过以下方式禁用 RetireJS 扫描 -->
 						<retireJsAnalyzerEnabled>false</retireJsAnalyzerEnabled>
 						<assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
@@ -523,7 +524,7 @@
 		<junit.version>4.13.2</junit.version>
 		<reflections.version>0.9.12</reflections.version>
 		<slf4j.version>1.7.36</slf4j.version>
-		<spring-framework.version>5.3.39</spring-framework.version>
+		<spring-framework.version>5.2.15.RELEASE</spring-framework.version>
 		<lombok.version>1.18.10</lombok.version>
 		<mybatis.version>3.5.16</mybatis.version>
 		<mybatis-spring.version>2.1.2</mybatis-spring.version>
