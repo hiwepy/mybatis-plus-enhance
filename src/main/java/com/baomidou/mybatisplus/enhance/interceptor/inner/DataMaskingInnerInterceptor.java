@@ -1,16 +1,9 @@
 package com.baomidou.mybatisplus.enhance.interceptor.inner;
 
-import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.Update;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.enhance.crypto.handler.DataSignatureHandler;
-import com.baomidou.mybatisplus.enhance.sensitive.annotation.SensitiveField;
-import com.baomidou.mybatisplus.enhance.sensitive.annotation.SensitiveJSONField;
-import com.baomidou.mybatisplus.enhance.sensitive.annotation.SensitiveJSONFieldKey;
-import com.baomidou.mybatisplus.enhance.sensitive.annotation.SensitiveType;
 import com.baomidou.mybatisplus.enhance.sensitive.handler.DataMaskingHandler;
-import com.baomidou.mybatisplus.enhance.sensitive.handler.SensitiveTypeRegisty;
 import com.baomidou.mybatisplus.enhance.util.EnhanceConstants;
 import com.baomidou.mybatisplus.enhance.util.ParameterUtils;
 import com.baomidou.mybatisplus.extension.parser.JsqlParserSupport;
@@ -23,7 +16,6 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.SimpleTypeRegistry;
 
-import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.*;
 

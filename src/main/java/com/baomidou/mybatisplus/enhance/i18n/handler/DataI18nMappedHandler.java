@@ -15,10 +15,10 @@
  */
 package com.baomidou.mybatisplus.enhance.i18n.handler;
 
-import java.util.Locale;
-
 import com.baomidou.mybatisplus.enhance.i18n.annotation.I18nMapper;
 import com.baomidou.mybatisplus.enhance.i18n.annotation.I18nPrimary;
+
+import java.util.Locale;
 
 
 public interface DataI18nMappedHandler {

@@ -28,7 +28,6 @@ public class EnhanceSqlInjector extends DefaultSqlInjector {
             logger.warn(String.format("%s ,Not found @TableId annotation, Cannot use Mybatis-Plus 'xxById' Method.",
                     tableInfo.getEntityType()));
         }
-
         return methodList;
     }
 

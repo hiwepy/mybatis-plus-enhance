@@ -1,6 +1,6 @@
 package com.baomidou.mybatisplus.enhance.injector.methods;
 
-import com.baomidou.mybatisplus.core.injector.methods.SelectBatchByIds;
+import com.baomidou.mybatisplus.core.injector.methods.SelectByIds;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import com.baomidou.mybatisplus.enhance.enums.EnhanceSqlMethod;
@@ -10,7 +10,7 @@ import org.apache.ibatis.mapping.SqlSource;
 /**
  * 根据ID集合，批量查询数据，不解密
  */
-public class SelectIgnoreDecryptBatchIds extends SelectBatchByIds {
+public class SelectIgnoreDecryptBatchIds extends SelectByIds {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {

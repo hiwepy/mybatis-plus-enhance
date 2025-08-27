@@ -15,16 +15,6 @@
  */
 package com.baomidou.mybatisplus.enhance.i18n.handler.def;
 
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.enhance.i18n.annotation.I18nColumn;
 import com.baomidou.mybatisplus.enhance.i18n.annotation.I18nLocale;
@@ -34,6 +24,12 @@ import com.baomidou.mybatisplus.enhance.i18n.handler.DataI18nMappedHandler;
 import com.baomidou.mybatisplus.enhance.i18n.handler.DataI18nMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 @SuppressWarnings("unchecked")
 public class DefaultDataI18nMappedHandler implements DataI18nMappedHandler {
 

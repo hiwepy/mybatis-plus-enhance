@@ -15,10 +15,6 @@
  */
 package com.baomidou.mybatisplus.enhance.i18n.interceptor;
 
-import java.sql.SQLException;
-import java.util.Locale;
-
-import com.baomidou.mybatisplus.enhance.i18n.annotation.I18nSwitch;
 import com.baomidou.mybatisplus.enhance.i18n.handler.DataI18nHandler;
 import com.baomidou.mybatisplus.extension.parser.JsqlParserSupport;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
@@ -26,9 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
+
+import java.sql.SQLException;
+import java.util.Locale;
 
 @Slf4j
 public abstract class AbstractDataI18nInterceptor extends JsqlParserSupport implements InnerInterceptor {

@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * MybatisPlus 解密和签名验证拦截器，用于替代 MybatisPlus 的原生拦截器，实现对数据库字段的解密和签名验证操作
  * 参考：
- * - https://blog.csdn.net/tianmaxingkonger/article/details/130986784
+ * - <a href="https://blog.csdn.net/tianmaxingkonger/article/details/130986784">...</a>
  */
 @Intercepts(
     {
@@ -99,9 +99,7 @@ public class MybatisPlusEnhanceInterceptor extends MybatisPlusInterceptor {
 
     @Override
     public String toString() {
-        return "MybatisPlusEnhanceInterceptor{" +
-                "interceptors=" + getInterceptors() +
-                '}';
+        return "MybatisPlusEnhanceInterceptor{interceptors=" + getInterceptors() + "}";
     }
 
 }

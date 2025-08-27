@@ -1,7 +1,10 @@
 package com.baomidou.mybatisplus.enhance.datascope.annotation;
 
 
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * 原文：https://blog.csdn.net/qq_35542689/article/details/140710986

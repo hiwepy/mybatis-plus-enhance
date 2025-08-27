@@ -15,10 +15,10 @@
  */
 package com.baomidou.mybatisplus.enhance.i18n.bundle;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Enumeration;
 import java.util.ResourceBundle;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class MultipleResourceBundle extends ResourceBundle {

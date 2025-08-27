@@ -15,22 +15,15 @@
  */
 package com.baomidou.mybatisplus.enhance.i18n.handler.def;
 
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Locale;
-import java.util.Map;
-
 import cn.hutool.core.bean.BeanUtil;
-import com.baomidou.mybatisplus.enhance.i18n.annotation.I18nMapper;
-import com.baomidou.mybatisplus.enhance.i18n.annotation.I18nPrimary;
 import com.baomidou.mybatisplus.enhance.i18n.handler.AbstractDataI18nHandler;
 import com.baomidou.mybatisplus.enhance.i18n.handler.DataI18nMappedHandler;
 import com.baomidou.mybatisplus.enhance.i18n.handler.DataI18nMapper;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.plugin.Invocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
+import java.util.Map;
 
 public class DefaultDataI18nHandler extends AbstractDataI18nHandler {
 

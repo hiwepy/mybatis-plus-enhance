@@ -1,7 +1,6 @@
 package com.baomidou.mybatisplus.enhance.datascope.handler;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.enhance.Constants;
 import com.baomidou.mybatisplus.enhance.datascope.annotation.DataScopePlus;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
@@ -14,7 +13,6 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

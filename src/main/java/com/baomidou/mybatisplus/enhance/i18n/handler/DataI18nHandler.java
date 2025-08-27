@@ -15,10 +15,6 @@
  */
 package com.baomidou.mybatisplus.enhance.i18n.handler;
 
-import java.util.Locale;
-
-import org.apache.ibatis.plugin.Invocation;
-
 public interface DataI18nHandler {
 /*
 

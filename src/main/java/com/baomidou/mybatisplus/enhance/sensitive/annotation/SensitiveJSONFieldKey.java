@@ -1,11 +1,6 @@
 package com.baomidou.mybatisplus.enhance.sensitive.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * json字段中需要脱敏的key字段以及key脱敏类型
