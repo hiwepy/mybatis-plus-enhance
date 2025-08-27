@@ -513,7 +513,7 @@
 		<bcprov.version>1.78.1</bcprov.version>
 		<commons-beanutils.version>1.9.4</commons-beanutils.version>
 		<commons-collections4.version>4.5.0-M2</commons-collections4.version>
-		<commons-lang3.version>3.17.0</commons-lang3.version>
+		<commons-lang3.version>3.18.0</commons-lang3.version>
 		<contiperf.version>2.3.4</contiperf.version>
 		<hutool.version>5.8.36</hutool.version>
 		<!--<jackson-bom.version>2.12.7.20240502</jackson-bom.version>-->
