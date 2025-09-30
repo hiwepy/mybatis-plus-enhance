@@ -47,13 +47,18 @@ public class Test {
         sm4Iv = Base64.encode(sm4Iv.getBytes());
         System.out.println("sm4Iv-Base64:"+ sm4Iv);
 
-        DefaultEncryptedFieldHandler handler = new DefaultEncryptedFieldHandler( new ObjectMapper(),SymmetricAlgorithmType.SM4, HmacAlgorithm.HmacSM3,
+        DefaultEncryptedFieldHandler handler = new DefaultEncryptedFieldHandler( new ObjectMapper(), SymmetricAlgorithmType.SM4, HmacAlgorithm.HmacSM3,
                 Mode.CBC, Padding.PKCS5Padding, sm4Key, sm4Iv, true);
 
         String encrypt = handler.encrypt("123");
         System.out.println(encrypt);
         System.out.println(handler.decrypt(encrypt, String.class));
 
+        SM4 sm4 = new SM4(Mode.ECB, Padding.PKCS5Padding, sm4Key.getBytes(), sm4Iv.getBytes());
+
+        String encryptedData = sm4.encryptBase64("123");
+        System.out.println(encryptedData);
+        System.out.println(sm4.decryptStr(encryptedData));
     }
 
 }
