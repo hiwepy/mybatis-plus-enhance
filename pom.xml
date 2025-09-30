@@ -36,18 +36,14 @@
 		</developer>
 	</developers>
 
-	<distributionManagement>
-		<snapshotRepository>
-			<id>ossrh</id>
-			<name>Maven Snapshots Repository</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</snapshotRepository>
-		<repository>
-			<id>ossrh</id>
-			<name>Maven Central Staging Repository</name>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
-	</distributionManagement>
+    <distributionManagement>
+        <repository>
+            <!--必须与 settings.xml 的 id 一致-->
+            <id>aiban-tianyin-core</id>
+            <name>core</name>
+            <url>https://aiban-maven.pkg.coding.net/repository/tianyin/core/</url>
+        </repository>
+    </distributionManagement>
 
 	<build>
 		<pluginManagement>
@@ -540,6 +536,8 @@
 		<hutool.version>5.8.40</hutool.version>
         <jackson.version>2.19.0</jackson.version>
         <jackson-bom.version>${jackson.version}</jackson-bom.version>
+        <jakarta-annotation.version>2.1.1</jakarta-annotation.version>
+        <jakarta-servlet.version>6.1.0</jakarta-servlet.version>
         <json-path.version>2.9.0</json-path.version>
         <json-smart.version>2.5.2</json-smart.version>
         <json-schema-validator.version>2.2.14</json-schema-validator.version>
@@ -582,6 +580,18 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+            <!-- https://mvnrepository.com/artifact/jakarta.annotation/jakarta.annotation-api -->
+            <dependency>
+                <groupId>jakarta.annotation</groupId>
+                <artifactId>jakarta.annotation-api</artifactId>
+                <version>${jakarta-annotation.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api -->
+            <dependency>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>${jakarta-servlet.version}</version>
+            </dependency>
 			<!-- https://mvnrepository.com/artifact/com.github.jsqlparser/jsqlparser -->
 			<dependency>
 				<groupId>com.github.jsqlparser</groupId>
@@ -783,6 +793,16 @@
 			<artifactId>spring-web</artifactId>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <scope>test</scope>
+        </dependency>
 	</dependencies>
 
 
