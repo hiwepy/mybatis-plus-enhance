@@ -4,11 +4,11 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.enhance.datascope.annotation.DataScopePlus;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
-import net.sf.jsqlparser.expression.Parenthesis;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
+import net.sf.jsqlparser.expression.operators.relational.ParenthesedExpressionList;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import org.apache.commons.lang3.StringUtils;
@@ -79,7 +79,7 @@ public class DefaultDataScopeExpressionProvider implements DataScopeExpressionPr
             ExpressionList deptIds = new ExpressionList(createIdList.stream().map(LongValue::new).collect(Collectors.toList()));
             // 设置左边的字段表达式，右边设置值。
             deptIdInExpression.setLeftExpression(buildColumn(tableAlias, deptScopeName));
-            deptIdInExpression.setRightExpression(new Parenthesis(deptIds));
+            deptIdInExpression.setRightExpression(new ParenthesedExpressionList(deptIds));
             //deptIdInExpression.setRightItemsList(deptIds);
 
         }
