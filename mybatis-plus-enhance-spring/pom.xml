@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>io.github.hiwepy</groupId>
+        <groupId>io.github.easy4j</groupId>
         <artifactId>mybatis-plus-enhance</artifactId>
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
@@ -18,7 +18,7 @@
     <dependencies>
         <!-- Extension：Service 直接复用签名处理器、加密能力与 EnhanceBaseMapper。 -->
         <dependency>
-            <groupId>io.github.hiwepy</groupId>
+            <groupId>io.github.easy4j</groupId>
             <artifactId>mybatis-plus-enhance-extension</artifactId>
         </dependency>
         <!-- MyBatis Core：Service API 暴露 ResultHandler，并处理 MapperMethod 参数。 -->
@@ -66,7 +66,7 @@
         </dependency>
         <!-- 公共 Annotation：测试实体使用表签名注解。 -->
         <dependency>
-            <groupId>io.github.hiwepy</groupId>
+            <groupId>io.github.easy4j</groupId>
             <artifactId>mybatis-enhance-annotation</artifactId>
             <scope>test</scope>
         </dependency>

@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>io.github.hiwepy</groupId>
+        <groupId>io.github.easy4j</groupId>
         <artifactId>mybatis-plus-enhance</artifactId>
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
@@ -17,12 +17,12 @@
     <dependencies>
         <!-- 公共 Annotation：Extension 直接使用 crypto/i18n 类型，遵循“直接使用、直接声明”。 -->
         <dependency>
-            <groupId>io.github.hiwepy</groupId>
+            <groupId>io.github.easy4j</groupId>
             <artifactId>mybatis-enhance-annotation</artifactId>
         </dependency>
         <!-- Core：统一拦截器链、执行后生命周期和公共参数工具。 -->
         <dependency>
-            <groupId>io.github.hiwepy</groupId>
+            <groupId>io.github.easy4j</groupId>
             <artifactId>mybatis-plus-enhance-core</artifactId>
         </dependency>
 
