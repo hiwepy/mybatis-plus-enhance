@@ -351,6 +351,9 @@
                         <proc>full</proc>
                         <encoding>${project.build.sourceEncoding}</encoding>
                         <parameters>true</parameters>
+                        <testExcludes>
+                            <testExclude>**/*.java</testExclude>
+                        </testExcludes>
                         <!--
                             显式固定 Lombok 注解处理器版本，避免依赖顺序或新版 JDK 改变
                             Classpath 自动发现行为。没有 Lombok 注解的模块不会生成额外代码。
