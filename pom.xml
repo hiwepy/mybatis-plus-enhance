@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>io.github.hiwepy</groupId>
+    <groupId>io.github.easy4j</groupId>
     <artifactId>mybatis-plus-enhance</artifactId>
     <!-- CI-Friendly Version：开发 POM 使用 revision，发布 POM 由 flatten 插件固化为实际版本。 -->
     <version>${revision}</version>
@@ -12,7 +12,7 @@
 
     <name>MyBatis-Plus Enhance</name>
     <description>MyBatis-Plus 模块化增强框架</description>
-    <url>https://github.com/hiwepy/mybatis-plus-enhance</url>
+    <url>https://github.com/easy-4-java/mybatis-plus-enhance</url>
 
     <licenses>
         <license>
@@ -33,15 +33,15 @@
     </developers>
 
     <scm>
-        <connection>scm:git:https://github.com/hiwepy/mybatis-plus-enhance.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/hiwepy/mybatis-plus-enhance.git</developerConnection>
-        <url>https://github.com/hiwepy/mybatis-plus-enhance</url>
+        <connection>scm:git:https://github.com/easy-4-java/mybatis-plus-enhance.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/easy-4-java/mybatis-plus-enhance.git</developerConnection>
+        <url>https://github.com/easy-4-java/mybatis-plus-enhance</url>
         <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
         <system>GitHub Issues</system>
-        <url>https://github.com/hiwepy/mybatis-plus-enhance/issues</url>
+        <url>https://github.com/easy-4-java/mybatis-plus-enhance/issues</url>
     </issueManagement>
 
     <!--
@@ -132,7 +132,7 @@
 
             <!-- 原生 MyBatis 与 MyBatis-Plus 共用的轻量注解协议。 -->
             <dependency>
-                <groupId>io.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>mybatis-enhance-annotation</artifactId>
                 <version>${mybatis-enhance.version}</version>
             </dependency>
@@ -142,7 +142,7 @@
                 所有依赖 Core 的功能模块从这里继承与 Reactor 一致的版本。
             -->
             <dependency>
-                <groupId>io.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>mybatis-plus-enhance-core</artifactId>
                 <version>${revision}</version>
             </dependency>
@@ -151,13 +151,13 @@
                 对齐 MyBatis-Plus 将可插拔实现集中在 extension 的模块模式。
             -->
             <dependency>
-                <groupId>io.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>mybatis-plus-enhance-extension</artifactId>
                 <version>${revision}</version>
             </dependency>
             <!-- Enhance Spring：事务、依赖注入和增强 Service 适配。 -->
             <dependency>
-                <groupId>io.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>mybatis-plus-enhance-spring</artifactId>
                 <version>${revision}</version>
             </dependency>
