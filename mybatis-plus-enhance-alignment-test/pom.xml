@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>io.github.hiwepy</groupId>
+        <groupId>io.github.easy4j</groupId>
         <artifactId>mybatis-plus-enhance</artifactId>
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
@@ -30,32 +30,32 @@
     <dependencies>
         <!-- ========= mybatis-plus-enhance（Plus 版） ========= -->
         <dependency>
-            <groupId>io.github.hiwepy</groupId>
+            <groupId>io.github.easy4j</groupId>
             <artifactId>mybatis-plus-enhance-extension</artifactId>
             <version>${revision}</version>
         </dependency>
         <!-- mybatis-plus-enhance-spring：Service 基类 -->
         <dependency>
-            <groupId>io.github.hiwepy</groupId>
+            <groupId>io.github.easy4j</groupId>
             <artifactId>mybatis-plus-enhance-spring</artifactId>
             <version>${revision}</version>
         </dependency>
 
         <!-- ========= mybatis-enhance（non-Plus 版） ========= -->
         <dependency>
-            <groupId>io.github.hiwepy</groupId>
+            <groupId>io.github.easy4j</groupId>
             <artifactId>mybatis-enhance-extension</artifactId>
             <version>${mybatis-enhance.version}</version>
         </dependency>
         <!-- mybatis-enhance-core：拦截器契约 -->
         <dependency>
-            <groupId>io.github.hiwepy</groupId>
+            <groupId>io.github.easy4j</groupId>
             <artifactId>mybatis-enhance-core</artifactId>
             <version>${mybatis-enhance.version}</version>
         </dependency>
         <!-- mybatis-enhance-spring：Service 基类 -->
         <dependency>
-            <groupId>io.github.hiwepy</groupId>
+            <groupId>io.github.easy4j</groupId>
             <artifactId>mybatis-enhance-spring</artifactId>
             <version>${mybatis-enhance.version}</version>
         </dependency>
