@@ -109,7 +109,7 @@
         <junit.version>4.13.2</junit.version>
         <lombok.version>1.18.46</lombok.version>
         <mybatis.version>3.5.19</mybatis.version>
-        <mybatis-enhance.version>1.0.x.20260630-SNAPSHOT</mybatis-enhance.version>
+        <easy4j-mybatis-enhance.version>1.0.x.20260630-SNAPSHOT</easy4j-mybatis-enhance.version>
         <mybatis-plus.version>3.5.14</mybatis-plus.version>
         <slf4j.version>2.0.18</slf4j.version>
         <spring-framework.version>5.3.39</spring-framework.version>
@@ -126,7 +126,7 @@
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>mybatis-enhance-annotation</artifactId>
-                <version>${mybatis-enhance.version}</version>
+                <version>${easy4j-mybatis-enhance.version}</version>
             </dependency>
             <!-- Source: https://github.com/easy-4-java/mybatis-plus-enhance-core — easy4j mybatis-plus-enhance-core -->
             <dependency>
