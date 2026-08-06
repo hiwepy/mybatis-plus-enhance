@@ -116,7 +116,7 @@
         <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
         <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
     
-		<junit-jupiter.version>6.1.0</junit-jupiter.version>
+		<junit-jupiter.version>5.11.4</junit-jupiter.version>
 		<commons-lang.version>2.6</commons-lang.version></properties>
 
     <!-- 依赖版本统一管理（dependencyManagement） -->
