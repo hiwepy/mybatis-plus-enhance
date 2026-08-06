@@ -1,494 +1,309 @@
 # mybatis-plus-enhance
 
-`mybatis-plus-enhance` 是面向 MyBatis-Plus 的基础增强组件，在不替代官方插件体系的前提下，补充以下能力：
+<div align="center">
 
-- 字段透明加密、查询结果解密与 HMAC；
-- 表级数据签名、验签与历史数据补签；
-- 基于官方 `TenantLineInnerInterceptor` 的租户上下文和默认适配器；
-- 基于官方 `DataPermissionInterceptor` 的注解解析与数据权限表达式扩展点；
-- 实体字段国际化映射；
-- MySQL `INSERT IGNORE` 作用域；
-- 超长 SQL 检测、真实执行耗时观测和慢 SQL 日志；
-- 带查询后、更新后和执行完成回调的统一增强拦截器链。
+**Modular enhancement framework for MyBatis-Plus: transparent encryption, table-level signature, tenant & data-scope support, i18n and SQL observation**
 
-本项目的定位是“增强 MyBatis-Plus”，不会重新实现分页、乐观锁、多租户或数据权限等官方已有基础设施。租户和数据权限能力应与
-MyBatis-Plus 官方拦截器组合使用。
+![Java](https://img.shields.io/badge/Java-17-orange) ![License](https://img.shields.io/badge/license-Apache%202.0-green)
 
-## 运行要求
+[简体中文](./README.zh-CN.md)
 
-项目主版本线与 Java 基线严格对应：
+[1. Project Overview](#1-project-overview) · [2. Features & Status](#2-features--status) · [3. Requirements & Compatibility](#3-requirements--compatibility) · [4. Architecture & Modules](#4-architecture--modules) · [5. Installation](#5-installation) · [6. Quick Start](#6-quick-start) · [7. Configuration](#7-configuration) · [8. Core Usage](#8-core-usage) · [9. Testing & Build](#9-testing--build) · [10. Versioning & Branches](#10-versioning--branches) · [11. Contributing & License](#11-contributing--license)
 
-| 项目版本线   | Java 基线 | Spring 技术栈             | API 命名空间    | JSqlParser 适配                 |
-|---------|--------:|------------------------|-------------|-------------------------------|
-| `1.0.x` |   JDK 8 | Spring Framework 5.3.x | `javax.*`   | `mybatis-plus-jsqlparser-4.9` |
-| `2.0.x` |  JDK 17 | Spring Framework 6.2.x | `jakarta.*` | `mybatis-plus-jsqlparser`     |
-| `3.0.x` |  JDK 21 | 支持 JDK 21 的稳定版本        | `jakarta.*` | `mybatis-plus-jsqlparser`     |
+</div>
 
-当前分支是 `2.0.x`，源码与构建基线如下：
+---
 
-| 组件           | 版本     |
-|--------------|--------|
-| Java         | 17+    |
-| Maven        | 3.9.6+ |
-| MyBatis      | 3.5.19 |
-| MyBatis-Plus | 3.5.14 |
-| Hutool Core + Crypto | 5.8.40 |
+> **Current branch**: `feature/2.0.x`<br>
+> **Version**: `2.0.x.x.20260630-SNAPSHOT`<br>
+> **JDK baseline**: 8<br>
+> **Project status**: maintenance (1.0.x line). Not yet published to Maven Central; artifacts are distributed via the Aliyun Maven repository and GitHub Releases.
 
-完整的依赖选择、源码约束和发布验证规则见 [版本兼容性策略](COMPATIBILITY.md)。
+<a id="1-project-overview"></a>
+## 1. Project Overview
 
-Spring 集成已隔离到 `mybatis-plus-enhance-spring`。`core` 与 `extension` 保持 Spring 无关；
-普通 MyBatis-Plus 项目只需按能力选择 `core` 或 `extension`。
+### 1.1 What it is
 
-公共加密和国际化注解统一复用 `mybatis-enhance-annotation`，MyBatis-Plus 项目不维护重复协议；
-唯一的 Plus 专属数据权限注解随 Extension 提供，不为单个注解拆分独立 Maven 模块。
+**mybatis-plus-enhance** is a modular enhancement layer on top of MyBatis-Plus (3.5.14). It adds capabilities without replacing the official plugin system:
 
-## 引入依赖
+- Transparent field encryption, decryption of query results and HMAC verification;
+- Table-level data signature, verification and historical back-filling;
+- Tenant context and a default adapter for the official `TenantLineInnerInterceptor`;
+- Annotation-based data-scope metadata with expression extension points for the official `DataPermissionInterceptor`;
+- Entity field internationalization (i18n) mapping;
+- MySQL `INSERT IGNORE` scope;
+- Long-SQL detection, real execution-time observation and slow-SQL logging;
+- A unified enhancement interceptor chain with post-query, post-update and after-execution callbacks.
 
-```xml
+### 1.2 What it is not
 
-<dependencies>
-    <dependency>
-        <groupId>io.github.hiwepy</groupId>
-        <artifactId>mybatis-plus-enhance-extension</artifactId>
-        <version>2.0.x.20260630-SNAPSHOT</version>
-    </dependency>
-</dependencies>
-```
+- **Not a replacement for MyBatis-Plus.** Pagination, optimistic lock, tenant SQL parsing and data-permission parsing remain the official interceptors' job. Tenant and data-scope capabilities here are designed to be *combined* with the official ones.
+- **Not a Spring Boot starter.** Spring integration (transactional services, dependency injection) is isolated in the `mybatis-plus-enhance-spring` module; `core` and `extension` stay Spring-free.
+- **Not a re-implementation of JSqlParser-based SQL rewriting.** SQL condition injection is delegated to the official plugins.
 
-`extension` 已包含 Core 以及加密、租户、数据权限、国际化、SQL 和观测增强。需要带签名语义的
-Service、事务和依赖注入时，改为引入 `mybatis-plus-enhance-spring`，它会传递引入 Extension。
+### 1.3 Typical scenarios
 
-若使用快照版本，请在应用的 Maven 配置中启用对应快照仓库。生产环境建议锁定经过验证的发布版本，不要使用动态版本范围。
+| Scenario | Recommended entry | Result |
+|---|---|---|
+| Encrypt sensitive columns (mobile, ID card) transparently | `DataEncryptionInnerInterceptor` + `EncryptedFieldHandler` | Ciphertext persisted, plaintext on read |
+| Detect out-of-band tampering of key business rows | `DataSignatureInnerInterceptor` + `@TableSignature` | HMAC-based row signature verified on read |
+| Multi-tenant app without re-parsing SQL | `TenantContext` + `DefaultTenantLineHandler` + official `TenantLineInnerInterceptor` | Tenant condition injected safely |
+| Row-level authorization beyond SQL conditions | `@DataScopePlus` + `DataScopeExpressionProvider` | Data-scope expressions on authorized queries |
+| Multi-language entity fields | `DataI18nInnerInterceptor` + `I18nContext` | Same-row translated values, no extra SQL |
+| Find oversized statements and real latency | `LongSqlInnerInterceptor` + `SqlObservationInnerInterceptor` | Structural + performance signals separated |
 
-## 模块结构
+<a id="2-features--status"></a>
+## 2. Features & Status
 
-| 模块                               | 职责                              |
-|----------------------------------|---------------------------------|
-| `mybatis-plus-enhance-core`      | 增强拦截器契约、查询后/更新后/执行完成生命周期和公共工具   |
-| `mybatis-plus-enhance-extension` | 加密、签名、租户、数据权限、国际化、SQL 处理和执行观测   |
-| `mybatis-plus-enhance-spring`    | 带签名语义的 Spring Service、依赖注入和事务集成 |
+| Capability | Status | Notes |
+|---|:---:|---|
+| Transparent field encryption / decryption | Available | `@EncryptedField`; random IV per encryption; versioned envelope with `version/keyId/algorithm/mode/padding/iv/ciphertext/mac` |
+| HMAC verification | Available | `EncryptedFieldHandler.verifyHmac`; separate encryption and authentication keys |
+| Table-level signature & verification | Available | `@TableSignature` / `@TableSignatureField`; batch back-fill via signed Service API |
+| Multi-tenant context | Available | TTL-based `TenantContext`; missing tenant ID fails fast instead of producing un-scoped SQL |
+| Data-scope (data permission) extension | Available | `@DataScopePlus` + `DataScopeAnnotationHandler` + `DataScopeExpressionProvider` |
+| Entity i18n mapping | Available | `@I18nColumn` handled by `DefaultDataI18nHandler`; no N+1 queries |
+| MySQL `INSERT IGNORE` | Available | Explicit scope only; MySQL dialect only |
+| Long-SQL detection | Available | Length-based, no `EXPLAIN`, no timing heuristics |
+| SQL observation & slow-SQL logging | Available | `SqlObservation` carries mapper ID, SQL, nanos and failure; sinks via API or `ServiceLoader` |
+| Post-query / post-update / after-execution lifecycle | Available | `EnhanceInnerInterceptor` adds the three callbacks on top of official `InnerInterceptor` hooks |
+| Enhanced SQL injector | Available | `EnhanceSqlInjector` injects `selectIgnoreDecryptById` / `selectIgnoreDecryptList` / `updateSignatureById` and friends |
 
-注解包结构：
+<a id="3-requirements--compatibility"></a>
+## 3. Requirements & Compatibility
+
+### 3.1 Baseline (this branch)
+
+| Component | Version | Notes |
+|---|---:|---|
+| JDK | 17+ | Enforced by `maven-enforcer-plugin` |
+| Maven | 3.0+ | Enforcer minimum; CI-friendly `${revision}` requires Maven 3.5+ |
+| MyBatis | 3.5.19 | Pinned |
+| MyBatis-Plus | 3.5.14 | Pinned |
+| JSqlParser | 4.9 | Via `mybatis-plus-jsqlparser-4.9` |
+| Spring Framework | 5.3.39 | `mybatis-plus-enhance-spring` only |
+| Hutool core + crypto | 5.8.40 | Used by default crypto handlers |
+| Jackson | 2.17.2 | JSON envelope serialization |
+| API namespace | `javax.*` | `javax.annotation-api` 1.3.2 |
+
+### 3.2 Version-line matrix
+
+| Version line | Branch | JDK | Version pattern | Stack |
+|---|---|---:|---|---|
+| 1.0.x | `feature/2.0.x` | 8 | `1.0.x.*` | Spring 5.3.x, `javax.*`, JSqlParser 4.9 |
+| 2.0.x | `feature/2.0.x` | 17 | `2.0.x.*` | Spring 6.2.x, `jakarta.*`, `mybatis-plus-jsqlparser` |
+| 3.0.x | `feature/3.0.x` | 21 | `3.0.x.*` | `jakarta.*`, `mybatis-plus-jsqlparser` |
+
+Version lines are maintained per branch (no shared-source profile switching). The `1.0.x` line only accepts compatibility fixes and dependency upgrades that still run on JDK 8. See `COMPATIBILITY.md` for the full rules.
+
+<a id="4-architecture--modules"></a>
+## 4. Architecture & Modules
 
 ```text
-org.apache.mybatis.enhance.annotation.crypto           # MyBatis/Plus 共用
-org.apache.mybatis.enhance.annotation.i18n             # MyBatis/Plus 共用
-com.baomidou.mybatisplus.enhance.annotation.datascope  # Plus 专属，位于 Extension
+[ Your Application ]
+        |
+        | MyBatis-Plus + mybatis-plus-enhance
+        v
++-----------------------------------------+
+| MybatisPlusEnhanceInterceptor (chain)   |
+|  SQL_REWRITE      Tenant / DataScope   |
+|  PARAMETER_ENCRYPT  DataEncryption     |
+|  DATA_SIGNATURE     DataSignature      |
+|  RESULT_DECRYPTION  DataDecryption     |
+|  RESULT_I18N        DataI18n           |
+|  OBSERVATION        SqlObservation     |
++-----------------------------------------+
+        |
+        v
+[ MyBatis / MyBatis-Plus + JDBC ] -> [ DB ]
 ```
 
-## 配置增强拦截器链
+| Module | Responsibility |
+|---|---|
+| `mybatis-plus-enhance-core` | Enhancement interceptor contract, post-query / post-update / after-execution lifecycle (`EnhanceInnerInterceptor`, `EnhancePhase`) and common base classes. Spring-free. |
+| `mybatis-plus-enhance-extension` | Pluggable implementations: encryption, signature, tenant, data scope, i18n, SQL processing and observation. Spring-free. Pulls in `mybatis-plus-enhance-core` and `mybatis-enhance-annotation`. |
+| `mybatis-plus-enhance-spring` | Spring integration: signed `IEnhanceService` / `EnhanceServiceImpl`, dependency injection and transaction support. |
 
-需要查询后解密、查询后验签或真实执行耗时观测时，应使用 `MybatisPlusEnhanceInterceptor` 作为唯一的外层 MyBatis-Plus
-拦截器链入口。官方 `InnerInterceptor` 可以直接加入该链，无需适配。
+Rule of thumb: plain MyBatis-Plus projects pick `core` or `extension`; projects that need signed Service semantics, DI and transactions pick `spring`.
+
+<a id="5-installation"></a>
+## 5. Installation
+
+Maven:
+
+```xml
+<dependency>
+    <groupId>io.github.easy4j</groupId>
+    <artifactId>mybatis-plus-enhance-extension</artifactId>
+    <version>2.0.x.x.20260630-SNAPSHOT</version>
+</dependency>
+```
+
+Gradle:
+
+```groovy
+implementation 'io.github.easy4j:mybatis-plus-enhance-extension:2.0.x.x.20260630-SNAPSHOT'
+```
+
+Use `mybatis-plus-enhance-spring` instead when signed services / transactions are needed (it transitively includes extension). For the minimal interceptor contract only, depend on `mybatis-plus-enhance-core`.
+
+Snapshot builds require an enabled snapshot repository (Aliyun Maven snapshot repository per `distributionManagement` in `pom.xml`). For production, pin a verified release version; do not use dynamic version ranges.
+
+<a id="6-quick-start"></a>
+## 6. Quick Start
+
+The following enables decryption-on-read, signature-on-write and slow-SQL logging in one chain:
 
 ```java
-
 @Configuration
 public class MybatisConfiguration {
 
     @Bean
     public MybatisPlusEnhanceInterceptor mybatisPlusInterceptor(
             EncryptedFieldHandler encryptedFieldHandler,
-            DataSignatureHandler dataSignatureHandler,
-            TenantLineHandler tenantLineHandler) {
+            DataSignatureHandler dataSignatureHandler) {
 
         MybatisPlusEnhanceInterceptor interceptor = new MybatisPlusEnhanceInterceptor();
 
-        // 官方插件仍然直接使用。
-        interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(tenantLineHandler));
-
-        // 写入：先加密，后按最终密文生成表签名。
+        // Write path: encrypt first, then sign the final ciphertext row.
         interceptor.addInnerInterceptor(
                 new DataEncryptionInnerInterceptor(encryptedFieldHandler, true));
         interceptor.addInnerInterceptor(
                 new DataSignatureInnerInterceptor(dataSignatureHandler, true, true));
 
-        // 读取：注册顺序决定 afterQuery 顺序，因此先验签，后解密。
+        // Read path: registration order decides afterQuery order — verify, then decrypt.
         interceptor.addInnerInterceptor(
                 new DataDecryptionInnerInterceptor(encryptedFieldHandler, true));
 
-        SqlObservationInnerInterceptor observation =
-                new SqlObservationInnerInterceptor(new SlowSqlLoggingSink(500));
-        interceptor.addInnerInterceptor(observation);
+        interceptor.addInnerInterceptor(
+                new SqlObservationInnerInterceptor(new SlowSqlLoggingSink(500)));
         return interceptor;
     }
 }
 ```
 
-拦截器顺序是正确性约束，而不只是性能配置：
-
-1. 租户、数据权限等 SQL 条件插件先完成条件注入；
-2. 写入参数先加密，再基于最终入库值生成签名；
-3. 查询结果先验签，再解密为业务值；
-4. SQL 观测放在链尾，接收最终执行结果。
-
-同一个 MyBatis `Configuration` 不要同时注册官方 `MybatisPlusInterceptor` 和 `MybatisPlusEnhanceInterceptor`
-，否则内部插件可能重复执行。
-
-## 字段透明加解密
-
-### 声明实体
+Declare the entity:
 
 ```java
-
 @EncryptedTable
 public class CustomerPO {
-
     private Long id;
-
     @EncryptedField
     private String mobile;
-
     @EncryptedField
     private String idCard;
 }
 ```
 
-`@EncryptedTable` 声明实体参与透明加解密，只有标记 `@EncryptedField` 的字段会执行密码运算。Mapper 方法标记
-`@IgnoreEncrypted` 后，会跳过参数加密或结果解密，适用于验签、迁移和受控运维场景。
+**Expected result**: inserts write ciphertext (+ HMAC) to the `mobile` / `idCard` columns; selects transparently verify and decrypt back to plaintext; statements slower than 500 ms produce a slow-SQL log line via `SlowSqlLoggingSink`.
 
-### 提供密码处理器
+<a id="7-configuration"></a>
+## 7. Configuration
 
-核心扩展点是 `EncryptedFieldHandler`：
+This library is configured in code through the interceptor chain; there are no Spring configuration properties (the Spring module is bean-based). Interceptor order is a correctness constraint, not just performance tuning:
 
-```java
-public interface EncryptedFieldHandler {
-    <T> String encrypt(T value);
+1. Tenant / data-scope SQL-condition plugins first (official `TenantLineInnerInterceptor` etc.);
+2. Write parameters encrypted, then signed from the final values;
+3. Query results verified first, then decrypted to business values;
+4. SQL observation last, receiving the final execution outcome.
 
-    <T> T decrypt(String value, Class<T> rtType);
+Do not register both the official `MybatisPlusInterceptor` and `MybatisPlusEnhanceInterceptor` on the same MyBatis `Configuration` — inner interceptors would run twice.
 
-    <T> String hmac(T value);
+Key extension points:
 
-    <T> boolean verifyHmac(T value, String signature);
-}
-```
+| Extension point | Purpose |
+|---|---|
+| `EncryptedFieldHandler` | Encrypt / decrypt / HMAC contract; `DefaultEncryptedFieldHandler` (Hutool + Jackson + HMAC) provided |
+| `CryptoKeyProvider` | Supplies current + controlled historical keys; `StaticCryptoKeyProvider` for tests |
+| `DataSignatureHandler` / `DataSignatureReadWriteProvider` | Row signature compute and storage (entity field or external store) |
+| `TenantContext` | TTL-based tenant holder with `open(tenantId)` scope API |
+| `DataScopeExpressionProvider` | Builds JSqlParser expressions from your auth model (`DataScopeExpressions` helpers available) |
+| `I18nContext` | TTL-based locale holder with `open(Locale)` scope API |
+| `SqlObservationSink` | Consumes `SqlObservation`; auto-discoverable via Java `ServiceLoader` |
+| `ResultObjectCopier` | `ReflectionResultObjectCopier` (default) or `noCopy()` when MyBatis local cache is disabled |
 
-项目提供基于 Hutool、Jackson 和 HMAC 的 `DefaultEncryptedFieldHandler`。默认协议强制使用独立的
-加密密钥与认证密钥，每次加密生成随机 IV，并输出携带 `version/keyId/algorithm/mode/padding/iv/ciphertext/mac`
-的版本化信封。应用应通过 `CryptoKeyProvider` 对接 KMS、HSM 或受保护配置，不应把密钥硬编码到仓库。
+Secrets (keys, IVs, HMAC keys) must come from a managed key system — never commit them to the repository, log them or expose them in exception messages. Use different keys for encryption vs. authentication, and record key versions (`keyId`) to support rotation.
 
-```java
-EncryptedFieldHandler handler = new DefaultEncryptedFieldHandler(
-        objectMapper,
-        SymmetricAlgorithmType.AES,
-        HmacType.HmacSHA256,
-        CipherMode.CBC,
-        CipherPadding.PKCS5Padding,
-        new StaticCryptoKeyProvider(new CryptoKeyMaterial(
-                "customer-v1",
-                encryptionKeyBytes,
-                authenticationKeyBytes))
-);
-```
+<a id="8-core-usage"></a>
+## 8. Core Usage
 
-注意：
-
-- 加密字段不适合数据库端的 `LIKE`、范围比较、排序和聚合；
-- 随机 IV 密文不支持直接等值查询；需要等值检索时应增加使用独立密钥生成的盲索引列；
-- Wrapper 中无法定位实体字段元数据的简单参数不会被盲目加密；
-- 默认处理器不记录明文、完整密文、密钥、IV 或 HMAC；自定义处理器也必须遵守相同约束；
-- 密文和 HMAC 携带 `keyId`；轮换时由 `CryptoKeyProvider` 同时提供当前密钥与受控历史密钥。
-
-### 解密结果拷贝与缓存安全
-
-`DataDecryptionInnerInterceptor` 默认在解密前**浅拷贝**每条查询结果，防止就地修改污染 MyBatis 一级/二级缓存。
-如果应用已禁用 MyBatis 本地缓存（或使用 Redis 等外部缓存），可通过 `ResultObjectCopier.noCopy()` 跳过拷贝，
-直接就地解密以节省内存：
+### 8.1 Table-level signature
 
 ```java
-interceptor.addInnerInterceptor(
-        new DataDecryptionInnerInterceptor(encryptionHandler, true, ResultObjectCopier.noCopy()));
-```
-
-使用 `noCopy()` 时需自行保证：同一 SqlSession 中不会混合使用普通查询与 `selectIgnoreDecryptById` 等跳过解密查询，
-否则缓存中的密文会被解密覆盖。
-
-## 表级签名与验签
-
-表签名用于检测关键业务字段是否被绕过应用直接篡改，它不是访问控制或数据加密的替代品。
-
-```java
-
 @TableSignature
 public class OrderPO {
-
     @TableSignatureField(order = 1)
     private String orderNo;
-
     @TableSignatureField(order = 2)
     private BigDecimal amount;
-
     @TableSignatureField(stored = true)
-    private String rowSignature;
+    private String rowSignature;   // stores the signature, not part of the signed payload
 }
 ```
 
-- `order` 决定签名原文的稳定拼接顺序；
-- `stored = true` 标记保存签名结果的字段，该字段不参与原文拼接；
-- `@TableSignature(unionAll = true)` 会把除签名存储字段外的可持久化字段纳入签名；
-- `DataSignatureReadWriteProvider` 可将签名保存在实体字段或外部存储中；
-- `DefaultDataSignatureHandler` 使用 `EncryptedFieldHandler.hmac` 计算签名。
-
-需要批量补签、按原始密文验签或使用带签名语义的 Service API 时：
-
 ```java
-public interface OrderMapper extends EnhanceMapper<OrderPO> {
-}
+public interface OrderMapper extends EnhanceBaseMapper<OrderPO> { }
 
 @Service
-public class OrderService
-        extends EnhanceServiceImpl<OrderMapper, OrderPO> {
-}
+public class OrderService extends EnhanceServiceImpl<OrderMapper, OrderPO> { }
 ```
 
-同时配置 `EnhanceSqlInjector`，以注入 `selectIgnoreDecryptById`、`selectIgnoreDecryptList` 等内部查询方法。应用若已有自定义
-`ISqlInjector`，应合并其方法列表，不能注册两个互相覆盖的注入器。
+Register `EnhanceSqlInjector` to enable internal queries such as `selectIgnoreDecryptById`, `selectIgnoreDecryptList` and `updateSignatureById`. If you already have a custom `ISqlInjector`, merge its method list — never register two injectors that overwrite each other. `saveSigned`, `saveBatchSigned`, `updateSignedById`, `pageSigned` carry signature semantics; batch writes must run inside a transaction so data and signature commit or roll back together.
 
-`saveSigned`、`saveBatchSigned`、`updateSignedById`、`pageSigned` 等方法会将签名或验签纳入调用语义。批量写入必须在事务中执行，确保业务数据与签名同时提交或回滚。
-
-## 多租户
-
-本项目不重新实现租户 SQL 解析，而是提供可透传上下文和官方处理器适配器：
-
-```java
-TenantContext tenantContext = new TenantContext();
-TenantLineHandler handler = new DefaultTenantLineHandler(
-        tenantContext,
-        "tenant_id",
-        tableName -> "sys_config".equalsIgnoreCase(tableName)
-);
-
-MybatisPlusEnhanceInterceptor interceptor = new MybatisPlusEnhanceInterceptor();
-interceptor.
-
-addInnerInterceptor(new TenantLineInnerInterceptor(handler));
-```
-
-推荐使用作用域 API，异常和嵌套调用都能恢复先前租户：
-
-```java
-try(TenantContext.Scope ignored = tenantContext.open(tenantId)){
-        orderMapper.
-
-selectList(Wrappers.emptyWrapper());
-        }
-```
-
-`TenantContext` 使用 Alibaba TransmittableThreadLocal。异步任务必须使用 TTL 提供的 Executor 包装器或 Agent；只使用
-`TransmittableThreadLocal` 类型本身并不能让任意线程池自动安全透传。请求出口仍应清理上下文，防止线程复用造成租户串扰。
-
-缺少租户 ID 时，`DefaultTenantLineHandler` 会快速失败，而不是生成无租户条件的 SQL。
-
-## 数据权限
-
-数据权限基于 MyBatis-Plus 官方 `DataPermissionInterceptor` 和 `MultiDataPermissionHandler` 机制扩展。`@DataScopePlus` 描述
-Mapper 方法的数据范围元数据，`DataScopeAnnotationHandler` 负责查找注解，`DataScopeExpressionProvider` 负责生成 JSqlParser
-表达式。
-
-```java
-
-@DataScopePlus(
-        tableAlias = "o",
-        oneselfScopeName = "creator_id"
-)
-List<OrderPO> selectAuthorizedOrders(OrderQuery query);
-```
-
-生产系统必须实现 `DataScopeExpressionProvider`，从自己的认证、组织和角色模型中读取授权范围。
-模块不提供默认放行实现，避免误配置时静默绕过权限。可使用 `DataScopeExpressions`
-构造等值、IN、AND 和 OR 表达式，避免手工拼接 SQL。
-
-数据权限属于安全边界：不要把前端传入的表名、列名或 SQL 片段直接拼接到表达式；超级管理员绕过、空权限集、跨部门角色合并和子查询别名都应有独立测试。
-
-## 国际化
-
-`i18n` 模块现在提供完整的同行多语言字段映射链：
-
-- `I18nContext` 使用 TTL 保存当前 Locale；
-- `DataI18nInnerInterceptor` 在查询结果映射完成后触发国际化；
-- `DefaultDataI18nHandler` 处理实体字段和 Mapper 方法上的 `@I18nColumn`；
-- 默认实现不执行额外 SQL，不会产生 N+1 查询。
-
-```java
-I18nContext i18nContext = new I18nContext();
-interceptor.
-
-addInnerInterceptor(new DataI18nInnerInterceptor(
-        i18nContext, new DefaultDataI18nHandler()));
-
-        try(
-I18nContext.Scope ignored = i18nContext.open(Locale.US)){
-        productMapper.
-
-selectList(Wrappers.emptyWrapper());
-        }
-```
-
-国际化映射应放在验签、解密之后，避免翻译值参与数库完整性校验。
-
-## MySQL INSERT IGNORE
-
-`InsertIgnoreInnerInterceptor` 只支持 MySQL 方言，并且仅在显式作用域内改写普通 INSERT：
-
-```java
-interceptor.addInnerInterceptor(new InsertIgnoreInnerInterceptor());
-
-        try(
-InsertIgnoreContext.Scope ignored = InsertIgnoreContext.open()){
-        orderMapper.
-
-insert(order);
-}
-```
-
-作用域可嵌套，关闭后自动恢复。不要在 PostgreSQL、Oracle、SQL Server 等数据库上注册该拦截器；`INSERT IGNORE`
-会把部分数据错误降级为警告，使用前应确认这符合业务一致性要求。
-
-## SQL 观测
-
-### 慢 SQL
-
-`SqlObservationInnerInterceptor` 在真实执行完成后发布 `SqlObservation`，包含 Mapper ID、SQL、纳秒级耗时和执行异常。接收器实现
-`SqlObservationSink`：
-
-```java
-SqlObservationInnerInterceptor observation = new SqlObservationInnerInterceptor();
-observation.
-
-addSink(new SlowSqlLoggingSink(500, 1000));
-        observation.
-
-addSink(item ->metrics.
-
-record(
-        item.getMappedStatementId(),item.
-
-getElapsedMillis(),item.
-
-isSuccess()));
-```
-
-接收器也可通过 Java `ServiceLoader` 自动发现。在**使用方自己的项目**中创建以下文件（框架自身不提供该文件）：
-
-```text
-src/main/resources/META-INF/services/com.baomidou.mybatisplus.enhance.observation.SqlObservationSink
-```
-
-文件内容为实现类的全限定名（每行一个）。接收器运行在 SQL 调用线程中，应快速、无阻塞；发送网络指标或审计事件时应使用有界队列，并定义丢弃、重试和降级策略。单个接收器的运行时异常会被隔离，不会改变
-SQL 结果。
-
-### 超长 SQL
-
-`LongSqlInnerInterceptor` 按 SQL 字符数检测超长语句：
-
-```java
-interceptor.addInnerInterceptor(
-        new LongSqlInnerInterceptor(4000,
-                (mappedStatementId, sql) ->
-
-alert(mappedStatementId)));
-```
-
-它不执行数据库 `EXPLAIN`，也不根据耗时判断慢 SQL。超长 SQL 与慢 SQL 是两个独立信号：前者用于发现巨型 `IN`
-、异常拼接等结构问题，后者反映真实执行延迟。
-
-## 扩展执行生命周期
-
-自定义增强可以实现 `EnhanceInnerInterceptor`：
+### 8.2 Custom lifecycle enhancement
 
 ```java
 public final class AuditInnerInterceptor implements EnhanceInnerInterceptor {
 
     @Override
-    public void afterExecution(
-            Executor executor,
-            MappedStatement mappedStatement,
-            Object parameter,
-            BoundSql boundSql,
-            Object result,
-            Throwable failure,
-            long elapsedNanos) {
-        // 只做轻量旁路处理。
+    public void afterExecution(Executor executor, MappedStatement ms,
+            Object parameter, BoundSql boundSql, Object result,
+            Throwable failure, long elapsedNanos) {
+        // Lightweight side-effect only.
     }
 }
 ```
 
-该接口保留官方 `InnerInterceptor` 的全部前置钩子，并增加：
+`afterQuery` / `afterUpdate` run inside the main execution chain — exceptions affect the business call. `afterExecution` is a side-channel notification: its runtime exceptions are logged and isolated, so do not build strongly-consistent auditing on it (use business transactions or an Outbox instead). Mapper methods marked `@IgnoreEncrypted` skip parameter encryption / result decryption — restrict their call scope and audit them.
 
-- `afterQuery`：查询成功并完成结果映射后，返回隔离于 MyBatis 缓存对象的转换结果；
-- `afterUpdate`：更新成功后；
-- `afterExecution`：查询或更新最终完成后，成功与失败都会调用。
-
-`afterQuery`、`afterUpdate` 属于主执行链，异常会影响业务调用；`afterExecution`
-是旁路通知，运行时异常会记录并隔离。需要强一致审计时，不应依赖被隔离的旁路回调，应使用业务事务或 Outbox。
-
-## 安全与运维建议
-
-- 加密密钥和 HMAC 密钥必须由受控密钥系统提供并相互独立，禁止提交到 Git、打印到日志或暴露在异常信息中；
-- 密文信封必须保留版本和 keyId；历史密钥只能用于读取，不得继续用于新写入；
-- 不要记录完整 SQL 参数、明文敏感字段或解密结果；
-- 租户与数据权限必须采用“上下文缺失即拒绝”的默认策略；
-- 为拦截器顺序建立集成测试，覆盖插入、更新、批量操作、Wrapper、自定义 XML、缓存命中和异常路径；
-- `@IgnoreEncrypted` 与原始密文 Mapper 方法应限制调用范围并纳入审计；
-- 高并发场景应评估反射、JSON 序列化、JSqlParser 和密码运算的成本。
-
-## 构建与测试
+<a id="9-testing--build"></a>
+## 9. Testing & Build
 
 ```bash
 mvn clean verify
 ```
 
-项目强制 Maven 3.9.6+。父 POM 会统一校验 Maven、Java 和模块依赖边界：Core 与 Extension
-的传递依赖中不允许出现 Spring、MyBatis-Spring 或 MyBatis-Plus-Spring，只有
-`mybatis-plus-enhance-spring` 明确放行 Spring。
-
-项目使用 Maven CI-Friendly Version 和 `flatten-maven-plugin` 管理多模块版本：
-
-- 根项目、所有子模块父版本和内部模块依赖统一使用 `${revision}`；
-- 默认版本由父 POM 的 `revision` 属性定义；
-- CI 可使用 `-Drevision=1.0.0` 构建指定的正式版本，无需批量修改所有 POM；
-- `process-resources` 阶段为每个模块生成 `.flattened-pom.xml`；
-- `install` 和 `deploy` 使用已经固化版本的 flattened POM；
-- `mvn clean` 会删除生成的 flattened POM，文件也已加入 `.gitignore`。
-
-例如，验证一个不修改源码 POM 的正式版本构建：
+- The parent POM enforces Maven version and Java version, and bans Spring / `mybatis-spring` / `mybatis-plus-spring` from `core` and `extension` transitive dependencies (only `mybatis-plus-enhance-spring` is allowed to pull Spring).
+- JaCoCo runs `prepare-agent` and `report`, and checks the **90% line-coverage** rule on the `verify` phase (`haltOnFailure=false` so the build still completes with a report).
+- Per `COMPATIBILITY.md`, the 1.0.x line must run real H2 combination tests covering cache, encryption, signature, back-fill and the enhanced SQL injector. The repo workflow `.github/workflows/compatibility-matrix.yml` checks out all three version lines and runs `mvn clean verify` on the respective JDK baselines.
+- CI-Friendly versions: the root POM and all modules use `${revision}` (default `2.0.x.x.20260630-SNAPSHOT`), flattened via `flatten-maven-plugin`. Build a concrete release without touching POMs:
 
 ```bash
 mvn -Drevision=1.0.0 -DskipTests package
 ```
 
-发布前可在不签名、不上传的情况下检查源码包和 Javadoc 包：
+- Dry-run the release packaging without signing/uploading:
 
 ```bash
 mvn -Prelease -Dgpg.skip=true -DskipTests package
 ```
 
-`release` Profile 会生成主构件、sources、Javadoc 和 GPG 签名，并通过 Sonatype Central
-Publishing Maven Plugin 上传。发布账号在本机 `settings.xml` 中使用 `central` Server ID 配置，
-仓库中不得保存令牌：
+`mvn -Prelease deploy` produces main jar + sources + javadoc + GPG signatures. The `release` profile is wired for Sonatype Central Publishing with `autoPublish=false` (release must be confirmed in the Central Portal), while plain `mvn deploy` routes SNAPSHOT/release artifacts to the Aliyun Maven repository per `distributionManagement`. Repository credentials belong in your local/CI `settings.xml`, never in the project POM.
 
-```xml
+<a id="10-versioning--branches"></a>
+## 10. Versioning & Branches
 
-<server>
-    <id>central</id>
-    <username>${env.CENTRAL_USERNAME}</username>
-    <password>${env.CENTRAL_TOKEN}</password>
-</server>
-```
+| Branch | Version pattern | JDK | Maintenance policy |
+|---|---|---|---|
+| `feature/1.0.x` (this branch) | `1.0.x.*` | 8 | Compatibility fixes and JDK-8-safe dependency upgrades only |
+| `feature/2.0.x` | `2.0.x.*` | 17 | JDK 17 / Spring 6 / `jakarta.*` changes |
+| `feature/3.0.x` | `3.0.x.*` | 21 | JDK 21 language/runtime features |
 
-```bash
-mvn -Prelease deploy
-```
+Cross-line upgrades may break binary compatibility; release notes must list package, configuration and dependency migrations. Keep public API semantics consistent across lines wherever possible.
 
-默认 `autoPublish=false`，上传并校验成功后仍需在 Central Portal 确认发布，避免 CI 误发布。
+<a id="11-contributing--license"></a>
+## 11. Contributing & License
 
-项目同时沿用同组织组件的 Aliyun Maven 仓库：普通 `mvn deploy` 会根据版本后缀把
-`SNAPSHOT` 和正式版本分别路由到父 POM 的 `snapshotRepository` 与 `repository`。对应 Server ID
-的凭据同样只能存放在本机或 CI 的 `settings.xml`，不得写入项目 POM。
+Contributions are welcome. Before opening a pull request, run `mvn clean verify` and describe compatibility, testing, documentation and migration impact. When adding crypto algorithms, permission expressions or interceptors, add unit tests and real-database integration tests — especially for in-place parameter mutation, context restoration after exceptions and interceptor ordering.
 
-新增密码算法、权限表达式或拦截器时，应补充单元测试和真实数据库集成测试。当前 H2 组合测试覆盖真实
-`SqlSession`、一级缓存、加密、签名、验签、解密、部分更新拒绝和签名列专用更新；同时必须验证上下文是否在异常后恢复、插件顺序是否符合预期。
-
-## License
-
-本项目采用 [Apache License 2.0](LICENSE) 发布。
+This project is licensed under the [Apache License 2.0](LICENSE).
