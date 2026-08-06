@@ -1,41 +1,36 @@
-*#
-*.iml
-*.ipr
-*.iws
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
 *.jar
-*.sw?
-*~
-.#*
-.*.md.html
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+replay_pid*
 .DS_Store
-.classpath
-.factorypath
-.gradle
-.idea
-.metadata
-.project
-.recommenders
-.settings
-.springBeans
-.apt_generated
-/build
-/code
-MANIFEST.MF
-_site/
-activemq-data
-bin
-build
-build.log
-dependency-reduced-pom.xml
-dump.rdb
-interpolated*.xml
-lib/
-logs
-manifest.yml
-overridedb.*
-settings.xml
-target
-transaction-logs
-.flattened-pom.xml
-secrets.yml
-pom.xml.versionsBackup
+
+# Maven
+/target/
+
+# 本地 dreamina CLI 采集输出
+.cli-audit/
+
+# Python
+__pycache__/
+*.pyc
+target/

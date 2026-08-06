@@ -1,757 +1,688 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>io.github.easy4j</groupId>
+    <artifactId>mybatis-plus-enhance</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <url>https://github.com/easy-4-java/${project.artifactId}</url>
+    <version>${revision}</version>
+    <packaging>pom</packaging>
+    <description>MyBatis-Plus 模块化增强框架</description>
 
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>io.github.easy4j</groupId>
-	<artifactId>mybatis-plus-enhance</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
-	<description>MyBatis Plus 增强扩展</description>
-	<name>${project.groupId}:${project.artifactId}</name>
-	<url>https://github.com/easy-4-java/${project.artifactId}</url>
-	<packaging>jar</packaging>
+    <!-- 开源协议采用 Apache 2.0 协议 -->
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
 
-	<licenses>
-		<license>
-			<name>The Apache Software License, Version 2.0</name>
-			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
-		</license>
-	</licenses>
+    <!-- 开发者信息 -->
+    <developers>
+        <developer>
+            <name>Loong Wan</name>
+            <email>hiwepy@gmail.com</email>
+            <url>https://github.com/loong10k</url>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>+8</timezone>
+        </developer>
+    </developers>
 
-	<scm>
-		<connection>scm:git:https:github.com/easy-4-java/${project.artifactId}.git</connection>
-		<developerConnection>scm:git:https:github.com/easy-4-java/${project.artifactId}.git</developerConnection>
-		<url>https:github.com/easy-4-java/${project.artifactId}</url>
-		<tag>${project.artifactId}</tag>
-	</scm>
+    <!-- 源码仓库（SCM）信息 -->
+    <scm>
+        <connection>scm:git:https://github.com/easy-4-java/mybatis-plus-enhance.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/easy-4-java/mybatis-plus-enhance.git</developerConnection>
+        <url>https://github.com/easy-4-java/mybatis-plus-enhance</url>
+        <tag>HEAD</tag>
+    </scm>
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/easy-4-java/mybatis-plus-enhance/issues</url>
+    </issueManagement>
 
-	<developers>
-		<developer>
-			<name>wandl</name>
-			<email>hiwepy@gmail.com</email>
-			<roles>
-				<role>developer</role>
-			</roles>
-			<timezone>+8</timezone>
-		</developer>
-	</developers>
+    <!-- 制品发布仓库配置（distributionManagement） -->
+    <distributionManagement>
+        <repository>
+            <id>2624322-release-6F6h6R</id>
+            <url>https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-release-6f6h6r</url>
+        </repository>
+        <snapshotRepository>
+            <id>2624322-snapshot-3EoOv3</id>
+            <url>https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3</url>
+        </snapshotRepository>
+    </distributionManagement>
 
-	<distributionManagement>
-		<snapshotRepository>
-			<id>ossrh</id>
-			<name>Maven Snapshots Repository</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</snapshotRepository>
-		<repository>
-			<id>ossrh</id>
-			<name>Maven Central Staging Repository</name>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
-	</distributionManagement>
+    <!-- 项目子模块（modules） -->
+    <modules>
+        <module>mybatis-plus-enhance-core</module>
+        <module>mybatis-plus-enhance-extension</module>
+        <module>mybatis-plus-enhance-spring</module>
+    </modules>
 
-	<build>
-		<pluginManagement>
-			<plugins>
-				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>${maven-compiler-plugin.version}</version>
-					<configuration>
-						<source>${java.version}</source>
-						<target>${java.version}</target>
-						<encoding>${project.build.sourceEncoding}</encoding>
-						<maxmem>512M</maxmem>
-					</configuration>
-				</plugin>
-				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-deploy-plugin</artifactId>
-					<version>${maven-deploy-plugin.version}</version>
-				</plugin>
-				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-enforcer-plugin -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-enforcer-plugin</artifactId>
-					<version>${maven-enforcer-plugin.version}</version>
-					<executions>
-						<execution>
-							<id>default-cli</id>
-							<goals>
-								<goal>enforce</goal>
-							</goals>
-							<phase>validate</phase>
-							<configuration>
-								<rules>
-									<requireMavenVersion>
-										<message>
-	                                        <![CDATA[You are running an older version of Maven. This application requires at least Maven ${maven.version}.]]>
-										</message>
-										<version>[${maven.version}.0,)</version>
-									</requireMavenVersion>
-									<requireJavaVersion>
-										<message>
-	                                        <![CDATA[You are running an older version of Java. This application requires at least JDK ${java.version}.]]>
-										</message>
-										<version>[${java.version}.0,)</version>
-									</requireJavaVersion>
-								</rules>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
-				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-gpg-plugin</artifactId>
-					<version>${maven-gpg-plugin.version}</version>
-					<executions>
-						<execution>
-							<id>sign-artifacts</id>
-							<phase>verify</phase>
-							<goals>
-								<goal>sign</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-install-plugin -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-install-plugin</artifactId>
-					<version>${maven-install-plugin.version}</version>
-				</plugin>
-				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-resources-plugin -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-resources-plugin</artifactId>
-					<version>${maven-resources-plugin.version}</version>
-					<configuration>
-						<encoding>${project.build.sourceEncoding}</encoding>
-					</configuration>
-				</plugin>
-				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-release-plugin -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-release-plugin</artifactId>
-					<version>${maven-release-plugin.version}</version>
-					<configuration>
-						<tagNameFormat>v@{project.version}</tagNameFormat>
-						<autoVersionSubmodules>true</autoVersionSubmodules>
-						<useReleaseProfile>false</useReleaseProfile>
-						<releaseProfiles>release</releaseProfiles>
-						<goals>deploy</goals>
-					</configuration>
-				</plugin>
-				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-source-plugin</artifactId>
-					<version>${maven-source-plugin.version}</version>
-					<configuration>
-						<attach>true</attach>
-					</configuration>
-					<executions>
-						<execution>
-							<id>attach-sources</id>
-							<goals>
-								<goal>jar-no-fork</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
+    <!-- 版本属性定义：Java 版本、依赖版本与 Maven 插件版本统一管理 -->
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <revision>2.0.x.20260630-SNAPSHOT</revision>
+        <java.version>17</java.version>
+        <maven.version>3.0</maven.version>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+        <allow.spring.dependencies>false</allow.spring.dependencies>
+        <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
+        <!-- Maven Plugin versions -->
+        <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version>
+        <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
+        <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
+        <maven-enforcer-plugin.version>3.6.3</maven-enforcer-plugin.version>
+        <maven-flatten-plugin.version>1.7.3</maven-flatten-plugin.version>
+        <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
+        <maven-install-plugin.version>3.1.4</maven-install-plugin.version>
+        <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
+        <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
+        <maven-release-plugin.version>3.3.1</maven-release-plugin.version>
+        <maven-resources-plugin.version>3.5.0</maven-resources-plugin.version>
+        <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
+        <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
+        <bcprov.version>1.81</bcprov.version>
+        <commons-lang3.version>3.20.0</commons-lang3.version>
+        <hutool.version>5.8.40</hutool.version>
+        <h2.version>2.3.232</h2.version>
+        <!-- Dependency versions -->
+        <jackson.version>2.17.2</jackson.version>
+        <jakarta-annotation.version>2.1.1</jakarta-annotation.version>
+        <jsqlparser.version>5.2</jsqlparser.version>
+        <junit.version>4.13.2</junit.version>
+        <lombok.version>1.18.46</lombok.version>
+        <mybatis.version>3.5.19</mybatis.version>
+        <easy4j-mybatis-enhance.version>2.0.x.20260630-SNAPSHOT</easy4j-mybatis-enhance.version>
+        <mybatis-plus.version>3.5.14</mybatis-plus.version>
+        <slf4j.version>2.0.18</slf4j.version>
+        <spring-framework.version>6.2.11</spring-framework.version>
+        <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
+        <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
+    
+		<junit-jupiter.version>6.1.0</junit-jupiter.version>
+		<commons-lang.version>2.6</commons-lang.version></properties>
 
-				<!-- Spring Boot 代码质量检查 -->
+    <!-- 依赖版本统一管理（dependencyManagement） -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- Source: https://github.com/easy-4-java/mybatis-enhance-annotation — easy4j mybatis-enhance-annotation -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>mybatis-enhance-annotation</artifactId>
+                <version>${easy4j-mybatis-enhance.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/mybatis-plus-enhance-core — easy4j mybatis-plus-enhance-core -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>mybatis-plus-enhance-core</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/mybatis-plus-enhance-extension — easy4j mybatis-plus-enhance-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>mybatis-plus-enhance-extension</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/mybatis-plus-enhance-spring — easy4j mybatis-plus-enhance-spring -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>mybatis-plus-enhance-spring</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <!-- For MyBatis -->
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis.version}</version>
+            </dependency>
+            <!-- For MyBatis Plus -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-annotation</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <!-- For MyBatis Plus -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-core</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <!-- For MyBatis Plus -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-extension</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <!-- For MyBatis Plus -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-spring</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-jsqlparser -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-jsqlparser</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <!-- For JSqlParser -->
+            <dependency>
+                <groupId>com.github.jsqlparser</groupId>
+                <artifactId>jsqlparser</artifactId>
+                <version>${jsqlparser.version}</version>
+            </dependency>
+            <!-- For Slf4j -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <!-- For Slf4j -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <!-- For Lombok -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+            <!-- For Transmittable Thread Local -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>transmittable-thread-local</artifactId>
+                <version>${transmittable-thread-local.version}</version>
+            </dependency>
+            <!-- For Hutool -->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-core</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <!-- For Hutool -->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-crypto</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <!-- Bouncy Castle -->
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk18on</artifactId>
+                <version>${bcprov.version}</version>
+            </dependency>
+            <!-- For Commons Lang3 -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+            </dependency>
+            <!-- For Jackson -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <!-- For Spring Framework -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <version>${spring-framework.version}</version>
+            </dependency>
+            <!-- For Spring Framework -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring-framework.version}</version>
+            </dependency>
+            <!-- For Spring Framework -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
+                <version>${spring-framework.version}</version>
+            </dependency>
+            <!-- For Spring Framework -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>${spring-framework.version}</version>
+            </dependency>
+            <!-- For Annotation Api -->
+            <dependency>
+                <groupId>jakarta.annotation</groupId>
+                <artifactId>jakarta.annotation-api</artifactId>
+                <version>${jakarta-annotation.version}</version>
+            </dependency>
+            <!-- For H2 -->
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2.version}</version>
+            </dependency>
+            <!-- For Junit -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
-				<!-- 代码格式检查  -->
-				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-checkstyle-plugin -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-checkstyle-plugin</artifactId>
-					<version>${maven-checkstyle-plugin.version}</version>
-				</plugin>
-				<!-- 代码覆盖率 -->
-				<!-- https://mvnrepository.com/artifact/org.codehaus.mojo/cobertura-maven-plugin -->
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>cobertura-maven-plugin</artifactId>
-					<version>${maven-cobertura-plugin.version}</version>
-					<configuration>
-						<formats>
-							<format>html</format>
-							<format>xml</format>
-						</formats>
-						<check>
-							<branchRate>85</branchRate>
-							<lineRate>85</lineRate>
-							<haltOnFailure>true</haltOnFailure>
-							<totalBranchRate>85</totalBranchRate>
-							<totalLineRate>85</totalLineRate>
-							<packageLineRate>85</packageLineRate>
-							<packageBranchRate>85</packageBranchRate>
-							<regexes>
-								<regex>
-									<pattern>com.tianyin.*</pattern>
-									<branchRate>90</branchRate>
-									<lineRate>80</lineRate>
-								</regex>
-							</regexes>
-						</check>
-					</configuration>
-					<executions>
-						<execution>
-							<goals>
-								<goal>clean</goal>
-								<goal>check</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<!-- 依赖检查：检查是否有依赖有漏洞的第三方包 -->
-				<!-- https://mvnrepository.com/artifact/org.owasp/dependency-check-maven -->
-				<plugin>
-					<groupId>org.owasp</groupId>
-					<artifactId>dependency-check-maven</artifactId>
-					<version>${maven-dependency-check-plugin.version}</version>
-					<configuration>
-						<skip>true</skip>
-						<!-- 项目中不涉及 JavaScript 依赖项或无需检查相关漏洞，通过以下方式禁用 RetireJS 扫描 -->
-						<retireJsAnalyzerEnabled>false</retireJsAnalyzerEnabled>
-						<assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
-						<format>HTML</format>
-						<outputDirectory>${project.build.directory}/dependency-check</outputDirectory>
-					</configuration>
-					<executions>
-						<execution>
-							<goals>
-								<goal>check</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<!-- 代码Bug检查：检查类或者 JAR 文件 -->
-				<!-- https://mvnrepository.com/artifact/org.codehaus.mojo/findbugs-maven-plugin -->
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>findbugs-maven-plugin</artifactId>
-					<version>${maven-findbugs-plugin.version}</version>
-					<configuration>
-						<!-- 设置分析工作的等级，可以为Min、Default和Max -->
-						<effort>Low</effort>
-						<!-- Low、Medium和High (Low最严格) -->
-						<threshold>Medium</threshold>
-						<failOnError>true</failOnError>
-						<includeTests>true</includeTests>
-						<!--findbugs需要忽略的错误的配置文件
-                        <excludeFilterFile>findbugs/findbugs-exclude-filter.xml</excludeFilterFile>-->
-					</configuration>
-					<executions>
-						<execution>
-							<id>run-findbugs</id>
-							<!-- 在package 阶段触发执行findbugs检查，比如执行 mvn clean package -->
-							<phase>package</phase>
-							<goals>
-								<goal>check</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<!-- 源码分析  -->
-				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-pmd-plugin -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-pmd-plugin</artifactId>
-					<version>${maven-pmd-plugin.version}</version>
-				</plugin>
-				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<version>${maven-surefire-plugin.vertsion}</version>
-					<configuration>
-						<!-- 跳过单元测试 -->
-						<skip>true</skip>
-						<skipTests>true</skipTests>
-						<!-- forkMode 可设置值有 “never”， “once”， “always” 和 “pertest”。 pretest：
-							每一个测试创建一个新进程，为每个测试创建新的JVM是单独测试的最彻底方式，但也是最慢的，不适合hudson上持续回归。 once：在一个进程中进行所有测试。once为默认设置，在Hudson上持续回归时建议使用默认设置。
-							always：在一个进程中并行的运行脚本，Junit4.7以上版本才可以使用，surefire的版本要在2.6以上提供这个功能，其中 threadCount：执行时，指定可分配的线程数量。只和参数parallel配合使用有效。默认：5。 -->
-						<forkMode>once</forkMode>
-						<argLine>-Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=256m
-							-Dfile.encoding=UTF-8</argLine>
-						<additionalClasspathElements>
-							<additionalClasspathElement>${basedir}/target/test-classes</additionalClasspathElement>
-						</additionalClasspathElements>
-						<includes>
-							<include>**/*Test.java</include>
-						</includes>
-						<excludes>
-							<exclude>**/TestBean.java</exclude>
-						</excludes>
-					</configuration>
-				</plugin>
-				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-jar-plugin</artifactId>
-					<version>${maven-jar-plugin.version}</version>
-					<configuration>
-						<skipIfEmpty>true</skipIfEmpty>
-						<archive>
-							<manifest>
-								<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-								<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-							</manifest>
-						</archive>
-					</configuration>
-				</plugin>
-				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>${maven-javadoc-plugin.version}</version>
-					<configuration>
-						<charset>${project.build.sourceEncoding}</charset>
-						<encoding>${project.build.sourceEncoding}</encoding>
-						<docencoding>${project.build.sourceEncoding}</docencoding>
-					</configuration>
-					<executions>
-						<execution>
-							<id>attach-javadocs</id>
-							<phase>package</phase>
-							<goals>
-								<goal>jar</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>org.sonatype.plugins</groupId>
-					<artifactId>nexus-staging-maven-plugin</artifactId>
-					<version>${maven-nexus-staging-plugin.version}</version>
-					<extensions>true</extensions>
-					<configuration>
-						<serverId>ossrh</serverId>
-						<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-						<autoReleaseAfterClose>false</autoReleaseAfterClose>
-						<!-- <sslAllowAll>true</sslAllowAll> -->
-						<stagingProgressPauseDurationSeconds>60</stagingProgressPauseDurationSeconds>
-						<stagingProgressTimeoutMinutes>20</stagingProgressTimeoutMinutes>
-						<detectBuildFailures>true</detectBuildFailures>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-		<plugins>
-			<!--环境检查插件：代码编译前的环境检查 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-enforcer-plugin</artifactId>
-			</plugin>
-			<!-- findbugs插件 ：代码检查
+    <!-- 项目依赖（dependencies） -->
+    <dependencies>
+        <!-- For Junit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- For Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- For Slf4j -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+    </dependencies>
+
+    <!-- 构建配置（Build） -->
+    <build>
+        <pluginManagement>
+            <plugins>
+
+                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-clean-plugin -->
+                <plugin>
+                    <!-- 清理插件：清理构建输出目录 -->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>${maven-clean-plugin.version}</version>
+                </plugin>
+
+                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+                <plugin>
+                    <!-- 编译插件：编译主代码至主输出目录 -->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <release>${maven.compiler.release}</release>
+                        <proc>full</proc>
+                        <!-- 字符集编码 -->
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <!-- 保留方法参数名，支持 Spring MVC 按参数名绑定 -->
+                        <parameters>true</parameters>
+                        <testExcludes>
+                            <testExclude>**/*.java</testExclude>
+                        </testExcludes>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+
+                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-resources-plugin -->
+                <plugin>
+                    <!-- 资源插件：复制主资源文件至主输出目录 -->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven-resources-plugin.version}</version>
+                    <configuration>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                    </configuration>
+                </plugin>
+
+                <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/flatten-maven-plugin -->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>flatten-maven-plugin</artifactId>
+                    <version>${maven-flatten-plugin.version}</version>
+                    <configuration>
+                        <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                        <updatePomFile>true</updatePomFile>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>flatten</id>
+                            <phase>process-resources</phase>
+                            <goals>
+                                <goal>flatten</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>flatten.clean</id>
+                            <phase>clean</phase>
+                            <goals>
+                                <goal>clean</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
+                <plugin>
+                    <!-- 单元测试插件：执行测试用例 -->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                    <configuration>
+                        <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
+                    </configuration>
+                </plugin>
+
+                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin -->
+                <plugin>
+                    <!-- jar 包生成插件：创建项目 jar 包 -->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven-jar-plugin.version}</version>
+                    <configuration>
+                        <skipIfEmpty>true</skipIfEmpty>
+                        <archive>
+                            <manifest>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            </manifest>
+                        </archive>
+                    </configuration>
+                </plugin>
+
+                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
+                <plugin>
+                    <!-- 文档插件：发布时自动生成 Javadoc 并发布 -->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven-javadoc-plugin.version}</version>
+                    <configuration>
+                        <charset>${project.build.sourceEncoding}</charset>
+                        <docencoding>${project.build.sourceEncoding}</docencoding>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                    </configuration>
+                </plugin>
+
+                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
+                <plugin>
+                    <!-- 源码插件：发布时自动将源码同时发布 -->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven-source-plugin.version}</version>
+                </plugin>
+
+                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-install-plugin -->
+                <plugin>
+                    <!-- 安装插件：将项目输出构件安装到本地仓库 -->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>${maven-install-plugin.version}</version>
+                </plugin>
+
+                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
+                <plugin>
+                    <!-- 发布插件：将项目输出构件部署到远程仓库 -->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${maven-deploy-plugin.version}</version>
+                </plugin>
+
+                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
+                <plugin>
+                    <!-- 签名插件：对制品进行 PGP 签名 -->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${maven-gpg-plugin.version}</version>
+                </plugin>
+
+                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-release-plugin -->
+                <plugin>
+                    <!-- 发布管理插件：版本发布与标签管理 -->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>${maven-release-plugin.version}</version>
+                    <configuration>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <goals>deploy</goals>
+                        <releaseProfiles>release</releaseProfiles>
+                        <tagNameFormat>v@{project.version}</tagNameFormat>
+                        <useReleaseProfile>false</useReleaseProfile>
+                    </configuration>
+                </plugin>
+
+                <!-- https://mvnrepository.com/artifact/org.sonatype.central/central-publishing-maven-plugin -->
+                <plugin>
+                    <!-- 发布插件：将制品发布到 Maven Central Portal -->
+                    <groupId>org.sonatype.central</groupId>
+                    <artifactId>central-publishing-maven-plugin</artifactId>
+                    <version>${central-publishing-maven-plugin.version}</version>
+                </plugin>
+
+                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-enforcer-plugin -->
+                <plugin>
+                    <!-- 环境检查插件：代码编译前的环境监察 -->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>${maven-enforcer-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>enforce-build-environment</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <requireMavenVersion>
+                                        <version>[${maven.version},)</version>
+                                    </requireMavenVersion>
+                                    <requireJavaVersion>
+                                        <version>[${java.version},)</version>
+                                    </requireJavaVersion>
+                                </rules>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>ban-spring-dependencies</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <skip>${allow.spring.dependencies}</skip>
+                                <rules>
+                                    <bannedDependencies>
+                                        <searchTransitive>true</searchTransitive>
+                                        <excludes>
+                                            <exclude>org.springframework:*</exclude>
+                                            <exclude>org.springframework.*:*</exclude>
+                                            <exclude>org.mybatis:mybatis-spring</exclude>
+                                            <exclude>com.baomidou:mybatis-plus-spring</exclude>
+                                        </excludes>
+                                        <message>非 Spring 模块禁止引入 Spring；请将集成代码放入
+                                                                                mybatis-plus-enhance-spring。
+                                                                        </message>
+                                    </bannedDependencies>
+                                </rules>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>enforce-java17-dependency-line</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <bannedDependencies>
+                                        <searchTransitive>true</searchTransitive>
+                                        <excludes>
+                                            <exclude>org.springframework:*:(,6)</exclude>
+                                            <exclude>javax.annotation:*</exclude>
+                                            <exclude>javax.servlet:*</exclude>
+                                            <exclude>com.baomidou:mybatis-plus-jsqlparser-4.9</exclude>
+                                            <exclude>com.github.jsqlparser:jsqlparser:(,5)</exclude>
+                                        </excludes>
+                                        <message>2.0.x 必须保持 JDK 17、Spring 6、Jakarta API 和 JSqlParser 5 兼容。</message>
+                                    </bannedDependencies>
+                                </rules>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+
+            <!-- https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-            </plugin> -->
-			<!-- dependency-check 插件 ：依赖检查-->
-			<plugin>
-				<groupId>org.owasp</groupId>
-				<artifactId>dependency-check-maven</artifactId>
-			</plugin>
-			<!-- 编译插件：编译主代码至主输出目录 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-			</plugin>
-			<!-- 资源插件：复制主资源文件至主输出目录 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-			</plugin>
-			<!-- 单元测试插件 ：执行测试用例 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-			</plugin>
-			<!-- jar包生成插件 ：创建项目jar包 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-			</plugin>
-			<!-- 源码插件:发布时自动将源码同时发布 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-			</plugin>
-			<!-- 安装插件：将项目输出构件安装到本地仓库 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-install-plugin</artifactId>
-			</plugin>
-			<!-- 发布插件 ：将项目输出构件部署到远程仓库 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+                <!-- 覆盖率插件：生成覆盖率报告并校验测试覆盖率（目标 90%） -->
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <haltOnFailure>false</haltOnFailure>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.90</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
-	<profiles>
-		<profile>
-			<id>disable-javadoc-doclint</id>
-			<activation>
-				<jdk>[1.8,)</jdk>
-			</activation>
-			<properties>
-				<additionalparam>-Xdoclint:none</additionalparam>
-			</properties>
-		</profile>
-		<profile>
-			<id>release</id>
-			<build>
-				<plugins>
-					<!--环境检查插件：代码编译前的环境检查 -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-enforcer-plugin</artifactId>
-					</plugin>
-					<!-- findbugs插件 ：代码检查
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+            <plugin>
+                <!-- 编译插件：编译主代码至主输出目录 -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <!-- 源代码编译版本 -->
+                    <source>${java.version}</source>
+                    <!-- 目标平台编译版本 -->
+                    <target>${java.version}</target>
+                    <parameters>true</parameters>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <!-- 编译最大内存 -->
+                    <maxmem>512M</maxmem>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- 构建 Profile 配置 -->
+    <profiles>
+        <!-- 发布到 Maven Central Portal：mvn -Prelease deploy（GPG 签名 + 源码 + Javadoc + Central 发布插件） -->
+
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+
+                    <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
                     <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>findbugs-maven-plugin</artifactId>
-                    </plugin> -->
-					<!-- dependency-check 插件 ：依赖检查-->
-					<plugin>
-						<groupId>org.owasp</groupId>
-						<artifactId>dependency-check-maven</artifactId>
-					</plugin>
-					<!-- 编译插件：编译主代码至主输出目录 -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-					</plugin>
-					<!-- 资源插件：复制主资源文件至主输出目录 -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-resources-plugin</artifactId>
-					</plugin>
-					<!-- 单元测试插件 ：执行测试用例 -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-					</plugin>
-					<!-- jar包生成插件 ：创建项目jar包 -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jar-plugin</artifactId>
-					</plugin>
-					<!-- 源码插件:发布时自动将源码同时发布 -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-source-plugin</artifactId>
-					</plugin>
-					<!-- javadoc -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-					</plugin>
-					<!-- 安装插件：将项目输出构件安装到本地仓库 -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-install-plugin</artifactId>
-					</plugin>
-					<!-- 签名插件：对构建的jar、javadoc、source使用gpg来签名 -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-					</plugin>
-					<!-- 发布插件 ：将项目输出构件部署到远程仓库 -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-deploy-plugin</artifactId>
-					</plugin>
-					<!-- 版本自动升级插件 ：重置版本号 -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-release-plugin</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>org.sonatype.plugins</groupId>
-						<artifactId>nexus-staging-maven-plugin</artifactId>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+                        <!-- 源码插件：发布时自动将源码同时发布 -->
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
-		<!-- Maven Plugin versions -->
-		<maven.version>3.0</maven.version>
-		<maven-clean-plugin.version>3.0.0</maven-clean-plugin.version>
-		<maven-cobertura-plugin.version>2.7</maven-cobertura-plugin.version>
-		<maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
-		<maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
-		<maven-dependency-plugin.version>3.0.1</maven-dependency-plugin.version>
-		<maven-dependency-check-plugin.version>10.0.4</maven-dependency-check-plugin.version>
-		<maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
-		<maven-enforcer-plugin.version>3.0.0-M1</maven-enforcer-plugin.version>
-		<maven-findbugs-plugin.version>3.0.5</maven-findbugs-plugin.version>
-		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
-		<maven-install-plugin.version>2.5.2</maven-install-plugin.version>
-		<maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
-		<maven-javadoc-plugin.version>3.0.0</maven-javadoc-plugin.version>
-		<maven-pmd-plugin.version>3.11.0</maven-pmd-plugin.version>
-		<maven-release-plugin.version>2.5.3</maven-release-plugin.version>
-		<maven-resources-plugin.version>3.0.2</maven-resources-plugin.version>
-		<maven-surefire-plugin.vertsion>2.21.0</maven-surefire-plugin.vertsion>
-		<maven-source-plugin.version>3.0.1</maven-source-plugin.version>
-		<maven-nexus-staging-plugin.version>1.6.8</maven-nexus-staging-plugin.version>
-		<!-- Dependency versions -->
-		<caffeine.version>2.9.3</caffeine.version>
-		<bcprov.version>1.78.1</bcprov.version>
-		<commons-beanutils.version>1.9.4</commons-beanutils.version>
-		<commons-collections4.version>4.5.0-M2</commons-collections4.version>
-		<commons-lang3.version>3.18.0</commons-lang3.version>
-		<contiperf.version>2.3.4</contiperf.version>
-		<hutool.version>5.8.36</hutool.version>
-		<!--<jackson-bom.version>2.12.7.20240502</jackson-bom.version>-->
-		<jackson-bom.version>2.18.3</jackson-bom.version>
-		<json-path.version>2.9.0</json-path.version>
-		<json-smart.version>2.5.2</json-smart.version>
-		<jsqlparser.version>4.9</jsqlparser.version>
-		<junit.version>4.13.2</junit.version>
-		<reflections.version>0.9.12</reflections.version>
-		<slf4j.version>1.7.36</slf4j.version>
-		<spring-framework.version>5.2.15.RELEASE</spring-framework.version>
-		<lombok.version>1.18.10</lombok.version>
-		<mybatis.version>3.5.16</mybatis.version>
-		<mybatis-spring.version>2.1.2</mybatis-spring.version>
-		<mybatis-plus.version>3.5.8</mybatis-plus.version>
-	</properties>
+                    <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
+                    <plugin>
+                        <!-- 文档插件：发布时自动生成 Javadoc 并发布 -->
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
 
-	<dependencyManagement>
-		<dependencies>
-			<!-- https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine -->
-			<dependency>
-				<groupId>com.github.ben-manes.caffeine</groupId>
-				<artifactId>caffeine</artifactId>
-				<version>${caffeine.version}</version>
-			</dependency>
-			<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
-			<dependency>
-				<groupId>org.projectlombok</groupId>
-				<artifactId>lombok</artifactId>
-				<version>${lombok.version}</version>
-			</dependency>
-			<!-- https://mvnrepository.com/artifact/cn.hutool/hutool-all -->
-			<dependency>
-				<groupId>cn.hutool</groupId>
-				<artifactId>hutool-all</artifactId>
-				<version>${hutool.version}</version>
-			</dependency>
-			<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson/jackson-bom -->
-			<dependency>
-				<groupId>com.fasterxml.jackson</groupId>
-				<artifactId>jackson-bom</artifactId>
-				<version>${jackson-bom.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<!-- https://mvnrepository.com/artifact/com.github.jsqlparser/jsqlparser -->
-			<dependency>
-				<groupId>com.github.jsqlparser</groupId>
-				<artifactId>jsqlparser</artifactId>
-				<version>${jsqlparser.version}</version>
-			</dependency>
-			<!-- https://mvnrepository.com/artifact/junit/junit -->
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>${junit.version}</version>
-			</dependency>
-			<!-- https://mvnrepository.com/artifact/org.databene/contiperf -->
-			<dependency>
-				<groupId>org.databene</groupId>
-				<artifactId>contiperf</artifactId>
-				<version>${contiperf.version}</version>
-			</dependency>
+                    <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
+                    <plugin>
+                        <!-- 签名插件：对制品进行 PGP 签名 -->
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
 
-			<!-- https://mvnrepository.com/artifact/org.slf4j -->
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
-				<version>${slf4j.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-simple</artifactId>
-				<version>${slf4j.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk18on -->
-			<dependency>
-				<groupId>org.bouncycastle</groupId>
-				<artifactId>bcprov-jdk18on</artifactId>
-				<version>${bcprov.version}</version>
-			</dependency>
-			<!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
-			<dependency>
-				<groupId>commons-beanutils</groupId>
-				<artifactId>commons-beanutils</artifactId>
-				<version>${commons-beanutils.version}</version>
-			</dependency>
-			<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-lang3</artifactId>
-				<version>${commons-lang3.version}</version>
-			</dependency>
-			<!-- https://mvnrepository.com/artifact/org.mybatis/mybatis -->
-			<dependency>
-				<groupId>org.mybatis</groupId>
-				<artifactId>mybatis</artifactId>
-				<version>${mybatis.version}</version>
-			</dependency>
-			<!-- https://mvnrepository.com/artifact/org.mybatis/mybatis-spring -->
-			<dependency>
-				<groupId>org.mybatis</groupId>
-				<artifactId>mybatis-spring</artifactId>
-				<version>${mybatis-spring.version}</version>
-			</dependency>
-			<!-- https://mvnrepository.com/artifact/com.baomidou/mybatis-plus -->
-			<dependency>
-				<groupId>com.baomidou</groupId>
-				<artifactId>mybatis-plus</artifactId>
-				<version>${mybatis-plus.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.baomidou</groupId>
-				<artifactId>mybatis-plus-extension</artifactId>
-				<version>${mybatis-plus.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.baomidou</groupId>
-				<artifactId>mybatis-plus-core</artifactId>
-				<version>${mybatis-plus.version}</version>
-			</dependency>
-			<!-- https://mvnrepository.com/artifact/org.springframework/spring-framework-bom -->
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-framework-bom</artifactId>
-				<version>${spring-framework.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
-
-	<dependencies>
-
-		<!-- Test dependencies -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-		    <groupId>org.databene</groupId>
-		    <artifactId>contiperf</artifactId>
-		    <scope>test</scope>
-		</dependency>
-
-		<!-- For SLF4J -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<!-- Compile dependencies -->
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<scope>compile</scope>
-		</dependency>
-
-		<!-- For Caffeine -->
-		<dependency>
-			<groupId>com.github.ben-manes.caffeine</groupId>
-			<artifactId>caffeine</artifactId>
-		</dependency>
-		<!-- For Jsqlparser -->
-		<dependency>
-			<groupId>com.github.jsqlparser</groupId>
-			<artifactId>jsqlparser</artifactId>
-		</dependency>
-		<!-- For Commons -->
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-		</dependency>
-		<!-- For Crypto -->
-		<dependency>
-			<groupId>cn.hutool</groupId>
-			<artifactId>hutool-all</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk18on</artifactId>
-		</dependency>
-		<!-- For Jackson -->
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-		</dependency>
-		<!-- For Mybatis Plus -->
-		<dependency>
-			<groupId>com.baomidou</groupId>
-			<artifactId>mybatis-plus</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.baomidou</groupId>
-			<artifactId>mybatis-plus-extension</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.baomidou</groupId>
-			<artifactId>mybatis-plus-core</artifactId>
-		</dependency>
-		<!-- For Spring -->
-		<!-- Bean支持，包括Groovy -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<!-- For Spring Context -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<!-- For Spring Tx -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-tx</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<!-- For Spring Web -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
-
-
+                    <!-- https://mvnrepository.com/artifact/org.sonatype.central/central-publishing-maven-plugin -->
+                    <plugin>
+                        <!-- 发布插件：将制品发布到 Maven Central Portal -->
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <extensions>true</extensions>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>false</autoPublish>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
