@@ -1,135 +1,36 @@
-### IDE ###
-*.iml
-*.ipr
-*.iws
-.idea/
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.apt_generated
-.sts4-cache
-.metadata
-.recommenders
-rebel.xml
-.vscode/
+# Compiled class file
+*.class
 
-### Gradle ###
-.gradle
-!gradle/wrapper/gradle-wrapper.jar
-
-### Maven ###
-target/
-dependency-reduced-pom.xml
-pom.xml.versionsBackup
-.flattened-pom.xml
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-
-### NetBeans ###
-nbproject/private/
-nbbuild/
-nbdist/
-.nb-gradle/
-dist/
-
-### Build ###
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-build.log
-bin/
-lib/
-codes/
-/code
-gen_code
-
-### Logs ###
-logs/
+# Log file
 *.log
-log.*/
-transaction-logs
 
-### Archives ###
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
 *.jar
 *.war
+*.nar
 *.ear
-*.tar
-*.gz
-!/libs/*.jar
+*.zip
+*.tar.gz
+*.rar
 
-### Temporary files ###
-*#
-*.sw?
-*~
-.#*
-.*.md.html
-*.cache
-*.diff
-*.patch
-*.tmp
-*.java~
-*.properties~
-*.xml~
-
-### System files ###
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+replay_pid*
 .DS_Store
-Thumbs.db
-Servers
 
-### Application specific ###
-MANIFEST.MF
-_site/
-activemq-data
-dump.rdb
-interpolated*.xml
-manifest.yml
-overridedb.*
-secrets.yml
-upload
+# Maven
+/target/
 
-### Node / Frontend ###
-node_modules/
-**/.output/
-**/.vite/
-**/.cache/
-**/.parcel-cache/
-**/*.tsbuildinfo
-**/.env.local
-**/.env.*.local
-**/coverage/
-**/storybook-static/
-**/boba-tea-shop/supervisor-agent/**/static/
+# 本地 dreamina CLI 采集输出
+.cli-audit/
 
-### Python ###
+# Python
 __pycache__/
-*.py[cod]
-*$py.class
-*.egg-info/
-.venv/
-
-### Docs ###
-docs/_build
-
-### Rust ###
-Cargo.lock
-
-### Server ###
-/server/nacos-server/data
-/server/nacos-server/logs
-
-### AI / vibe coding ###
-.claude
-openspec
-AGENTS.md
-CLAUDE.md
-.agentscope/
-**/*.db
-
-### Development tools ###
-.fastRequest
-*.http
-*.json
-qodana.yaml
+*.pyc
+target/
