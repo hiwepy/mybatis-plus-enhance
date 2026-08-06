@@ -2,6 +2,8 @@
 
 [English](./README.md) | [简体中文](./README.zh-CN.md)
 
+[![Java](https://img.shields.io/badge/Java-8-orange)](https://github.com/easy-4-java/mybatis-plus-enhance) [![License](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE)
+
 Modular enhancement framework for MyBatis-Plus: transparent encryption, table-level signature, tenant & data-scope support, i18n and SQL observation
 [简体中文](./README.zh-CN.md)
 
