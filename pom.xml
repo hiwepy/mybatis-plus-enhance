@@ -85,7 +85,7 @@
         <maven-resources-plugin.version>3.5.0</maven-resources-plugin.version>
         <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
         <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
-        <bcprov.version>1.81</bcprov.version>
+        <bcprov.version>1.84</bcprov.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
         <hutool.version>5.8.40</hutool.version>
         <h2.version>2.3.232</h2.version>
