@@ -99,7 +99,7 @@
         <easy4j-mybatis-enhance.version>2.0.x.20260630-SNAPSHOT</easy4j-mybatis-enhance.version>
         <mybatis-plus.version>3.5.14</mybatis-plus.version>
         <slf4j.version>2.0.18</slf4j.version>
-        <spring-framework.version>6.2.11</spring-framework.version>
+        <spring-framework.version>6.2.19</spring-framework.version>
         <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
         <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
     
