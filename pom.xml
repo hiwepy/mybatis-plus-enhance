@@ -90,7 +90,7 @@
         <hutool.version>5.8.40</hutool.version>
         <h2.version>2.3.232</h2.version>
         <!-- Dependency versions -->
-        <jackson.version>2.17.2</jackson.version>
+        <jackson.version>2.18.9</jackson.version>
         <jakarta-annotation.version>2.1.1</jakarta-annotation.version>
         <jsqlparser.version>5.2</jsqlparser.version>
         <junit.version>4.13.2</junit.version>
