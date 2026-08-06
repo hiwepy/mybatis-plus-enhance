@@ -1,25 +1,28 @@
 # mybatis-plus-enhance
 
-<div align="center">
-
-**面向 MyBatis-Plus 的模块化增强框架：透明加解密、表级签名、租户与数据权限支持、国际化与 SQL 观测**
-
-![Java](https://img.shields.io/badge/Java-8-orange) ![License](https://img.shields.io/badge/license-Apache%202.0-green)
-
 [English](./README.md) | [简体中文](./README.zh-CN.md)
 
-[1. 项目概述](#1-project-overview) · [2. 能力与状态](#2-features--status) · [3. 运行要求与兼容性](#3-requirements--compatibility) · [4. 架构与模块](#4-architecture--modules) · [5. 引入依赖](#5-installation) · [6. 快速开始](#6-quick-start) · [7. 配置](#7-configuration) · [8. 核心用法](#8-core-usage) · [9. 测试与构建](#9-testing--build) · [10. 版本线与分支](#10-versioning--branches) · [11. 贡献与许可证](#11-contributing--license)
+面向 MyBatis-Plus 的模块化增强框架：透明加解密、表级签名、租户与数据权限支持、国际化与 SQL 观测
 
-</div>
-
----
-
-> **当前分支**：`feature/1.0.x`<br>
-> **版本**：`1.0.x.20260630-SNAPSHOT`<br>
-> **JDK 基线**：8<br>
+> **当前分支**：`feature/1.0.x`
+> **版本**：`1.0.x.20260630-SNAPSHOT`
+> **JDK 基线**：8
 > **项目状态**：维护中（1.0.x 线）。尚未发布 Maven Central；制品通过 Aliyun Maven 仓库与 GitHub Releases 分发。
 
-<a id="1-project-overview"></a>
+## 目录
+
+- [1. 项目概述](#1-项目概述)
+- [2. 能力与状态](#2-features--status)
+- [3. 运行要求与兼容性](#3-requirements--compatibility)
+- [4. 架构与模块](#4-architecture--modules)
+- [5. 引入依赖](#5-installation)
+- [6. 快速开始](#6-quick-start)
+- [7. 配置](#7-configuration)
+- [8. 核心用法](#8-core-usage)
+- [9. 测试与构建](#9-testing--build)
+- [10. 版本线与分支](#10-versioning--branches)
+- [11. 贡献与许可证](#11-contributing--license)
+
 ## 1. 项目概述
 
 ### 1.1 是什么

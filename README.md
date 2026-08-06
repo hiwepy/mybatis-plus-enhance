@@ -1,25 +1,29 @@
 # mybatis-plus-enhance
 
-<div align="center">
+[English](./README.md) | [简体中文](./README.zh-CN.md)
 
-**Modular enhancement framework for MyBatis-Plus: transparent encryption, table-level signature, tenant & data-scope support, i18n and SQL observation**
-
-![Java](https://img.shields.io/badge/Java-8-orange) ![License](https://img.shields.io/badge/license-Apache%202.0-green)
-
+Modular enhancement framework for MyBatis-Plus: transparent encryption, table-level signature, tenant & data-scope support, i18n and SQL observation
 [简体中文](./README.zh-CN.md)
 
-[1. Project Overview](#1-project-overview) · [2. Features & Status](#2-features--status) · [3. Requirements & Compatibility](#3-requirements--compatibility) · [4. Architecture & Modules](#4-architecture--modules) · [5. Installation](#5-installation) · [6. Quick Start](#6-quick-start) · [7. Configuration](#7-configuration) · [8. Core Usage](#8-core-usage) · [9. Testing & Build](#9-testing--build) · [10. Versioning & Branches](#10-versioning--branches) · [11. Contributing & License](#11-contributing--license)
-
-</div>
-
----
-
-> **Current branch**: `feature/1.0.x`<br>
-> **Version**: `1.0.x.20260630-SNAPSHOT`<br>
-> **JDK baseline**: 8<br>
+> **Current branch**: `feature/1.0.x`
+> **Version**: `1.0.x.20260630-SNAPSHOT`
+> **JDK baseline**: 8
 > **Project status**: maintenance (1.0.x line). Not yet published to Maven Central; artifacts are distributed via the Aliyun Maven repository and GitHub Releases.
 
-<a id="1-project-overview"></a>
+## Table of Contents
+
+- [1. Project Overview](#1-project-overview)
+- [2. Features & Status](#2-features--status)
+- [3. Requirements & Compatibility](#3-requirements--compatibility)
+- [4. Architecture & Modules](#4-architecture--modules)
+- [5. Installation](#5-installation)
+- [6. Quick Start](#6-quick-start)
+- [7. Configuration](#7-configuration)
+- [8. Core Usage](#8-core-usage)
+- [9. Testing & Build](#9-testing--build)
+- [10. Versioning & Branches](#10-versioning--branches)
+- [11. Contributing & License](#11-contributing--license)
+
 ## 1. Project Overview
 
 ### 1.1 What it is
