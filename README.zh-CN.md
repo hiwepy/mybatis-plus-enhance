@@ -2,6 +2,8 @@
 
 [English](./README.md) | [简体中文](./README.zh-CN.md)
 
+[![Java](https://img.shields.io/badge/Java-21-orange)](https://github.com/easy-4-java/mybatis-plus-enhance) [![License](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE)
+
 面向 MyBatis-Plus 的模块化增强框架：透明加解密、表级签名、租户与数据权限支持、国际化与 SQL 观测
 
 > **当前分支**：`feature/3.0.x`
