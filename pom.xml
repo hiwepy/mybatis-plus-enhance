@@ -8,12 +8,16 @@
   <version>${revision}</version>
   <packaging>pom</packaging>
   <description>MyBatis-Plus 模块化增强框架</description>
+
+  <!-- 开源协议采用 Apache 2.0 协议 -->
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
       <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
+
+  <!-- 开发者信息 -->
   <developers>
     <developer>
       <name>Loong Wan</name>
@@ -25,6 +29,8 @@
       <timezone>+8</timezone>
     </developer>
   </developers>
+
+  <!-- 源码仓库（SCM）信息 -->
   <scm>
     <connection>scm:git:https://github.com/easy-4-java/mybatis-plus-enhance.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/easy-4-java/mybatis-plus-enhance.git</developerConnection>
@@ -35,6 +41,8 @@
     <system>GitHub Issues</system>
     <url>https://github.com/easy-4-java/mybatis-plus-enhance/issues</url>
   </issueManagement>
+
+  <!-- 制品发布仓库配置（distributionManagement） -->
   <distributionManagement>
     <repository>
       <id>2624322-release-6F6h6R</id>
@@ -62,6 +70,8 @@
     <module>mybatis-plus-enhance-extension</module>
     <module>mybatis-plus-enhance-spring</module>
   </modules>
+
+  <!-- 版本属性定义：Java 版本、依赖版本与 Maven 插件版本统一管理 -->
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -71,7 +81,7 @@
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <allow.spring.dependencies>false</allow.spring.dependencies>
-    <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
+    <maven-central-publishing-plugin.version>0.11.0</maven-central-publishing-plugin.version>
     <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version>
     <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
     <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
@@ -100,9 +110,13 @@
     <slf4j.version>2.0.18</slf4j.version>
     <spring-framework.version>5.3.39</spring-framework.version>
     <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
-    <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
+    <maven-jacoco-plugin.version>0.8.15</maven-jacoco-plugin.version>
   </properties>
+
+  <!-- 依赖版本统一管理（dependencyManagement） -->
   <dependencyManagement>
+
+  <!-- 项目依赖（dependencies） -->
     <dependencies>
       <dependency>
         <groupId>io.github.easy4j</groupId>
@@ -241,6 +255,8 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <!-- 项目依赖（dependencies） -->
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -257,7 +273,11 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
   </dependencies>
+
+  <!-- 构建配置（Build） -->
   <build>
+
+    <!-- 插件版本统一管理（pluginManagement） -->
     <pluginManagement>
       <plugins>
         <plugin>
@@ -265,6 +285,8 @@
           <artifactId>maven-clean-plugin</artifactId>
           <version>${maven-clean-plugin.version}</version>
         </plugin>
+
+        <!-- Maven 编译插件：统一 Java 版本参数与 Lombok 注解处理 -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -337,6 +359,8 @@
             </archive>
           </configuration>
         </plugin>
+
+        <!-- Maven Javadoc 插件：打包 javadoc.jar（Maven Central 发布要求） -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
@@ -347,6 +371,8 @@
             <encoding>${project.build.sourceEncoding}</encoding>
           </configuration>
         </plugin>
+
+        <!-- Maven 源码插件：打包 sources.jar（Maven Central 发布要求） -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
@@ -362,6 +388,8 @@
           <artifactId>maven-deploy-plugin</artifactId>
           <version>${maven-deploy-plugin.version}</version>
         </plugin>
+
+        <!-- GPG 签名插件：对制品进行 PGP 签名（Maven Central 发布要求） -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-gpg-plugin</artifactId>
@@ -379,10 +407,12 @@
             <useReleaseProfile>false</useReleaseProfile>
           </configuration>
         </plugin>
+
+        <!-- Central Publishing 插件：发布制品到 Maven Central Portal -->
         <plugin>
           <groupId>org.sonatype.central</groupId>
           <artifactId>central-publishing-maven-plugin</artifactId>
-          <version>${central-publishing-maven-plugin.version}</version>
+          <version>${maven-central-publishing-plugin.version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -454,10 +484,12 @@
       </plugins>
     </pluginManagement>
     <plugins>
+
+      <!-- JaCoCo 覆盖率插件：生成覆盖率报告并校验测试覆盖率（目标 90%） -->
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>${jacoco-maven-plugin.version}</version>
+        <version>${maven-jacoco-plugin.version}</version>
         <executions>
           <execution>
             <id>prepare-agent</id>
@@ -496,6 +528,8 @@
           </execution>
         </executions>
       </plugin>
+
+      <!-- Maven 编译插件：统一 Java 版本参数与 Lombok 注解处理 -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -517,11 +551,17 @@
       </plugin>
     </plugins>
   </build>
+
+  <!-- 构建 Profile 配置 -->
   <profiles>
     <profile>
       <id>release</id>
+
+  <!-- 构建配置（Build） -->
       <build>
         <plugins>
+
+          <!-- Maven 源码插件：打包 sources.jar（Maven Central 发布要求） -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-source-plugin</artifactId>
@@ -534,6 +574,8 @@
               </execution>
             </executions>
           </plugin>
+
+          <!-- Maven Javadoc 插件：打包 javadoc.jar（Maven Central 发布要求） -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
@@ -546,6 +588,8 @@
               </execution>
             </executions>
           </plugin>
+
+          <!-- GPG 签名插件：对制品进行 PGP 签名（Maven Central 发布要求） -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
@@ -559,6 +603,8 @@
               </execution>
             </executions>
           </plugin>
+
+          <!-- Central Publishing 插件：发布制品到 Maven Central Portal -->
           <plugin>
             <groupId>org.sonatype.central</groupId>
             <artifactId>central-publishing-maven-plugin</artifactId>
