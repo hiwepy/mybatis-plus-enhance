@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import org.apache.ibatis.enhance.annotation.crypto.TableSignature;
 import org.apache.ibatis.enhance.annotation.crypto.TableSignatureField;
 import lombok.Data;
+import org.apache.ibatis.enhance.annotation.crypto.TableSignature;
+import org.apache.ibatis.enhance.annotation.crypto.TableSignatureField;
 
 import java.io.Serializable;
 

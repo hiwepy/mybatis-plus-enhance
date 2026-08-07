@@ -14,6 +14,8 @@ import com.baomidou.mybatisplus.enhance.util.TableFieldHelper;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.SimpleTypeRegistry;
+import org.apache.ibatis.enhance.annotation.crypto.EncryptedField;
+import org.apache.ibatis.enhance.annotation.crypto.EncryptedTable;
 
 import java.util.Arrays;
 import java.util.List;
