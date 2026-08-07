@@ -34,6 +34,23 @@ jobs:
           java-version: '21'
           cache: maven
 
+      - name: Install Easy4J snapshot dependencies
+        env:
+          EASY4J_BRANCH: ${{ github.base_ref || github.ref_name }}
+          EASY4J_DEPENDENCIES: "mybatis-enhance"
+        run: |
+          set -euo pipefail
+          dependency_root="${RUNNER_TEMP}/easy4j-dependencies"
+          mkdir -p "${dependency_root}"
+          for dependency in ${EASY4J_DEPENDENCIES}; do
+            git clone --depth 1 --branch "${EASY4J_BRANCH}" \
+              "https://github.com/easy-4-java/${dependency}.git" \
+              "${dependency_root}/${dependency}"
+            mvn -B --no-transfer-progress \
+              -f "${dependency_root}/${dependency}/pom.xml" \
+              -DskipTests -Djacoco.skip=true -Dgpg.skip=true install
+          done
+
       - name: Build and verify with JaCoCo coverage gate
         run: mvn -B --no-transfer-progress clean verify
 
