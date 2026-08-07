@@ -82,7 +82,7 @@
         <maven.version>3.0</maven.version>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <allow.spring.dependencies>false</allow.spring.dependencies>
-        <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
+        <central-maven-publishing-plugin.version>0.11.0</central-maven-publishing-plugin.version>
         <!-- Maven Plugin versions -->
         <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version>
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
@@ -113,7 +113,7 @@
         <slf4j.version>2.0.18</slf4j.version>
         <spring-framework.version>6.2.16</spring-framework.version>
         <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
-        <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
+        <maven-jacoco-plugin.version>0.8.15</maven-jacoco-plugin.version>
     
 		<junit-jupiter.version>6.1.0</junit-jupiter.version>
 		<commons-lang.version>2.6</commons-lang.version></properties>
@@ -476,7 +476,7 @@
                     <!-- 发布插件：将制品发布到 Maven Central Portal -->
                     <groupId>org.sonatype.central</groupId>
                     <artifactId>central-publishing-maven-plugin</artifactId>
-                    <version>${central-publishing-maven-plugin.version}</version>
+                    <version>${central-maven-publishing-plugin.version}</version>
                 </plugin>
 
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-enforcer-plugin -->
@@ -557,7 +557,7 @@
                 <!-- 覆盖率插件：生成覆盖率报告并校验测试覆盖率（目标 90%） -->
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco-maven-plugin.version}</version>
+                <version>${maven-jacoco-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
