@@ -46,9 +46,17 @@ jobs:
             git clone --depth 1 --branch "${EASY4J_BRANCH}" \
               "https://github.com/easy-4-java/${dependency}.git" \
               "${dependency_root}/${dependency}"
-            mvn -B --no-transfer-progress \
-              -f "${dependency_root}/${dependency}/pom.xml" \
-              -DskipTests -Djacoco.skip=true -Dgpg.skip=true install
+            for attempt in 1 2 3; do
+              if mvn -B --no-transfer-progress \
+                -f "${dependency_root}/${dependency}/pom.xml" \
+                -DskipTests -Djacoco.skip=true -Dgpg.skip=true install; then
+                break
+              fi
+              if [[ "${attempt}" -eq 3 ]]; then
+                exit 1
+              fi
+              sleep "$((attempt * 10))"
+            done
           done
 
       - name: Build and verify with JaCoCo coverage gate
