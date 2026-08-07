@@ -4,7 +4,7 @@
 #   - push / pull_request on the feature/2.0.x branch
 #   - manual workflow_dispatch
 #
-# Runs `./mvnw -B clean verify` which includes the JaCoCo coverage gate
+# Runs `mvn -B clean verify` which includes the JaCoCo coverage gate
 # (90% line coverage, haltOnFailure=false) configured in the POM.
 name: CI
 
@@ -25,21 +25,46 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
           cache: maven
 
+      - name: Install Easy4J snapshot dependencies
+        env:
+          EASY4J_BRANCH: ${{ github.base_ref || github.ref_name }}
+          EASY4J_DEPENDENCIES: "mybatis-enhance"
+        run: |
+          set -euo pipefail
+          dependency_root="${RUNNER_TEMP}/easy4j-dependencies"
+          mkdir -p "${dependency_root}"
+          for dependency in ${EASY4J_DEPENDENCIES}; do
+            git clone --depth 1 --branch "${EASY4J_BRANCH}" \
+              "https://github.com/easy-4-java/${dependency}.git" \
+              "${dependency_root}/${dependency}"
+            for attempt in 1 2 3; do
+              if mvn -B --no-transfer-progress \
+                -f "${dependency_root}/${dependency}/pom.xml" \
+                -DskipTests -Djacoco.skip=true -Dgpg.skip=true install; then
+                break
+              fi
+              if [[ "${attempt}" -eq 3 ]]; then
+                exit 1
+              fi
+              sleep "$((attempt * 10))"
+            done
+          done
+
       - name: Build and verify with JaCoCo coverage gate
-        run: ./mvnw -B --no-transfer-progress clean verify
+        run: mvn -B --no-transfer-progress clean verify
 
       - name: Upload JaCoCo coverage report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: jacoco-coverage
           path: target/site/jacoco
@@ -47,7 +72,7 @@ jobs:
 
       - name: Upload surefire reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: surefire-reports
           path: target/surefire-reports
