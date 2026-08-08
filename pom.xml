@@ -82,7 +82,7 @@
         <maven.version>3.0</maven.version>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <allow.spring.dependencies>false</allow.spring.dependencies>
-        <central-maven-publishing-plugin.version>0.11.0</central-maven-publishing-plugin.version>
+        <maven-central-publishing-plugin.version>0.11.0</maven-central-publishing-plugin.version>
         <!-- Maven Plugin versions -->
         <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version>
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
@@ -476,7 +476,7 @@
                     <!-- 发布插件：将制品发布到 Maven Central Portal -->
                     <groupId>org.sonatype.central</groupId>
                     <artifactId>central-publishing-maven-plugin</artifactId>
-                    <version>${central-maven-publishing-plugin.version}</version>
+                    <version>${maven-central-publishing-plugin.version}</version>
                 </plugin>
 
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-enforcer-plugin -->
