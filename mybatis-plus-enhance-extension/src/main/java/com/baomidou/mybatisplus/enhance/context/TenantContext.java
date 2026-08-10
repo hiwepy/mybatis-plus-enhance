@@ -20,33 +20,37 @@ import com.alibaba.ttl.TransmittableThreadLocal;
 import java.util.Objects;
 
 /**
- * 可透传的租户上下文。
+ * Propagatable tenant context.
  *
- * <p>租户标识保存在 {@link TransmittableThreadLocal} 中，可配合 TTL 提供的线程池包装器
- * 透传到异步任务。推荐使用 {@link #open(Object)} 创建可自动恢复的租户作用域。</p>
+ * <p>Stores the tenant identifier in a {@link TransmittableThreadLocal}, enabling
+ * propagation to async tasks when paired with TTL thread-pool wrappers. It is
+ * recommended to use {@link #open(Object)} to create an auto-restoring tenant scope.</p>
  *
- * <p>该类只管理租户标识，不负责决定表名、租户字段或 SQL 注入规则。</p>
+ * <p>This class only manages the tenant identifier; it does not determine table names,
+ * tenant columns, or SQL injection rules.</p>
+ *
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  */
 public class TenantContext {
 
     /**
-     * 当前执行链绑定的租户标识。
+     * Tenant identifier bound to the current execution chain.
      */
     private static final TransmittableThreadLocal<Object> CURRENT_TENANT_ID = new TransmittableThreadLocal<>();
 
     /**
-     * 获取当前租户标识。
+     * Returns the current tenant identifier.
      *
-     * @return 当前租户标识；未设置时返回 {@code null}
+     * @return the current tenant identifier, or {@code null} if not set
      */
     public Object getCurrentTenantId() {
         return CURRENT_TENANT_ID.get();
     }
 
     /**
-     * 设置当前租户标识。
+     * Sets the current tenant identifier.
      *
-     * @param tenantId 租户标识；为 {@code null} 时清理当前上下文
+     * @param tenantId the tenant identifier; passing {@code null} clears the context
      */
     public void setCurrentTenantId(Object tenantId) {
         if (Objects.isNull(tenantId)) {
@@ -57,17 +61,18 @@ public class TenantContext {
     }
 
     /**
-     * 清理当前线程保存的租户标识。
+     * Clears the tenant identifier stored for the current thread.
      */
     public void clear() {
         CURRENT_TENANT_ID.remove();
     }
 
     /**
-     * 在当前线程中切换租户，并在作用域关闭时恢复先前租户。
+     * Switches the tenant for the current thread and returns a scope that restores
+     * the previous tenant on close.
      *
-     * @param tenantId 当前作用域的租户 ID
-     * @return 可自动恢复上下文的租户作用域
+     * @param tenantId the tenant ID for this scope
+     * @return an auto-restoring tenant scope handle
      */
     public Scope open(Object tenantId) {
         Object previousTenantId = getCurrentTenantId();
@@ -76,32 +81,33 @@ public class TenantContext {
     }
 
     /**
-     * 可自动恢复的租户作用域句柄。
+     * Auto-restoring scope handle for tenant context.
      *
-     * <p>关闭作用域时恢复进入前的租户；重复关闭不会产生副作用。</p>
+     * <p>Closing the scope restores the tenant that was active before opening.
+     * Repeated close calls are safe.</p>
      */
     public static final class Scope implements AutoCloseable {
 
         /**
-         * 负责恢复租户状态的上下文实例。
+         * The context instance responsible for restoring tenant state.
          */
         private final TenantContext context;
 
         /**
-         * 打开当前作用域前绑定的租户标识。
+         * The tenant identifier that was bound before this scope was opened.
          */
         private final Object previousTenantId;
 
         /**
-         * 是否已关闭，用于保证恢复操作幂等。
+         * Whether this scope has been closed, ensuring idempotent restoration.
          */
         private boolean closed;
 
         /**
-         * 创建租户作用域恢复句柄。
+         * Creates a tenant scope restoration handle.
          *
-         * @param context          租户上下文
-         * @param previousTenantId 进入作用域前的租户标识
+         * @param context          the tenant context
+         * @param previousTenantId the tenant identifier before this scope was opened
          */
         private Scope(TenantContext context, Object previousTenantId) {
             this.context = context;
@@ -109,7 +115,7 @@ public class TenantContext {
         }
 
         /**
-         * 关闭租户作用域并恢复先前租户。
+         * Closes this scope and restores the previous tenant.
          */
         @Override
         public void close() {

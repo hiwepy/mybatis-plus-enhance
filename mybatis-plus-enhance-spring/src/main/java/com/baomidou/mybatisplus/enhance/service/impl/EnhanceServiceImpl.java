@@ -25,14 +25,17 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * {@link IEnhanceService} 的抽象基础实现。
- * <p>
- * 该类把签名和验签流程与 MyBatis-Plus 的批量写入、Wrapper 查询及自定义
- * {@link EnhanceBaseMapper} 能力组合起来。子类只需声明具体 Mapper 和实体类型，并注入
- * {@link DataSignatureHandler}。批量写入和补签方法应在事务中调用，以保证业务数据与签名原子提交。
+ * Abstract base implementation of {@link IEnhanceService}.
  *
- * @param <M> 实体对应的增强 Mapper 类型
- * @param <T> MyBatis-Plus 实体类型
+ * <p>Combines signature and verification flows with MyBatis-Plus batch writes, Wrapper
+ * queries, and custom {@link EnhanceBaseMapper} capabilities. Subclasses only need to
+ * declare the concrete Mapper and entity types and inject a {@link DataSignatureHandler}.
+ * Batch write and re-sign methods should be called within a transaction to ensure atomic
+ * commit of business data and signatures.</p>
+ *
+ * @param <M> entity-specific enhanced Mapper type
+ * @param <T> MyBatis-Plus entity type
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  */
 public abstract class EnhanceServiceImpl<M extends EnhanceBaseMapper<T>, T> extends ServiceImpl<M, T> implements IEnhanceService<T> {
 

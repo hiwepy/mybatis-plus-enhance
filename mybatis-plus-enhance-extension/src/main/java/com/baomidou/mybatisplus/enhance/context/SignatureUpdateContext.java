@@ -6,10 +6,13 @@ import com.baomidou.mybatisplus.enhance.crypto.enums.SignatureUpdateStrategy;
 import java.util.Objects;
 
 /**
- * 表签名更新策略线程上下文。
+ * Thread-local context for table-signature update strategy.
  *
- * <p>作用域用于 Service 事务与拦截器之间传递明确的更新语义。调用方必须使用
- * try-with-resources 关闭作用域，嵌套调用会在关闭时恢复上一层策略。</p>
+ * <p>Scopes bridge the gap between Service transactions and interceptors, conveying
+ * explicit update semantics. Callers must use try-with-resources to close the scope;
+ * nesting restores the previous strategy on close.</p>
+ *
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  */
 public final class SignatureUpdateContext {
 
@@ -20,10 +23,10 @@ public final class SignatureUpdateContext {
     }
 
     /**
-     * 打开指定签名更新策略作用域。
+     * Opens a scope with the specified signature update strategy.
      *
-     * @param strategy 当前更新策略
-     * @return 必须关闭的作用域句柄
+     * @param strategy the update strategy for this scope; must not be {@code null}
+     * @return a scope handle that must be closed
      */
     public static Scope open(SignatureUpdateStrategy strategy) {
         SignatureUpdateStrategy previous = STRATEGY.get();
@@ -32,9 +35,10 @@ public final class SignatureUpdateContext {
     }
 
     /**
-     * 获取当前策略；未打开作用域时使用拒绝部分更新的安全默认值。
+     * Returns the current strategy. When no scope is open, defaults to the safe
+     * {@link SignatureUpdateStrategy#REJECT_PARTIAL}.
      *
-     * @return 当前签名更新策略
+     * @return the current signature update strategy
      */
     public static SignatureUpdateStrategy current() {
         SignatureUpdateStrategy strategy = STRATEGY.get();
@@ -42,14 +46,14 @@ public final class SignatureUpdateContext {
     }
 
     /**
-     * 清理当前线程策略，主要供请求边界和测试使用。
+     * Clears the current thread's strategy. Primarily for request boundaries and tests.
      */
     public static void clear() {
         STRATEGY.remove();
     }
 
     /**
-     * 自动恢复上一层签名策略的作用域。
+     * Auto-restoring scope handle for signature update strategy.
      */
     public static final class Scope implements AutoCloseable {
 
