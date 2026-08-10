@@ -75,15 +75,33 @@
 
     
     <properties>
+        <java.version>21</java.version>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+        <maven.version>3.0</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Dependency versions -->
+        <allow.spring.dependencies>false</allow.spring.dependencies>
+        <bcprov.version>1.84</bcprov.version>
+        <commons-lang3.version>3.20.0</commons-lang3.version>
+        <commons-lang.version>2.6</commons-lang.version>
+        <easy4j-mybatis-enhance.version>3.0.x.20260630-SNAPSHOT</easy4j-mybatis-enhance.version>
+        <h2.version>2.4.240</h2.version>
+        <hutool.version>5.8.46</hutool.version>
+        <jackson.version>2.22.0</jackson.version>
+        <jakarta-annotation.version>3.0.0</jakarta-annotation.version>
+        <jsqlparser.version>5.3</jsqlparser.version>
+        <junit-jupiter.version>6.1.0</junit-jupiter.version>
+        <junit.version>4.13.2</junit.version>
+        <lombok.version>1.18.46</lombok.version>
+        <mybatis-plus.version>3.5.16</mybatis-plus.version>
+        <mybatis.version>3.5.19</mybatis.version>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <revision>3.0.x.20260630-SNAPSHOT</revision>
-        <java.version>21</java.version>
-        <maven.version>3.0</maven.version>
-        <maven.compiler.release>${java.version}</maven.compiler.release>
-        <allow.spring.dependencies>false</allow.spring.dependencies>
+        <slf4j.version>2.0.18</slf4j.version>
+        <spring-framework.version>6.2.16</spring-framework.version>
+        <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
+        <!-- Maven Plugin versions -->
         <maven-central-publishing-plugin.version>0.11.0</maven-central-publishing-plugin.version>
-        
         <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version>
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
         <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
@@ -91,32 +109,15 @@
         <maven-flatten-plugin.version>1.7.3</maven-flatten-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <maven-install-plugin.version>3.1.4</maven-install-plugin.version>
+        <maven-jacoco-plugin.version>0.8.15</maven-jacoco-plugin.version>
         <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
         <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
         <maven-release-plugin.version>3.3.1</maven-release-plugin.version>
         <maven-resources-plugin.version>3.5.0</maven-resources-plugin.version>
         <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
         <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
-        <bcprov.version>1.84</bcprov.version>
-        <commons-lang3.version>3.20.0</commons-lang3.version>
-        <hutool.version>5.8.46</hutool.version>
-        <h2.version>2.4.240</h2.version>
-        
-        <jackson.version>2.22.0</jackson.version>
-        <jakarta-annotation.version>3.0.0</jakarta-annotation.version>
-        <jsqlparser.version>5.3</jsqlparser.version>
-        <junit.version>4.13.2</junit.version>
-        <lombok.version>1.18.46</lombok.version>
-        <mybatis.version>3.5.19</mybatis.version>
-        <easy4j-mybatis-enhance.version>3.0.x.20260630-SNAPSHOT</easy4j-mybatis-enhance.version>
-        <mybatis-plus.version>3.5.16</mybatis-plus.version>
-        <slf4j.version>2.0.18</slf4j.version>
-        <spring-framework.version>6.2.16</spring-framework.version>
-        <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
-        <maven-jacoco-plugin.version>0.8.15</maven-jacoco-plugin.version>
-    
-		<junit-jupiter.version>6.1.0</junit-jupiter.version>
-		<commons-lang.version>2.6</commons-lang.version></properties>
+    </properties>
+
 
     
     <dependencyManagement>
