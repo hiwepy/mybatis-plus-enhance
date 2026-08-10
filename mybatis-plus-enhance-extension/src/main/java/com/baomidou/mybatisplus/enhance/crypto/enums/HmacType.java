@@ -3,27 +3,29 @@ package com.baomidou.mybatisplus.enhance.crypto.enums;
 import cn.hutool.crypto.digest.HmacAlgorithm;
 
 /**
- * HMAC 签名算法类型。
+ * HMAC signature algorithm type.
  *
- * <p>本枚举封装标准 HMAC 算法，用于公共 API，隔离第三方密码库类型。</p>
+ * <p>Encapsulates standard HMAC algorithms for use in the public API,
+ * isolating third-party crypto library types.</p>
  *
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 2.0.0
  */
 public enum HmacType {
 
-    /** HMAC-MD5，仅用于兼容历史系统。 */
+    /** HMAC-MD5; for legacy system compatibility only. */
     HmacMD5(HmacAlgorithm.HmacMD5),
 
-    /** HMAC-SHA1。 */
+    /** HMAC-SHA1. */
     HmacSHA1(HmacAlgorithm.HmacSHA1),
 
-    /** HMAC-SHA256，通用推荐。 */
+    /** HMAC-SHA256; generally recommended. */
     HmacSHA256(HmacAlgorithm.HmacSHA256),
 
-    /** HMAC-SHA384。 */
+    /** HMAC-SHA384. */
     HmacSHA384(HmacAlgorithm.HmacSHA384),
 
-    /** HMAC-SHA512。 */
+    /** HMAC-SHA512. */
     HmacSHA512(HmacAlgorithm.HmacSHA512);
 
     private final HmacAlgorithm hutoolAlgorithm;
@@ -33,9 +35,9 @@ public enum HmacType {
     }
 
     /**
-     * 获取内部 Hutool HMAC 算法枚举，仅供框架内部实现使用。
+     * Returns the internal Hutool HMAC algorithm enum for framework-internal use only.
      *
-     * @return Hutool {@link HmacAlgorithm} 实例
+     * @return the Hutool {@link HmacAlgorithm} instance
      */
     public HmacAlgorithm toHutoolAlgorithm() {
         return hutoolAlgorithm;

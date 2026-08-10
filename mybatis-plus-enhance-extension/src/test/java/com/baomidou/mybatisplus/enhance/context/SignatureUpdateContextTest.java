@@ -1,35 +1,71 @@
 package com.baomidou.mybatisplus.enhance.context;
 
 import com.baomidou.mybatisplus.enhance.crypto.enums.SignatureUpdateStrategy;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * {@link SignatureUpdateContext} 嵌套作用域测试。
+ * Unit tests for {@link SignatureUpdateContext}.
+ *
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  */
-public class SignatureUpdateContextTest {
+@DisplayName("SignatureUpdateContext")
+class SignatureUpdateContextTest {
 
-    @After
-    public void tearDown() {
+    @AfterEach
+    void tearDown() {
         SignatureUpdateContext.clear();
     }
 
     @Test
-    public void shouldRestorePreviousStrategyAfterNestedScope() {
-        assertEquals(SignatureUpdateStrategy.REJECT_PARTIAL, SignatureUpdateContext.current());
+    @DisplayName("should default to REJECT_PARTIAL when no scope is open")
+    void shouldDefaultToRejectPartial() {
+        assertThat(SignatureUpdateContext.current())
+                .isEqualTo(SignatureUpdateStrategy.REJECT_PARTIAL);
+    }
+
+    @Test
+    @DisplayName("should restore previous strategy after nested scope")
+    void shouldRestorePreviousStrategyAfterNestedScope() {
+        assertThat(SignatureUpdateContext.current())
+                .isEqualTo(SignatureUpdateStrategy.REJECT_PARTIAL);
 
         try (SignatureUpdateContext.Scope ignored = SignatureUpdateContext.open(
                 SignatureUpdateStrategy.DEFERRED_RESIGN)) {
-            assertEquals(SignatureUpdateStrategy.DEFERRED_RESIGN, SignatureUpdateContext.current());
+            assertThat(SignatureUpdateContext.current())
+                    .isEqualTo(SignatureUpdateStrategy.DEFERRED_RESIGN);
             try (SignatureUpdateContext.Scope nested = SignatureUpdateContext.open(
                     SignatureUpdateStrategy.SIGNATURE_ONLY)) {
-                assertEquals(SignatureUpdateStrategy.SIGNATURE_ONLY, SignatureUpdateContext.current());
+                assertThat(SignatureUpdateContext.current())
+                        .isEqualTo(SignatureUpdateStrategy.SIGNATURE_ONLY);
             }
-            assertEquals(SignatureUpdateStrategy.DEFERRED_RESIGN, SignatureUpdateContext.current());
+            assertThat(SignatureUpdateContext.current())
+                    .isEqualTo(SignatureUpdateStrategy.DEFERRED_RESIGN);
         }
 
-        assertEquals(SignatureUpdateStrategy.REJECT_PARTIAL, SignatureUpdateContext.current());
+        assertThat(SignatureUpdateContext.current())
+                .isEqualTo(SignatureUpdateStrategy.REJECT_PARTIAL);
+    }
+
+    @Test
+    @DisplayName("should be safe to close scope multiple times")
+    void shouldBeSafeToCloseMultipleTimes() {
+        SignatureUpdateContext.Scope scope = SignatureUpdateContext.open(
+                SignatureUpdateStrategy.DEFERRED_RESIGN);
+        scope.close();
+        scope.close();
+        assertThat(SignatureUpdateContext.current())
+                .isEqualTo(SignatureUpdateStrategy.REJECT_PARTIAL);
+    }
+
+    @Test
+    @DisplayName("should reject null strategy")
+    void shouldRejectNullStrategy() {
+        assertThatThrownBy(() -> SignatureUpdateContext.open(null))
+                .isInstanceOf(NullPointerException.class);
     }
 }

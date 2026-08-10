@@ -12,41 +12,47 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * MyBatis-Plus 增强拦截器生命周期扩展。
+ * Lifecycle extension for MyBatis-Plus enhanced interceptors.
  *
- * <p>在官方 {@link InnerInterceptor} 的前置钩子基础上，增加查询成功后、更新成功后以及
- * SQL 执行完成后的回调。实现类由 {@code MybatisPlusEnhanceInterceptor} 统一调度。</p>
+ * <p>Adds post-query, post-update, and post-execution callbacks on top of the official
+ * {@link InnerInterceptor} pre-execution hooks. Implementations are dispatched by the
+ * {@code MybatisPlusEnhanceInterceptor} chain entry point.</p>
  *
- * <p>结果增强方法可以修改返回对象；执行完成方法应保持旁路特性，不得影响 SQL 主流程。</p>
+ * <p>Result-enhancement methods may modify return objects. Execution-complete methods
+ * must remain sidecar-only and must not affect the SQL main flow.</p>
  *
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 2.0.0
  */
 public interface EnhanceInnerInterceptor extends InnerInterceptor {
 
     /**
-     * 声明增强在统一拦截器链中的阶段。
+     * Declares the phase of this enhance interceptor within the unified chain.
      *
-     * <p>框架内置增强必须返回明确阶段；第三方增强默认不参与强制排序，以保持与官方
-     * {@link InnerInterceptor} 的兼容性。</p>
+     * <p>Built-in enhance interceptors must return a definite phase. Third-party
+     * enhancements default to {@link EnhancePhase#UNSPECIFIED} to preserve
+     * compatibility with the official {@link InnerInterceptor} contract.</p>
      *
-     * @return 增强阶段
+     * @return the enhance phase
      */
     default EnhancePhase phase() {
         return EnhancePhase.UNSPECIFIED;
     }
 
     /**
+     * Post-query result enhancement callback, invoked after
      * {@link Executor#query(MappedStatement, Object, RowBounds, ResultHandler, CacheKey, BoundSql)}
-     * 成功完成后的结果增强处理。
+     * completes successfully.
      *
-     * @param executor      MyBatis 执行器，可能是代理对象
-     * @param ms            映射语句元数据
-     * @param parameter     Mapper 调用参数
-     * @param rowBounds     分页边界
-     * @param resultHandler 结果处理器
-     * @param boundSql      已绑定的 SQL
-     * @param rtList        查询结果列表
-     * @throws SQLException 查询结果增强失败时抛出
+     * @param executor       the MyBatis executor (may be a proxy)
+     * @param ms             mapped statement metadata
+     * @param parameter      mapper invocation parameter
+     * @param rowBounds      pagination bounds
+     * @param resultHandler  result handler
+     * @param boundSql       the bound SQL
+     * @param rtList         the query result list
+     * @return the (possibly modified) result list; must not be {@code null}
+     * @throws SQLException if result enhancement fails
      */
     default List<Object> afterQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds,
                                     ResultHandler<?> resultHandler, BoundSql boundSql,
@@ -55,14 +61,15 @@ public interface EnhanceInnerInterceptor extends InnerInterceptor {
     }
 
     /**
-     * {@link Executor#update(MappedStatement, Object)} 成功完成后的增强处理。
+     * Post-update enhancement callback, invoked after
+     * {@link Executor#update(MappedStatement, Object)} completes successfully.
      *
-     * @param executor     MyBatis 执行器，可能是代理对象
-     * @param ms           映射语句元数据
-     * @param parameter    Mapper 调用参数
-     * @param boundSql     已绑定的 SQL
-     * @param affectedRows 影响行数
-     * @throws SQLException 更新结果增强失败时抛出
+     * @param executor      the MyBatis executor (may be a proxy)
+     * @param ms            mapped statement metadata
+     * @param parameter     mapper invocation parameter
+     * @param boundSql      the bound SQL
+     * @param affectedRows  number of affected rows
+     * @throws SQLException if update enhancement fails
      */
     default void afterUpdate(Executor executor, MappedStatement ms, Object parameter, BoundSql boundSql,
                              int affectedRows) throws SQLException {
@@ -70,18 +77,19 @@ public interface EnhanceInnerInterceptor extends InnerInterceptor {
     }
 
     /**
-     * SQL 执行及结果增强全部完成后的生命周期通知。
-     * <p>
-     * 该通知同时覆盖查询、插入、更新、删除以及异常路径，适用于监控、追踪等旁路能力。
-     * 实现不得抛出异常影响 SQL 主流程。
+     * Post-execution lifecycle notification, invoked after all SQL execution and result
+     * enhancement is complete. Covers query, insert, update, delete, and error paths.
+     * Suitable for monitoring, tracing, and other sidecar capabilities.
      *
-     * @param executor     MyBatis 执行器，可能是代理对象
-     * @param ms           映射语句元数据
-     * @param parameter    Mapper 调用参数
-     * @param boundSql     已绑定的 SQL
-     * @param result       执行结果，失败时可能为 {@code null}
-     * @param failure      执行或结果增强异常，成功时为 {@code null}
-     * @param elapsedNanos Executor 实际执行耗时（纳秒）
+     * <p>Implementations must not throw exceptions that affect the SQL main flow.</p>
+     *
+     * @param executor      the MyBatis executor (may be a proxy)
+     * @param ms            mapped statement metadata
+     * @param parameter     mapper invocation parameter
+     * @param boundSql      the bound SQL
+     * @param result        the execution result; may be {@code null} on failure
+     * @param failure       the execution or enhancement exception; {@code null} on success
+     * @param elapsedNanos  executor actual execution time in nanoseconds
      */
     default void afterExecution(Executor executor, MappedStatement ms, Object parameter, BoundSql boundSql,
                                 Object result, Throwable failure, long elapsedNanos) {

@@ -25,52 +25,55 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
- * 默认 MyBatis-Plus 租户处理器。
+ * Default MyBatis-Plus tenant line handler.
  *
- * <p>租户值由 {@link TenantContext} 提供，租户字段和忽略表策略可由使用方配置。</p>
+ * <p>The tenant value is provided by {@link TenantContext}. The tenant column name and
+ * ignore-table strategy are configurable by the caller.</p>
  *
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 2.0.0
  */
 public class DefaultTenantLineHandler implements TenantLineHandler {
 
-    /** 默认租户字段名。 */
+    /** Default tenant column name. */
     public static final String DEFAULT_TENANT_COLUMN = "tenant_id";
 
     /**
-     * 默认不忽略任何业务表的判断策略。
+     * Default predicate that never ignores any business table.
      */
     private static final Predicate<String> NEVER_IGNORE = tableName -> false;
 
     /**
-     * 提供当前执行链租户标识的上下文。
+     * Context providing the current execution chain's tenant identifier.
      */
     private final TenantContext context;
 
     /**
-     * 追加到租户 SQL 条件中的字段名。
+     * Column name appended to tenant SQL conditions.
      */
     private final String tenantColumn;
 
     /**
-     * 判断指定表是否跳过租户条件的策略。
+     * Predicate determining whether a given table should skip the tenant condition.
      */
     private final Predicate<String> ignoredTable;
 
     /**
-     * 使用默认租户字段 {@value #DEFAULT_TENANT_COLUMN} 创建处理器。
+     * Creates a handler using the default tenant column {@value #DEFAULT_TENANT_COLUMN}.
      *
-     * @param context 租户上下文
+     * @param context the tenant context
      */
     public DefaultTenantLineHandler(TenantContext context) {
         this(context, DEFAULT_TENANT_COLUMN, NEVER_IGNORE);
     }
 
     /**
-     * 创建可配置租户字段和忽略表策略的处理器。
+     * Creates a handler with a configurable tenant column and ignore-table strategy.
      *
-     * @param context      租户上下文
-     * @param tenantColumn 租户字段名
-     * @param ignoredTable 返回 {@code true} 时跳过租户条件的表判断器
+     * @param context      the tenant context
+     * @param tenantColumn the tenant column name
+     * @param ignoredTable predicate returning {@code true} for tables that should skip
+     *                     the tenant condition
      */
     public DefaultTenantLineHandler(TenantContext context, String tenantColumn, Predicate<String> ignoredTable) {
         this.context = Objects.requireNonNull(context, "TenantContext must not be null");
@@ -79,10 +82,13 @@ public class DefaultTenantLineHandler implements TenantLineHandler {
     }
 
     /**
-     * 将当前租户标识转换为 JSqlParser 表达式。
+     * Converts the current tenant identifier to a JSqlParser expression.
      *
-     * @return 数字租户使用 {@link LongValue}，其他类型使用 {@link StringValue}
-     * @throws IllegalStateException 当前上下文不存在租户标识时抛出
+     * <p>Numeric tenants produce a {@link LongValue}; all other types produce
+     * a {@link StringValue}.</p>
+     *
+     * @return the tenant expression
+     * @throws IllegalStateException if no tenant identifier is present in the context
      */
     @Override
     public Expression getTenantId() {
@@ -97,9 +103,9 @@ public class DefaultTenantLineHandler implements TenantLineHandler {
     }
 
     /**
-     * 获取租户字段名。
+     * Returns the tenant column name.
      *
-     * @return 租户字段名
+     * @return the tenant column name
      */
     @Override
     public String getTenantIdColumn() {
@@ -107,10 +113,10 @@ public class DefaultTenantLineHandler implements TenantLineHandler {
     }
 
     /**
-     * 判断指定表是否跳过租户条件。
+     * Determines whether the given table should skip the tenant condition.
      *
-     * @param tableName 数据库表名
-     * @return 忽略时返回 {@code true}
+     * @param tableName the database table name
+     * @return {@code true} if the table should be ignored
      */
     @Override
     public boolean ignoreTable(String tableName) {

@@ -5,10 +5,13 @@ import com.alibaba.ttl.TransmittableThreadLocal;
 import java.util.Objects;
 
 /**
- * 表签名验签控制上下文。
+ * Thread-local context for controlling table-signature verification.
  *
- * <p>仅用于历史数据补签和延迟重签流程读取尚未刷新签名的原始行。普通业务查询不得打开
- * 此作用域，确保签名不匹配始终 fail-closed。</p>
+ * <p>Intended only for historical data re-signing and deferred re-sign flows that
+ * read rows whose signatures have not yet been refreshed. Normal business queries
+ * must not open this scope, ensuring that signature mismatches always fail closed.</p>
+ *
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  */
 public final class SignatureVerificationContext {
 
@@ -17,25 +20,37 @@ public final class SignatureVerificationContext {
     private SignatureVerificationContext() {
     }
 
-    /** @return 开启临时忽略验签的维护作用域 */
+    /**
+     * Opens a maintenance scope that temporarily ignores signature verification.
+     *
+     * @return a scope handle that must be closed
+     */
     public static Scope openIgnored() {
         Integer previous = IGNORE_DEPTH.get();
         IGNORE_DEPTH.set(Objects.isNull(previous) ? 1 : previous + 1);
         return new Scope(previous);
     }
 
-    /** @return 当前是否处于维护补签读取作用域 */
+    /**
+     * Returns whether the current thread is within a maintenance re-sign scope.
+     *
+     * @return {@code true} if signature verification is temporarily ignored
+     */
     public static boolean isIgnored() {
         Integer depth = IGNORE_DEPTH.get();
         return Objects.nonNull(depth) && depth > 0;
     }
 
-    /** 清理当前线程状态，主要供请求边界和测试使用。 */
+    /**
+     * Clears the current thread's state. Primarily for request boundaries and tests.
+     */
     public static void clear() {
         IGNORE_DEPTH.remove();
     }
 
-    /** 自动恢复上一层状态的作用域句柄。 */
+    /**
+     * Auto-restoring scope handle for signature verification bypass.
+     */
     public static final class Scope implements AutoCloseable {
 
         private final Integer previous;
