@@ -8,90 +8,67 @@ import com.baomidou.mybatisplus.enhance.util.SymmetricCryptoUtil;
 import lombok.Getter;
 
 /**
- * 内置对称加密算法类型。
- * <p>
- * 枚举值只描述算法名称，实际安全性还取决于模式、填充、密钥长度、IV 生成和密钥管理。
- * 新系统应优先使用 AES 或 SM4 的安全模式，历史算法仅用于兼容已有密文。
- */
-
-/**
- * 内置对称加密算法类型。
- * <p>
- * 枚举值只描述算法名称，实际安全性还取决于模式、填充、密钥长度、IV 生成和密钥管理。
- * 新系统应优先使用 AES 或 SM4 的安全模式，历史算法仅用于兼容已有密文。
+ * Built-in symmetric encryption algorithm type.
+ *
+ * <p>Enum values describe algorithm names only; actual security depends on mode, padding,
+ * key length, IV generation, and key management. New systems should prefer AES or SM4
+ * with secure modes; legacy algorithms exist solely for backward compatibility with
+ * existing ciphertext.</p>
+ *
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  */
 @Getter
 public enum SymmetricAlgorithmType {
 
-    /**
-     * 高级加密标准（AES），新系统的通用首选算法。
-     */
+    /** Advanced Encryption Standard (AES); the通用首选 for new systems. */
     AES(SymmetricAlgorithm.AES.name()),
 
-    /**
-     * ARCFOUR/RC4 流密码，仅用于兼容历史密文。
-     */
+    /** ARCFOUR/RC4 stream cipher; for legacy ciphertext compatibility only. */
     ARCFOUR(SymmetricAlgorithm.ARCFOUR.name()),
 
-    /**
-     * Blowfish 分组密码，仅用于兼容已有系统。
-     */
+    /** Blowfish block cipher; for existing system compatibility only. */
     Blowfish(SymmetricAlgorithm.Blowfish.name()),
 
-    /**
-     * DES 分组密码，安全强度不足，仅用于历史兼容。
-     */
+    /** DES block cipher; insufficient security strength, for legacy compatibility only. */
     DES(SymmetricAlgorithm.DES.name()),
 
-    /**
-     * 三重 DES（DESede），仅用于兼容历史密文。
-     */
+    /** Triple DES (DESede); for legacy ciphertext compatibility only. */
     DESede(SymmetricAlgorithm.DESede.name()),
 
-    /**
-     * RC2 分组密码，仅用于兼容已有系统。
-     */
+    /** RC2 block cipher; for existing system compatibility only. */
     RC2(SymmetricAlgorithm.RC2.name()),
 
-    /**
-     * 基于 MD5 与 DES 的口令加密算法，仅用于兼容历史数据。
-     */
+    /** Password-based encryption with MD5 and DES; for legacy data compatibility only. */
     PBEWithMD5AndDES(SymmetricAlgorithm.PBEWithMD5AndDES.name()),
 
-    /**
-     * 基于 SHA-1 与三重 DES 的口令加密算法，仅用于历史兼容。
-     */
+    /** Password-based encryption with SHA-1 and Triple DES; for legacy compatibility only. */
     PBEWithSHA1AndDESede(SymmetricAlgorithm.PBEWithSHA1AndDESede.name()),
 
-    /**
-     * 基于 SHA-1 与 40 位 RC2 的口令加密算法，仅用于历史兼容。
-     */
+    /** Password-based encryption with SHA-1 and 40-bit RC2; for legacy compatibility only. */
     PBEWithSHA1AndRC2_40(SymmetricAlgorithm.PBEWithSHA1AndRC2_40.name()),
 
-    /**
-     * 中国商用密码分组算法 SM4。
-     */
+    /** Chinese commercial cipher block algorithm SM4. */
     SM4("SM4");
 
     /**
-     * 传递给 Hutool/JCE 的标准算法名称。
+     * Standard algorithm name passed to Hutool/JCE.
      */
     private final String name;
 
     /**
-     * 创建算法类型。
+     * Creates an algorithm type.
      *
-     * @param name Hutool/JCE 算法名称
+     * @param name the Hutool/JCE algorithm name
      */
     SymmetricAlgorithmType(String name) {
         this.name = name;
     }
 
     /**
-     * 按算法名查找枚举值。
+     * Finds the enum value by algorithm name.
      *
-     * @param name Hutool/JCE 算法名称
-     * @return 匹配的算法类型，未找到时返回 {@code null}
+     * @param name the Hutool/JCE algorithm name
+     * @return the matching algorithm type, or {@code null} if not found
      */
     public SymmetricAlgorithmType getFor(String name) {
         for (SymmetricAlgorithmType type : SymmetricAlgorithmType.values()) {
@@ -103,26 +80,26 @@ public enum SymmetricAlgorithmType {
     }
 
     /**
-     * 根据字符串模式与填充方式创建对称加密器。
+     * Creates a symmetric encryptor from string mode and padding names.
      *
-     * @param mode    工作模式名称
-     * @param padding 填充方式名称
-     * @param key     密钥，不应写入日志或源码
-     * @param iv      初始化向量，其长度必须符合算法要求
-     * @return 已配置的对称加密器
+     * @param mode    the block-cipher mode name
+     * @param padding the padding scheme name
+     * @param key     the encryption key; must not be logged or committed to source control
+     * @param iv      the initialization vector; length must meet algorithm requirements
+     * @return the configured symmetric encryptor
      */
     public SymmetricCrypto getSymmetricCrypto(String mode, String padding, String key, String iv) {
         return SymmetricCryptoUtil.getSymmetricCrypto(this.getName(), Mode.valueOf(mode), Padding.valueOf(padding), key, iv);
     }
 
     /**
-     * 根据框架枚举模式与填充方式创建对称加密器。
+     * Creates a symmetric encryptor from framework enum mode and padding.
      *
-     * @param cipherMode    工作模式
-     * @param cipherPadding 填充方式
-     * @param key           密钥，不应写入日志或源码
-     * @param iv            初始化向量，其长度必须符合算法要求
-     * @return 已配置的对称加密器
+     * @param cipherMode    the block-cipher mode
+     * @param cipherPadding the padding scheme
+     * @param key           the encryption key; must not be logged or committed to source control
+     * @param iv            the initialization vector; length must meet algorithm requirements
+     * @return the configured symmetric encryptor
      * @since 2.0.0
      */
     public SymmetricCrypto getSymmetricCrypto(CipherMode cipherMode, CipherPadding cipherPadding, String key, String iv) {
@@ -130,15 +107,15 @@ public enum SymmetricAlgorithmType {
     }
 
     /**
-     * 根据强类型模式与填充方式创建对称加密器。
+     * Creates a symmetric encryptor from Hutool mode and padding enums.
      *
-     * @param mode    工作模式
-     * @param padding 填充方式
-     * @param key     密钥，不应写入日志或源码
-     * @param iv      初始化向量，其长度必须符合算法要求
-     * @return 已配置的对称加密器
-     * @deprecated 使用 {@link #getSymmetricCrypto(CipherMode, CipherPadding, String, String)} 替代，
-     *             避免公共 API 直接依赖 Hutool 类型。
+     * @param mode    the block-cipher mode
+     * @param padding the padding scheme
+     * @param key     the encryption key; must not be logged or committed to source control
+     * @param iv      the initialization vector; length must meet algorithm requirements
+     * @return the configured symmetric encryptor
+     * @deprecated Use {@link #getSymmetricCrypto(CipherMode, CipherPadding, String, String)} instead,
+     *             to avoid exposing Hutool types in the public API.
      */
     @Deprecated
     public SymmetricCrypto getSymmetricCrypto(Mode mode, Padding padding, String key, String iv) {

@@ -19,38 +19,41 @@ import com.baomidou.mybatisplus.annotation.IEnum;
 import lombok.Getter;
 
 /**
- * 数据库整型布尔值枚举。
+ * Database integer boolean enumeration.
  *
- * <p>通过 MyBatis-Plus {@link IEnum} 将 {@code false/true} 分别映射为 {@code 0/1}。</p>
+ * <p>Maps {@code false/true} to {@code 0/1} respectively via the MyBatis-Plus {@link IEnum} contract,
+ * enabling seamless persistence of Java boolean semantics into integer database columns.</p>
+ *
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  */
 @Getter
 public enum BooleanEnum implements IEnum<Integer> {
 
     /**
-     * 数据库存储值 {@code 0}，表示逻辑假。
+     * Database storage value {@code 0}, representing logical false.
      */
     IS_FALSE(false, "否"),
 
     /**
-     * 数据库存储值 {@code 1}，表示逻辑真。
+     * Database storage value {@code 1}, representing logical true.
      */
     IS_TRUE(true, "是");
 
     /**
-     * Java 布尔语义值。
+     * Java boolean semantic value.
      */
     private final boolean booleanValue;
 
     /**
-     * 面向中文展示的枚举名称。
+     * Chinese display name for the enumeration.
      */
     private final String nameCn;
 
     /**
-     * 创建数据库整型布尔枚举。
+     * Creates a database integer boolean enum entry.
      *
-     * @param booleanValue Java 布尔语义值
-     * @param nameCn       中文展示名称
+     * @param booleanValue Java boolean semantic value
+     * @param nameCn       Chinese display name
      */
     BooleanEnum(boolean booleanValue, String nameCn) {
         this.booleanValue = booleanValue;
@@ -58,10 +61,11 @@ public enum BooleanEnum implements IEnum<Integer> {
     }
 
     /**
-     * 根据数据库整型值获取枚举。
+     * Resolves the enum entry from a database integer value.
      *
-     * @param value 数据库存储值，只支持 0 和 1
-     * @return 对应的布尔枚举
+     * @param value database storage value; only {@code 0} and {@code 1} are supported
+     * @return the corresponding boolean enum entry
+     * @throws IllegalArgumentException if the value is not {@code 0} or {@code 1}
      */
     public static BooleanEnum valueOf(int value) {
         if (value == IS_FALSE.getValue()) {
@@ -74,9 +78,9 @@ public enum BooleanEnum implements IEnum<Integer> {
     }
 
     /**
-     * 获取 MyBatis-Plus 写入数据库的枚举值。
+     * Returns the MyBatis-Plus persistence value for this enum entry.
      *
-     * @return {@code false} 对应 {@code 0}，{@code true} 对应 {@code 1}
+     * @return {@code 0} for {@code false}, {@code 1} for {@code true}
      */
     @Override
     public Integer getValue() {

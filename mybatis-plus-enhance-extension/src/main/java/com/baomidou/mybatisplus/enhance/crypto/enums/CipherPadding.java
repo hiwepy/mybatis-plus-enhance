@@ -3,33 +3,35 @@ package com.baomidou.mybatisplus.enhance.crypto.enums;
 import cn.hutool.crypto.Padding;
 
 /**
- * 对称加密填充方式。
+ * Symmetric encryption padding scheme.
  *
- * <p>本枚举封装标准分组密码填充方式，用于公共 API，隔离第三方密码库类型。</p>
+ * <p>Encapsulates standard block-cipher padding schemes for use in the public API,
+ * isolating third-party crypto library types.</p>
  *
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 2.0.0
  */
 public enum CipherPadding {
 
-    /** 不填充，要求明文长度必须为分组长度的整数倍。 */
+    /** No padding; plaintext length must be a multiple of the block size. */
     NoPadding(Padding.NoPadding),
 
-    /** 零字节填充。 */
+    /** Zero-byte padding. */
     ZeroPadding(Padding.ZeroPadding),
 
-    /** ISO 10126 填充。 */
+    /** ISO 10126 padding. */
     ISO10126Padding(Padding.ISO10126Padding),
 
-    /** Optimal Asymmetric Encryption Padding，用于 RSA。 */
+    /** Optimal Asymmetric Encryption Padding; used with RSA. */
     OAEPPadding(Padding.OAEPPadding),
 
-    /** PKCS#1 填充，用于 RSA。 */
+    /** PKCS#1 padding; used with RSA. */
     PKCS1Padding(Padding.PKCS1Padding),
 
-    /** PKCS#5 填充（等同于 PKCS#7 对于 8 字节分组），通用推荐。 */
+    /** PKCS#5 padding (equivalent to PKCS#7 for 8-byte blocks); generally recommended. */
     PKCS5Padding(Padding.PKCS5Padding),
 
-    /** SSL3 填充。 */
+    /** SSL3 padding. */
     SSL3Padding(Padding.SSL3Padding);
 
     private final Padding hutoolPadding;
@@ -39,9 +41,9 @@ public enum CipherPadding {
     }
 
     /**
-     * 获取内部 Hutool 填充枚举，仅供框架内部实现使用。
+     * Returns the internal Hutool padding enum for framework-internal use only.
      *
-     * @return Hutool {@link Padding} 实例
+     * @return the Hutool {@link Padding} instance
      */
     public Padding toHutoolPadding() {
         return hutoolPadding;

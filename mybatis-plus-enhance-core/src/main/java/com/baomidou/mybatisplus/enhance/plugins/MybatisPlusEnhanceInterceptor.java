@@ -24,15 +24,17 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 /**
- * MyBatis-Plus 增强拦截器链入口。
+ * Enhanced interceptor chain entry point for MyBatis-Plus.
  *
- * <p>兼容官方 {@link MybatisPlusInterceptor} 的前置生命周期，并为
- * {@link EnhanceInnerInterceptor} 增加查询成功后、更新成功后和执行完成后的回调。</p>
+ * <p>Extends the official {@link MybatisPlusInterceptor} with post-query, post-update, and
+ * post-execution lifecycle callbacks for {@link EnhanceInnerInterceptor} implementations.
+ * Typical use cases include query result decryption, data signature verification,
+ * SQL observation, and other sidecar enhancements. Standard {@link InnerInterceptor}
+ * implementations continue to execute in registration order without modification.</p>
  *
- * <p>典型用途包括查询结果解密、数据验签、SQL 观测和其他旁路增强。普通官方
- * {@link InnerInterceptor} 仍按注册顺序执行，不需要改造。</p>
+ * <p>Only one instance of this interceptor should be registered per MyBatis Configuration.</p>
  *
- * <p>同一 MyBatis Configuration 中只应注册一个外层拦截器链入口。</p>
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  */
 @Intercepts(
         {
@@ -47,9 +49,10 @@ import java.util.Objects;
 public class MybatisPlusEnhanceInterceptor extends MybatisPlusInterceptor {
 
     /**
-     * 注册内部拦截器并立即校验框架增强阶段顺序。
+     * Registers an inner interceptor and validates the enhance phase ordering.
      *
-     * @param innerInterceptor 待注册拦截器
+     * @param innerInterceptor the interceptor to register; must not be {@code null}
+     * @throws IllegalArgumentException if the interceptor violates enhance phase ordering
      */
     @Override
     public void addInnerInterceptor(InnerInterceptor innerInterceptor) {
@@ -61,9 +64,10 @@ public class MybatisPlusEnhanceInterceptor extends MybatisPlusInterceptor {
     }
 
     /**
-     * 批量设置内部拦截器，并在写入父类前验证阶段顺序。
+     * Bulk-sets inner interceptors after validating enhance phase ordering.
      *
-     * @param interceptors 完整拦截器列表
+     * @param interceptors the complete interceptor list; must not be {@code null}
+     * @throws IllegalArgumentException if the list violates enhance phase ordering
      */
     @Override
     public void setInterceptors(List<InnerInterceptor> interceptors) {
@@ -72,6 +76,10 @@ public class MybatisPlusEnhanceInterceptor extends MybatisPlusInterceptor {
         super.setInterceptors(interceptors);
     }
 
+    /**
+     * Validates that all {@link EnhanceInnerInterceptor} instances appear in non-decreasing
+     * phase order within the given list.
+     */
     private void validateEnhanceOrder(List<InnerInterceptor> interceptors) {
         EnhancePhase previousPhase = null;
         Class<?> previousType = null;
@@ -94,14 +102,15 @@ public class MybatisPlusEnhanceInterceptor extends MybatisPlusInterceptor {
     }
 
     /**
-     * 分派 MyBatis Executor 与 StatementHandler 生命周期。
+     * Dispatches MyBatis Executor and StatementHandler lifecycle events.
      *
-     * <p>查询和更新由本类负责执行，以便在真实执行完成后触发增强回调；StatementHandler
-     * 仍调用官方 InnerInterceptor 的 SQL 准备钩子。</p>
+     * <p>Query and update operations are intercepted so that post-execution enhance callbacks
+     * can be triggered. StatementHandler events delegate to the standard InnerInterceptor
+     * SQL preparation hooks.</p>
      *
-     * @param invocation MyBatis 插件调用上下文
-     * @return SQL 执行结果
-     * @throws Throwable SQL 执行或前置增强失败时透传
+     * @param invocation MyBatis plugin invocation context
+     * @return the SQL execution result
+     * @throws Throwable propagated from SQL execution or enhance processing failures
      */
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
@@ -119,7 +128,6 @@ public class MybatisPlusEnhanceInterceptor extends MybatisPlusInterceptor {
                 if (args.length == 4) {
                     boundSql = ms.getBoundSql(parameter);
                 } else {
-                    // 几乎不可能走进这里面,除非使用Executor的代理对象调用query[args[6]]
                     boundSql = (BoundSql) args[5];
                 }
                 for (InnerInterceptor interceptor : super.getInterceptors()) {
@@ -142,7 +150,6 @@ public class MybatisPlusEnhanceInterceptor extends MybatisPlusInterceptor {
         } else {
             // StatementHandler
             final StatementHandler sh = (StatementHandler) target;
-            // 目前只有StatementHandler.getBoundSql方法args才为null
             if (Objects.isNull(args)) {
                 for (InnerInterceptor innerInterceptor : super.getInterceptors()) {
                     innerInterceptor.beforeGetBoundSql(sh);
@@ -159,10 +166,10 @@ public class MybatisPlusEnhanceInterceptor extends MybatisPlusInterceptor {
     }
 
     /**
-     * 执行查询并依次触发查询后增强和执行完成通知。
+     * Executes a query and triggers post-query enhance callbacks and execution-complete notifications.
      *
-     * @return MyBatis 查询结果
-     * @throws Throwable 查询或结果增强失败时透传
+     * @return the MyBatis query result list
+     * @throws Throwable propagated from query execution or result enhancement failures
      */
     private Object executeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds,
                                 ResultHandler<?> resultHandler, BoundSql boundSql) throws Throwable {
@@ -196,10 +203,10 @@ public class MybatisPlusEnhanceInterceptor extends MybatisPlusInterceptor {
     }
 
     /**
-     * 执行更新并依次触发更新后增强和执行完成通知。
+     * Executes an update and triggers post-update enhance callbacks and execution-complete notifications.
      *
-     * @return MyBatis 更新结果，通常为影响行数
-     * @throws Throwable 更新或结果增强失败时透传
+     * @return the MyBatis update result, typically the affected row count
+     * @throws Throwable propagated from update execution or result enhancement failures
      */
     private Object executeUpdate(Invocation invocation, Executor executor, MappedStatement ms, Object parameter,
                                  BoundSql boundSql) throws Throwable {
@@ -230,9 +237,10 @@ public class MybatisPlusEnhanceInterceptor extends MybatisPlusInterceptor {
     }
 
     /**
-     * 向全部增强拦截器广播执行完成事件。
+     * Broadcasts the execution-complete event to all enhance interceptors.
      *
-     * <p>该阶段属于旁路通知，单个实现的运行时异常会被隔离并记录。</p>
+     * <p>This is a sidecar notification phase; runtime exceptions from individual implementations
+     * are isolated and logged without affecting the SQL main flow.</p>
      */
     private void notifyAfterExecution(Executor executor, MappedStatement ms, Object parameter, BoundSql boundSql,
                                       Object result, Throwable failure, long elapsedNanos) {
@@ -252,9 +260,9 @@ public class MybatisPlusEnhanceInterceptor extends MybatisPlusInterceptor {
     }
 
     /**
-     * 返回当前已注册拦截器列表的诊断文本。
+     * Returns a diagnostic text representation of the registered interceptor chain.
      *
-     * @return 拦截器链描述
+     * @return interceptor chain description
      */
     @Override
     public String toString() {

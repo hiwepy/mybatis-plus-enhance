@@ -3,37 +3,39 @@ package com.baomidou.mybatisplus.enhance.crypto.enums;
 import cn.hutool.crypto.Mode;
 
 /**
- * 对称加密工作模式。
+ * Symmetric encryption block-cipher mode of operation.
  *
- * <p>本枚举封装标准分组密码工作模式，用于公共 API，隔离第三方密码库类型。
- * 新系统应优先使用 {@link #CBC}，不推荐 {@link #ECB}。</p>
+ * <p>Encapsulates standard block-cipher modes for use in the public API, isolating
+ * third-party crypto library types. New systems should prefer {@link #CBC}; {@link #ECB}
+ * is not recommended for encryption.</p>
  *
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 2.0.0
  */
 public enum CipherMode {
 
-    /** 无模式。 */
+    /** No mode. */
     NONE(Mode.NONE),
 
-    /** 密码分组链接模式，通用推荐。 */
+    /** Cipher Block Chaining mode; generally recommended. */
     CBC(Mode.CBC),
 
-    /** 密文反馈模式。 */
+    /** Cipher Feedback mode. */
     CFB(Mode.CFB),
 
-    /** 计数器模式。 */
+    /** Counter mode. */
     CTR(Mode.CTR),
 
-    /** Cipher Text Stealing。 */
+    /** Cipher Text Stealing. */
     CTS(Mode.CTS),
 
-    /** 电子密码本模式，不推荐用于加密。 */
+    /** Electronic Codebook mode; not recommended for encryption. */
     ECB(Mode.ECB),
 
-    /** 输出反馈模式。 */
+    /** Output Feedback mode. */
     OFB(Mode.OFB),
 
-    /** Propagating Cipher Block。 */
+    /** Propagating Cipher Block Chaining. */
     PCBC(Mode.PCBC);
 
     private final Mode hutoolMode;
@@ -43,9 +45,9 @@ public enum CipherMode {
     }
 
     /**
-     * 获取内部 Hutool 模式枚举，仅供框架内部实现使用。
+     * Returns the internal Hutool mode enum for framework-internal use only.
      *
-     * @return Hutool {@link Mode} 实例
+     * @return the Hutool {@link Mode} instance
      */
     public Mode toHutoolMode() {
         return hutoolMode;

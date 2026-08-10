@@ -7,18 +7,21 @@ import org.apache.ibatis.type.SimpleTypeRegistry;
 import java.util.*;
 
 /**
- * MyBatis Mapper 参数归一化工具。
+ * Utility class for normalizing MyBatis Mapper parameters.
  *
- * <p>用于拦截器判断开关状态，并从实体、数组、集合和 ParamMap 中提取去重后的处理对象。</p>
+ * <p>Used by interceptors to evaluate switch states and to extract deduplicated processing
+ * objects from entities, arrays, collections, and {@code ParamMap} instances.</p>
+ *
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  */
 public class ParameterUtils {
 
     /**
-     * 判断参数型增强是否应跳过。
+     * Determines whether parameter-based enhancement should be skipped.
      *
-     * @param globalSwitch    全局开关
-     * @param parameterObject Mapper 参数
-     * @return 开关关闭、参数为空或参数为简单类型时返回 {@code true}
+     * @param globalSwitch    the global enhancement switch
+     * @param parameterObject the Mapper parameter object
+     * @return {@code true} if the switch is off, the parameter is {@code null}, or the parameter is a simple type
      */
     public static boolean isSwitchOff(boolean globalSwitch, Object parameterObject) {
         return !globalSwitch || Objects.isNull(parameterObject) || SimpleTypeRegistry.isSimpleType(parameterObject.getClass());
@@ -26,22 +29,23 @@ public class ParameterUtils {
 
 
     /**
-     * 判断结果集增强是否应跳过。
+     * Determines whether result-set enhancement should be skipped.
      *
-     * @param globalSwitch 全局开关
-     * @param rtObjectList 查询结果列表
-     * @return 开关关闭或结果为空时返回 {@code true}
+     * @param globalSwitch the global enhancement switch
+     * @param rtObjectList the query result list
+     * @return {@code true} if the switch is off or the result list is {@code null} or empty
      */
     public static boolean isSwitchOff(boolean globalSwitch, List<Object> rtObjectList) {
         return !globalSwitch || Objects.isNull(rtObjectList) || CollectionUtils.isEmpty(rtObjectList);
     }
 
     /**
-     * 提取特殊key值 (只支持外层参数,嵌套参数不考虑)
-     * {@code List<Map<?, ?>>} 可以提取外层元素，但不递归展开更深层容器。
+     * Extracts processing objects from the given parameter, supporting top-level
+     * collections, arrays, and {@code Map} values. Nested containers are not
+     * recursively expanded.
      *
-     * @param parameterObject 参数
-     * @return 预期可能为填充参数值
+     * @param parameterObject the Mapper parameter
+     * @return a collection of candidate objects for enhancement processing
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static Collection<Object> extractParameters(Object parameterObject) {
@@ -66,10 +70,10 @@ public class ParameterUtils {
     }
 
     /**
-     * 将单值、对象数组或集合归一化为集合。
+     * Normalizes a single value, object array, or collection into a {@code Collection}.
      *
-     * @param value 待转换值
-     * @return 非空集合；输入为 {@code null} 时返回空集合
+     * @param value the value to convert
+     * @return a non-empty collection; an empty collection if the input is {@code null}
      */
     @SuppressWarnings("unchecked")
     public static Collection<Object> toCollection(Object value) {

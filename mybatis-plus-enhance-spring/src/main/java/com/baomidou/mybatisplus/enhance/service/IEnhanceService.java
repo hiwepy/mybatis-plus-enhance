@@ -17,13 +17,15 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * 支持表级数据签名与验签的 MyBatis-Plus Service 契约。
- * <p>
- * 以 {@link IService} 为基础，为写入、单条查询、列表查询和分页查询提供带签名语义的对等 API。
- * “Signed”方法会在持久化后生成或更新表签名，并在读取后执行验签。
- * 验签失败的处理策略由 {@code DataSignatureHandler} 实现决定。
+ * MyBatis-Plus Service contract with table-level data signature and verification support.
  *
- * @param <T> MyBatis-Plus 实体类型
+ * <p>Extends {@link IService} with signed counterparts for writes, single-row queries,
+ * list queries, and paginated queries. “Signed” methods generate or update the table
+ * signature after persistence and verify it after reads. Signature-verification failure
+ * handling is determined by the {@code DataSignatureHandler} implementation.</p>
+ *
+ * @param <T> MyBatis-Plus entity type
+ * @author <a href=”https://github.com/loong10k”>Loong Wan</a>
  */
 public interface IEnhanceService<T> extends IService<T> {
 

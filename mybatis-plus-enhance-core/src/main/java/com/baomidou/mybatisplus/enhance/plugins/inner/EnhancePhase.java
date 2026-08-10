@@ -1,32 +1,36 @@
 package com.baomidou.mybatisplus.enhance.plugins.inner;
 
 /**
- * MyBatis-Plus 增强拦截器阶段。
+ * Enumeration of phases for MyBatis-Plus enhanced interceptors.
  *
- * <p>阶段顺序同时约束写入前处理和查询后处理：参数先加密再签名，查询结果先验签再解密，
- * 解密后才能执行国际化，观测通知最后执行。未声明阶段的自定义增强不参与强制排序。</p>
+ * <p>Phase ordering constrains both pre-write processing and post-query processing:
+ * parameters are encrypted before signing, query results are verified before decryption,
+ * decryption precedes internationalization, and observation notifications execute last.
+ * Custom enhancements that do not declare a phase are excluded from mandatory ordering.</p>
+ *
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  */
 public enum EnhancePhase {
 
-    /** SQL 结构改写或前置保护。 */
+    /** SQL structure rewriting or pre-execution protection. */
     SQL_REWRITE(100),
 
-    /** 写入参数加密。 */
+    /** Write-parameter encryption. */
     PARAMETER_ENCRYPTION(200),
 
-    /** 写入签名及查询结果验签。 */
+    /** Write-time signing and query-result signature verification. */
     DATA_SIGNATURE(300),
 
-    /** 查询结果解密。 */
+    /** Query-result decryption. */
     RESULT_DECRYPTION(400),
 
-    /** 查询结果国际化。 */
+    /** Query-result internationalization. */
     RESULT_I18N(500),
 
-    /** SQL 执行观测与旁路通知。 */
+    /** SQL execution observation and sidecar notifications. */
     OBSERVATION(900),
 
-    /** 不参与框架顺序校验的自定义阶段。 */
+    /** Custom phase excluded from framework ordering validation. */
     UNSPECIFIED(Integer.MIN_VALUE);
 
     private final int order;
@@ -36,9 +40,9 @@ public enum EnhancePhase {
     }
 
     /**
-     * 获取阶段排序值。
+     * Returns the ordinal value of this phase.
      *
-     * @return 数值越小越先执行
+     * @return the ordering value; smaller values execute earlier
      */
     public int getOrder() {
         return order;
