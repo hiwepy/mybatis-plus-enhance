@@ -63,14 +63,33 @@
 
     <!-- 版本属性定义：Java 版本、依赖版本与 Maven 插件版本统一管理 -->
     <properties>
+        <java.version>17</java.version>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+        <maven.version>3.0</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Dependency versions -->
+        <allow.spring.dependencies>false</allow.spring.dependencies>
+        <bcprov.version>1.81</bcprov.version>
+        <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
+        <commons-lang3.version>3.20.0</commons-lang3.version>
+        <commons-lang.version>2.6</commons-lang.version>
+        <easy4j-mybatis-enhance.version>2.0.x.20260630-SNAPSHOT</easy4j-mybatis-enhance.version>
+        <h2.version>2.3.232</h2.version>
+        <hutool.version>5.8.40</hutool.version>
+        <jackson.version>2.17.2</jackson.version>
+        <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
+        <jakarta-annotation.version>2.1.1</jakarta-annotation.version>
+        <jsqlparser.version>5.2</jsqlparser.version>
+        <junit-jupiter.version>6.1.0</junit-jupiter.version>
+        <junit.version>4.13.2</junit.version>
+        <lombok.version>1.18.46</lombok.version>
+        <mybatis-plus.version>3.5.14</mybatis-plus.version>
+        <mybatis.version>3.5.19</mybatis.version>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <revision>2.0.x.20260630-SNAPSHOT</revision>
-        <java.version>17</java.version>
-        <maven.version>3.0</maven.version>
-        <maven.compiler.release>${java.version}</maven.compiler.release>
-        <allow.spring.dependencies>false</allow.spring.dependencies>
-        <maven-central-publishing-plugin.version>0.11.0</maven-central-publishing-plugin.version>
+        <slf4j.version>2.0.18</slf4j.version>
+        <spring-framework.version>6.2.11</spring-framework.version>
+        <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
         <!-- Maven Plugin versions -->
         <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version>
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
@@ -85,26 +104,9 @@
         <maven-resources-plugin.version>3.5.0</maven-resources-plugin.version>
         <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
         <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
-        <bcprov.version>1.81</bcprov.version>
-        <commons-lang3.version>3.20.0</commons-lang3.version>
-        <hutool.version>5.8.40</hutool.version>
-        <h2.version>2.3.232</h2.version>
-        <!-- Dependency versions -->
-        <jackson.version>2.17.2</jackson.version>
-        <jakarta-annotation.version>2.1.1</jakarta-annotation.version>
-        <jsqlparser.version>5.2</jsqlparser.version>
-        <junit.version>4.13.2</junit.version>
-        <lombok.version>1.18.46</lombok.version>
-        <mybatis.version>3.5.19</mybatis.version>
-        <easy4j-mybatis-enhance.version>2.0.x.20260630-SNAPSHOT</easy4j-mybatis-enhance.version>
-        <mybatis-plus.version>3.5.14</mybatis-plus.version>
-        <slf4j.version>2.0.18</slf4j.version>
-        <spring-framework.version>6.2.11</spring-framework.version>
-        <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
-        <maven-jacoco-plugin.version>0.8.15</maven-jacoco-plugin.version>
-    
-		<junit-jupiter.version>6.1.0</junit-jupiter.version>
-		<commons-lang.version>2.6</commons-lang.version></properties>
+    </properties>
+
+
 
     <!-- 依赖版本统一管理（dependencyManagement） -->
     <dependencyManagement>
@@ -464,7 +466,7 @@
                     <!-- 发布插件：将制品发布到 Maven Central Portal -->
                     <groupId>org.sonatype.central</groupId>
                     <artifactId>central-publishing-maven-plugin</artifactId>
-                    <version>${maven-central-publishing-plugin.version}</version>
+                    <version>${central-publishing-maven-plugin.version}</version>
                 </plugin>
 
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-enforcer-plugin -->
@@ -547,7 +549,7 @@
                 <!-- 覆盖率插件：生成覆盖率报告并校验测试覆盖率（目标 90%） -->
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${maven-jacoco-plugin.version}</version>
+                <version>${jacoco-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
