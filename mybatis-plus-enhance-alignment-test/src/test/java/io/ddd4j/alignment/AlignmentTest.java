@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
  * 密文本身不可直接对比（这由 EnvelopeCompatibilityTest 解决）。本测试对比的是：
  * <strong>两端各自加密相同 plaintext，都能解密回原文</strong>。</p>
  *
- * @author <a href="https://github.com/hiwepy">wandl</a>
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 3.0.x
  */
 public class AlignmentTest {

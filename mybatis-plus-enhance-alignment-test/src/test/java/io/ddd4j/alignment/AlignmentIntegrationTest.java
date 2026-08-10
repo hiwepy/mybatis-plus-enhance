@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
  * 对齐集成测试：同 SQLite schema + 同带注解实体 + 同 Mapper 接口，
  * 在 mybatis-plus-enhance 与 mybatis-enhance 两侧独立运行完整链路。
  *
- * @author <a href="https://github.com/hiwepy">wandl</a>
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  */
 public class AlignmentIntegrationTest {
 

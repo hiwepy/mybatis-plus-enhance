@@ -23,7 +23,7 @@ import java.util.Objects;
  * <p>支持将 {@code key=value} 文本解析为资源键和值；只按第一个等号分隔，
  * 因此值中可以继续包含等号。该对象用于 {@link I18nListResourceBundle} 构造资源条目。</p>
  *
- * @author <a href="mailto:pholser@alumni.rice.edu">Paul Holser</a>
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  */
 public final class KeyValuePair {
 
