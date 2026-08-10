@@ -3,6 +3,8 @@
 
 # Log file
 *.log
+logs/
+log.*/
 
 # BlueJ files
 *.ctxt
@@ -18,19 +20,170 @@
 *.zip
 *.tar.gz
 *.rar
+!/libs/*.jar
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
 .DS_Store
+**/.DS_Store
+Thumbs.db
 
-# Maven
+### Maven ###
 /target/
+target/
+**/target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+dependency-reduced-pom.xml
+**/dependency-reduced-pom.xml
+pom.xml.versionsBackup
+.flattened-pom.xml
+!.mvn/wrapper/maven-wrapper.jar
+
+### Gradle ###
+.gradle
+!gradle/wrapper/gradle-wrapper.jar
+
+### Build ###
+/build/
+build/
+**/build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+bin/
+codes/
+gen_code
+
+### IDE ###
+.idea/
+*.iml
+*.ipr
+*.iws
+.classpath
+.factorypath
+.project
+.settings
+.settings/
+.springBeans
+.apt_generated
+.sts4-cache
+.metadata
+.recommenders
+rebel.xml
+.vscode/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+### Temporary files ###
+*#
+*.swp
+*.swo
+*.sw?
+*~
+.#*
+.*.md.html
+*.cache
+*.diff
+*.patch
+*.tmp
+*.java~
+*.properties~
+*.xml~
+*.gz
+*.http
+*.tar
+
+### Application specific ###
+MANIFEST.MF
+_site/
+activemq-data
+dump.rdb
+interpolated*.xml
+manifest.yml
+overridedb.*
+secrets.yml
+upload
+
+### Node / Frontend ###
+node_modules/
+**/node_modules/
+**/dist/
+**/.output/
+**/.vite/
+**/.cache/
+**/.parcel-cache/
+**/*.tsbuildinfo
+**/coverage/
+**/storybook-static/
+
+### Python ###
+__pycache__/
+*.py[cod]
+*.pyc
+*$py.class
+*.egg-info/
+.venv/
+
+### Docs ###
+docs/_build
+
+### Rust ###
+Cargo.lock
+
+### Server ###
+/server/nacos-server/data
+/server/nacos-server/logs
+
+### AI / vibe coding ###
+.claude
+.claude/
+openspec
+AGENTS.md
+CLAUDE.md
+.agentscope/
+.mimocode/
+.codegraph/
+
+### Local databases ###
+**/*.db
+/agentdb.rvf
+/agentdb.rvf.lock
+/ruvector.db
+
+### Development tools ###
+.fastRequest
+*.json
+!cloud-agents-server/agents/maternal-recovery.json
+qodana.yaml
+
+### Environment and local secrets ###
+.env
+.env.local
+**/.env.local
+**/.env.*.local
+
+### Design and media build artifacts ###
+.video-tmp-*/
+/**/.video-tmp-*/
+/**/_narration/
+**/_narration_*/
+demos/_frames_*.png
+demos/_verify.js
+demos/_verify.mjs
+_style-research/
+**/design-demos/
+demos/**/*.mp4
 
 # 本地 dreamina CLI 采集输出
 .cli-audit/
-
-# Python
-__pycache__/
-*.pyc
-target/
