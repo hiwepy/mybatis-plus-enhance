@@ -76,7 +76,7 @@
         <easy4j-mybatis-enhance.version>2.0.x.20260630-SNAPSHOT</easy4j-mybatis-enhance.version>
         <h2.version>2.3.232</h2.version>
         <hutool.version>5.8.40</hutool.version>
-        <jackson.version>2.17.2</jackson.version>
+        <jackson-bom.version>2.22.1</jackson-bom.version>
         <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
         <jakarta-annotation.version>2.1.1</jakarta-annotation.version>
         <jsqlparser.version>5.2</jsqlparser.version>
@@ -112,6 +112,14 @@
     <!-- 依赖版本统一管理（dependencyManagement） -->
     <dependencyManagement>
         <dependencies>
+            <!-- For Jackson BOM -->
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- Source: https://github.com/easy-4-java/mybatis-enhance-annotation — easy4j mybatis-enhance-annotation -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
@@ -225,12 +233,6 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
-            </dependency>
-            <!-- For Jackson -->
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
             </dependency>
             <!-- For Spring Framework -->
             <dependency>
