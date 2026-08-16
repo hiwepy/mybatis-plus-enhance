@@ -3,7 +3,8 @@ package io.ddd4j.alignment.side;
 import cn.hutool.crypto.Mode;
 import cn.hutool.crypto.Padding;
 import cn.hutool.crypto.digest.HmacAlgorithm;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import io.ddd4j.alignment.entity.SharedUserEntity;
 import io.ddd4j.alignment.mapper.EnhanceUserMapper;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
@@ -57,7 +58,7 @@ public class EnhanceSide implements Closeable {
         String ivBase64 = java.util.Base64.getEncoder().encodeToString(new byte[16]);
 
         DefaultEncryptedFieldHandler fieldHandler = new DefaultEncryptedFieldHandler(
-                new ObjectMapper(),
+                new JsonMapper(),
                 SymmetricAlgorithmType.AES,
                 HmacAlgorithm.HmacSHA256,
                 Mode.CBC,

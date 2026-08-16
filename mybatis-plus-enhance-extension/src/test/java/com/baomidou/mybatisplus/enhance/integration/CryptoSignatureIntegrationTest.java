@@ -25,7 +25,8 @@ import com.baomidou.mybatisplus.enhance.plugins.MybatisPlusEnhanceInterceptor;
 import com.baomidou.mybatisplus.enhance.plugins.inner.DataDecryptionInnerInterceptor;
 import com.baomidou.mybatisplus.enhance.plugins.inner.DataEncryptionInnerInterceptor;
 import com.baomidou.mybatisplus.enhance.plugins.inner.DataSignatureInnerInterceptor;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -65,7 +66,7 @@ public class CryptoSignatureIntegrationTest {
         }
 
         DefaultEncryptedFieldHandler encryptedFieldHandler = new DefaultEncryptedFieldHandler(
-                new ObjectMapper(), SymmetricAlgorithmType.AES, HmacType.HmacSHA256,
+                new JsonMapper(), SymmetricAlgorithmType.AES, HmacType.HmacSHA256,
                 CipherMode.CBC, CipherPadding.PKCS5Padding,
                 new StaticCryptoKeyProvider(new CryptoKeyMaterial(
                         "integration-v1", bytes('e', 16), bytes('m', 32))));

@@ -13,7 +13,7 @@ import com.baomidou.mybatisplus.enhance.crypto.enums.SymmetricAlgorithmType;
 import com.baomidou.mybatisplus.enhance.crypto.key.CryptoKeyMaterial;
 import com.baomidou.mybatisplus.enhance.crypto.key.CryptoKeyProvider;
 import com.baomidou.mybatisplus.enhance.util.SymmetricCryptoUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 

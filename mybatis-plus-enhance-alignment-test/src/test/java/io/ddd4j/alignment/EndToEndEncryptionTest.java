@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.enhance.crypto.enums.CipherMode;
 import com.baomidou.mybatisplus.enhance.crypto.enums.CipherPadding;
 import com.baomidou.mybatisplus.enhance.crypto.enums.HmacType;
 import com.baomidou.mybatisplus.enhance.crypto.enums.SymmetricAlgorithmType;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import io.ddd4j.alignment.entity.SharedUserEntity;
 import io.ddd4j.alignment.mapper.PlusUserMapper;
 import io.ddd4j.alignment.mapper.EnhanceUserMapper;

@@ -9,7 +9,8 @@ import com.baomidou.mybatisplus.enhance.crypto.enums.SymmetricAlgorithmType;
 import com.baomidou.mybatisplus.enhance.crypto.handler.DefaultEncryptedFieldHandler;
 import com.baomidou.mybatisplus.enhance.crypto.key.CryptoKeyMaterial;
 import com.baomidou.mybatisplus.enhance.crypto.key.StaticCryptoKeyProvider;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import cn.hutool.crypto.digest.HmacAlgorithm;
 import org.apache.ibatis.enhance.crypto.handler.EnvelopeEncryptedFieldHandler;
 import org.junit.Before;
@@ -42,7 +43,7 @@ public class AlignmentTest {
 
     @Before
     public void setUp() throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = new JsonMapper();
 
         // Plus 版：使用 StaticCryptoKeyProvider 注入 CryptoKeyMaterial（用 Plus 版的 HmacType）
         CryptoKeyMaterial plusMaterial = new CryptoKeyMaterial("v1", ENC_KEY, AUTH_KEY);

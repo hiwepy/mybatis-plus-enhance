@@ -6,7 +6,8 @@ import com.baomidou.mybatisplus.enhance.crypto.enums.HmacType;
 import com.baomidou.mybatisplus.enhance.crypto.enums.SymmetricAlgorithmType;
 import com.baomidou.mybatisplus.enhance.crypto.key.CryptoKeyMaterial;
 import com.baomidou.mybatisplus.enhance.crypto.key.StaticCryptoKeyProvider;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import org.junit.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -80,7 +81,7 @@ public class DefaultEncryptedFieldHandlerTest {
 
     private DefaultEncryptedFieldHandler createHandler(StaticCryptoKeyProvider provider) {
         return new DefaultEncryptedFieldHandler(
-                new ObjectMapper(), SymmetricAlgorithmType.AES, HmacType.HmacSHA256,
+                new JsonMapper(), SymmetricAlgorithmType.AES, HmacType.HmacSHA256,
                 CipherMode.CBC, CipherPadding.PKCS5Padding, provider);
     }
 

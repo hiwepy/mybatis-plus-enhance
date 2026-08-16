@@ -8,7 +8,8 @@ import com.baomidou.mybatisplus.enhance.crypto.enums.CipherPadding;
 import com.baomidou.mybatisplus.enhance.crypto.handler.DefaultEncryptedFieldHandler;
 import com.baomidou.mybatisplus.enhance.crypto.key.CryptoKeyMaterial;
 import com.baomidou.mybatisplus.enhance.crypto.key.StaticCryptoKeyProvider;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import org.apache.ibatis.enhance.crypto.handler.EnvelopeEncryptedFieldHandler;
 import org.junit.Test;
 
@@ -32,7 +33,7 @@ public class EnvelopeCompatibilityTest {
                 ObjectMapper.class, symClass, HmacAlgorithm.class, Mode.class, Padding.class, matClass);
         ctor.setAccessible(true);
         return (EnvelopeEncryptedFieldHandler) ctor.newInstance(
-                new ObjectMapper(),
+                new JsonMapper(),
                 symClass.getField("AES").get(null),
                 HmacAlgorithm.HmacSHA256, Mode.CBC, Padding.PKCS5Padding,
                 nonPlusMaterial);
@@ -51,7 +52,7 @@ public class EnvelopeCompatibilityTest {
         // Plus 端加密
         CryptoKeyMaterial plusMaterial = new CryptoKeyMaterial("v1", ENC_KEY, AUTH_KEY);
         DefaultEncryptedFieldHandler plusEnc = new DefaultEncryptedFieldHandler(
-                new ObjectMapper(),
+                new JsonMapper(),
                 com.baomidou.mybatisplus.enhance.crypto.enums.SymmetricAlgorithmType.AES,
                 HmacAlgorithm.HmacSHA256,
                 Mode.CBC, Padding.PKCS5Padding,
@@ -83,7 +84,7 @@ public class EnvelopeCompatibilityTest {
             // Plus 端解密
             CryptoKeyMaterial plusMaterial = new CryptoKeyMaterial("v1", ENC_KEY, AUTH_KEY);
             DefaultEncryptedFieldHandler plusDec = new DefaultEncryptedFieldHandler(
-                    new ObjectMapper(),
+                    new JsonMapper(),
                     com.baomidou.mybatisplus.enhance.crypto.enums.SymmetricAlgorithmType.AES,
                     HmacAlgorithm.HmacSHA256,
                     Mode.CBC, Padding.PKCS5Padding,

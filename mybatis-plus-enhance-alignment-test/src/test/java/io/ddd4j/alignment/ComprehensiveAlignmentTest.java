@@ -9,7 +9,8 @@ import com.baomidou.mybatisplus.enhance.crypto.enums.SymmetricAlgorithmType;
 import com.baomidou.mybatisplus.enhance.crypto.handler.DefaultEncryptedFieldHandler;
 import com.baomidou.mybatisplus.enhance.crypto.key.CryptoKeyMaterial;
 import com.baomidou.mybatisplus.enhance.crypto.key.StaticCryptoKeyProvider;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import org.apache.ibatis.enhance.crypto.handler.EnvelopeEncryptedFieldHandler;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -169,7 +170,7 @@ public class ComprehensiveAlignmentTest {
     private static DefaultEncryptedFieldHandler createPlusHandler(byte[] encKey, byte[] authKey) {
         CryptoKeyMaterial material = new CryptoKeyMaterial("v1", encKey, authKey);
         return new DefaultEncryptedFieldHandler(
-                new ObjectMapper(),
+                new JsonMapper(),
                 SymmetricAlgorithmType.AES,
                 HmacType.HmacSHA256,
                 CipherMode.CBC,
@@ -190,7 +191,7 @@ public class ComprehensiveAlignmentTest {
                 Mode.class, Padding.class, matClass);
         ctor.setAccessible(true);
         return (EnvelopeEncryptedFieldHandler) ctor.newInstance(
-                new ObjectMapper(),
+                new JsonMapper(),
                 symClass.getField("AES").get(null),
                 Class.forName("cn.hutool.crypto.digest.HmacAlgorithm").getField("HmacSHA256").get(null),
                 Mode.CBC, Padding.PKCS5Padding,

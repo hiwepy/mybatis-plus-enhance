@@ -79,7 +79,7 @@
         </dependency>
         <!-- Jackson Databind：加密字段的 JSON 序列化和解密类型恢复。 -->
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
+            <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
         <!-- SLF4J API：统一日志门面，不绑定具体日志实现。 -->

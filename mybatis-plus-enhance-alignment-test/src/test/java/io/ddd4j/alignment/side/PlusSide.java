@@ -18,7 +18,8 @@ import com.baomidou.mybatisplus.enhance.plugins.MybatisPlusEnhanceInterceptor;
 import com.baomidou.mybatisplus.enhance.plugins.inner.DataDecryptionInnerInterceptor;
 import com.baomidou.mybatisplus.enhance.plugins.inner.DataEncryptionInnerInterceptor;
 import com.baomidou.mybatisplus.enhance.plugins.inner.DataSignatureInnerInterceptor;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import io.ddd4j.alignment.entity.SharedUserEntity;
 import io.ddd4j.alignment.mapper.PlusUserMapper;
 import org.apache.ibatis.mapping.Environment;
@@ -62,7 +63,7 @@ public class PlusSide implements Closeable {
         }
 
         DefaultEncryptedFieldHandler fieldHandler = new DefaultEncryptedFieldHandler(
-                new ObjectMapper(),
+                new JsonMapper(),
                 SymmetricAlgorithmType.AES,
                 HmacType.HmacSHA256,
                 CipherMode.CBC,
