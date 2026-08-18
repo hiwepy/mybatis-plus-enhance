@@ -4,7 +4,7 @@
 
 > 基于 [MyBatis Plus](https://baomidou.com/introduce/) 的 `数据加解密(Data Encryption And Decryption)`、`数据签名与验签(Data Signature)`、`数据脱敏(Data Masking)`、`数据权限(Data Permission)`、`多租户数据隔离(Multi Tenant Data Isolation)`、`数据国际化(Data Internationalized)` 增强扩展。
 
-Github： https://github.com/hiwepy/mybatis-plus-enhance
+Github： https://github.com/easy-4-java/mybatis-plus-enhance
 
 **MyBatis Plus 增强扩展计划提供以下支持：**
 
