@@ -9,7 +9,6 @@
     <packaging>pom</packaging>
     <description>MyBatis-Plus 模块化增强框架</description>
 
-    
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -17,7 +16,6 @@
         </license>
     </licenses>
 
-    
     <developers>
         <developer>
             <name>Loong Wan</name>
@@ -30,7 +28,6 @@
         </developer>
     </developers>
 
-    
     <scm>
         <connection>scm:git:https://github.com/easy-4-java/mybatis-plus-enhance.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/easy-4-java/mybatis-plus-enhance.git</developerConnection>
@@ -42,7 +39,6 @@
         <url>https://github.com/easy-4-java/mybatis-plus-enhance/issues</url>
     </issueManagement>
 
-    
     <distributionManagement>
         <repository>
             <id>2624322-release-6F6h6R</id>
@@ -66,14 +62,12 @@
         </snapshotRepository>
     </distributionManagement>
 
-    
     <modules>
         <module>mybatis-plus-enhance-core</module>
         <module>mybatis-plus-enhance-extension</module>
         <module>mybatis-plus-enhance-spring</module>
     </modules>
 
-    
     <properties>
         <java.version>21</java.version>
         <maven.compiler.release>${java.version}</maven.compiler.release>
@@ -119,8 +113,6 @@
         <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
     </properties>
 
-
-    
     <dependencyManagement>
         <dependencies>
             <!-- Jackson BOM -->
@@ -131,158 +123,157 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            
+
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>mybatis-enhance-annotation</artifactId>
                 <version>${easy4j-mybatis-enhance.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>mybatis-plus-enhance-core</artifactId>
                 <version>${revision}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>mybatis-plus-enhance-extension</artifactId>
                 <version>${revision}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>mybatis-plus-enhance-spring</artifactId>
                 <version>${revision}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis</artifactId>
                 <version>${mybatis.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-annotation</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-core</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-extension</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-spring</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-jsqlparser</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>com.github.jsqlparser</groupId>
                 <artifactId>jsqlparser</artifactId>
                 <version>${jsqlparser.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>transmittable-thread-local</artifactId>
                 <version>${transmittable-thread-local.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-core</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-crypto</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk18on</artifactId>
                 <version>${bcprov.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
             </dependency>
 
-            
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-beans</artifactId>
                 <version>${spring-framework.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
                 <version>${spring-framework.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-tx</artifactId>
                 <version>${spring-framework.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-web</artifactId>
                 <version>${spring-framework.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>jakarta.annotation</groupId>
                 <artifactId>jakarta.annotation-api</artifactId>
                 <version>${jakarta-annotation.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>${h2.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
@@ -313,52 +304,48 @@
         </dependencies>
     </dependencyManagement>
 
-    
     <dependencies>
-        
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
     </dependencies>
 
-    
     <build>
         <pluginManagement>
             <plugins>
 
-                
                 <plugin>
-                    
+
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>${maven-clean-plugin.version}</version>
                 </plugin>
 
-                
                 <plugin>
-                    
+
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven-compiler-plugin.version}</version>
                     <configuration>
                         <release>${maven.compiler.release}</release>
                         <proc>full</proc>
-                        
+
                         <encoding>${project.build.sourceEncoding}</encoding>
-                        
+
                         <parameters>true</parameters>
                         <testExcludes>
                             <testExclude>**/*.java</testExclude>
@@ -373,9 +360,8 @@
                     </configuration>
                 </plugin>
 
-                
                 <plugin>
-                    
+
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>${maven-resources-plugin.version}</version>
@@ -384,7 +370,6 @@
                     </configuration>
                 </plugin>
 
-                
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
@@ -411,9 +396,8 @@
                     </executions>
                 </plugin>
 
-                
                 <plugin>
-                    
+
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
@@ -422,9 +406,8 @@
                     </configuration>
                 </plugin>
 
-                
                 <plugin>
-                    
+
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>${maven-jar-plugin.version}</version>
@@ -438,9 +421,8 @@
                     </configuration>
                 </plugin>
 
-                
                 <plugin>
-                    
+
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>${maven-javadoc-plugin.version}</version>
@@ -451,41 +433,36 @@
                     </configuration>
                 </plugin>
 
-                
                 <plugin>
-                    
+
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
                     <version>${maven-source-plugin.version}</version>
                 </plugin>
 
-                
                 <plugin>
-                    
+
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
                     <version>${maven-install-plugin.version}</version>
                 </plugin>
 
-                
                 <plugin>
-                    
+
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>${maven-deploy-plugin.version}</version>
                 </plugin>
 
-                
                 <plugin>
-                    
+
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
                     <version>${maven-gpg-plugin.version}</version>
                 </plugin>
 
-                
                 <plugin>
-                    
+
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
                     <version>${maven-release-plugin.version}</version>
@@ -498,17 +475,15 @@
                     </configuration>
                 </plugin>
 
-                
                 <plugin>
-                    
+
                     <groupId>org.sonatype.central</groupId>
                     <artifactId>central-publishing-maven-plugin</artifactId>
                     <version>${maven-central-publishing-plugin.version}</version>
                 </plugin>
 
-                
                 <plugin>
-                    
+
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>${maven-enforcer-plugin.version}</version>
@@ -579,9 +554,8 @@
         </pluginManagement>
         <plugins>
 
-            
             <plugin>
-                
+
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${maven-jacoco-plugin.version}</version>
@@ -624,19 +598,17 @@
                 </executions>
             </plugin>
 
-            
             <plugin>
-                
+
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <release>${java.version}</release>
-                        
-                    
+
                     <parameters>true</parameters>
                     <encoding>${project.build.sourceEncoding}</encoding>
-                    
+
                     <maxmem>512M</maxmem>
                     <annotationProcessorPaths>
                         <path>
@@ -650,18 +622,15 @@
         </plugins>
     </build>
 
-    
     <profiles>
-        
 
         <profile>
             <id>release</id>
             <build>
                 <plugins>
 
-                    
                     <plugin>
-                        
+
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
                         <executions>
@@ -674,9 +643,8 @@
                         </executions>
                     </plugin>
 
-                    
                     <plugin>
-                        
+
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <executions>
@@ -689,9 +657,8 @@
                         </executions>
                     </plugin>
 
-                    
                     <plugin>
-                        
+
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
                         <executions>
@@ -705,9 +672,8 @@
                         </executions>
                     </plugin>
 
-                    
                     <plugin>
-                        
+
                         <groupId>org.sonatype.central</groupId>
                         <artifactId>central-publishing-maven-plugin</artifactId>
                         <extensions>true</extensions>
