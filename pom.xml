@@ -8,7 +8,6 @@
     <version>${revision}</version>
     <packaging>pom</packaging>
     <description>MyBatis-Plus 模块化增强框架</description>
-
     <!-- 开源协议采用 Apache 2.0 协议 -->
     <licenses>
         <license>
@@ -16,7 +15,6 @@
             <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
-
     <!-- 开发者信息 -->
     <developers>
         <developer>
@@ -29,7 +27,6 @@
             <timezone>+8</timezone>
         </developer>
     </developers>
-
     <!-- 源码仓库（SCM）信息 -->
     <scm>
         <connection>scm:git:https://github.com/easy-4-java/mybatis-plus-enhance.git</connection>
@@ -41,7 +38,6 @@
         <system>GitHub Issues</system>
         <url>https://github.com/easy-4-java/mybatis-plus-enhance/issues</url>
     </issueManagement>
-
     <!-- 制品发布仓库配置（distributionManagement） -->
     <distributionManagement>
         <repository>
@@ -65,14 +61,12 @@
             </snapshots>
         </snapshotRepository>
     </distributionManagement>
-
     <!-- 项目子模块（modules） -->
     <modules>
         <module>mybatis-plus-enhance-core</module>
         <module>mybatis-plus-enhance-extension</module>
         <module>mybatis-plus-enhance-spring</module>
     </modules>
-
     <!-- 版本属性定义：Java 版本、依赖版本与 Maven 插件版本统一管理 -->
     <properties>
         <!-- ═══ 第一段: 基础属性（自然排序）═══ -->
@@ -118,10 +112,7 @@
         <maven-resources-plugin.version>3.5.0</maven-resources-plugin.version>
         <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
         <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
-    
     </properties>
-
-
     <!-- 依赖版本统一管理（dependencyManagement） -->
     <dependencyManagement>
         <dependencies>
@@ -313,7 +304,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
     <!-- 项目依赖（dependencies） -->
     <dependencies>
         <!-- For Junit -->
@@ -346,12 +336,10 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
     </dependencies>
-
     <!-- 构建配置（Build） -->
     <build>
         <pluginManagement>
             <plugins>
-
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-clean-plugin -->
                 <plugin>
                     <!-- 清理插件：清理构建输出目录 -->
@@ -359,7 +347,6 @@
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>${maven-clean-plugin.version}</version>
                 </plugin>
-
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
                 <plugin>
                     <!-- 编译插件：编译主代码至主输出目录 -->
@@ -380,7 +367,6 @@
                         </annotationProcessorPaths>
                     </configuration>
                 </plugin>
-
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-resources-plugin -->
                 <plugin>
                     <!-- 资源插件：复制主资源文件至主输出目录 -->
@@ -391,7 +377,6 @@
                         <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
                 </plugin>
-
                 <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/flatten-maven-plugin -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -418,7 +403,6 @@
                         </execution>
                     </executions>
                 </plugin>
-
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
                 <plugin>
                     <!-- 单元测试插件：执行测试用例 -->
@@ -429,7 +413,6 @@
                         <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
                     </configuration>
                 </plugin>
-
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin -->
                 <plugin>
                     <!-- jar 包生成插件：创建项目 jar 包 -->
@@ -445,7 +428,6 @@
                         </archive>
                     </configuration>
                 </plugin>
-
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
                 <plugin>
                     <!-- 文档插件：发布时自动生成 Javadoc 并发布 -->
@@ -458,7 +440,6 @@
                         <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
                 </plugin>
-
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
                 <plugin>
                     <!-- 源码插件：发布时自动将源码同时发布 -->
@@ -466,7 +447,6 @@
                     <artifactId>maven-source-plugin</artifactId>
                     <version>${maven-source-plugin.version}</version>
                 </plugin>
-
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-install-plugin -->
                 <plugin>
                     <!-- 安装插件：将项目输出构件安装到本地仓库 -->
@@ -474,7 +454,6 @@
                     <artifactId>maven-install-plugin</artifactId>
                     <version>${maven-install-plugin.version}</version>
                 </plugin>
-
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
                 <plugin>
                     <!-- 发布插件：将项目输出构件部署到远程仓库 -->
@@ -482,7 +461,6 @@
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>${maven-deploy-plugin.version}</version>
                 </plugin>
-
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
                 <plugin>
                     <!-- 签名插件：对制品进行 PGP 签名 -->
@@ -490,7 +468,6 @@
                     <artifactId>maven-gpg-plugin</artifactId>
                     <version>${maven-gpg-plugin.version}</version>
                 </plugin>
-
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-release-plugin -->
                 <plugin>
                     <!-- 发布管理插件：版本发布与标签管理 -->
@@ -505,7 +482,6 @@
                         <useReleaseProfile>false</useReleaseProfile>
                     </configuration>
                 </plugin>
-
                 <!-- https://mvnrepository.com/artifact/org.sonatype.central/central-publishing-maven-plugin -->
                 <plugin>
                     <!-- 发布插件：将制品发布到 Maven Central Portal -->
@@ -513,7 +489,6 @@
                     <artifactId>central-publishing-maven-plugin</artifactId>
                     <version>${maven-central-publishing-plugin.version}</version>
                 </plugin>
-
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-enforcer-plugin -->
                 <plugin>
                     <!-- 环境检查插件：代码编译前的环境监察 -->
@@ -586,7 +561,6 @@
             </plugins>
         </pluginManagement>
         <plugins>
-
             <!-- https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
             <plugin>
                 <!-- 覆盖率插件：生成覆盖率报告并校验测试覆盖率（目标 90%） -->
@@ -631,7 +605,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
             <plugin>
                 <!-- 编译插件：编译主代码至主输出目录 -->
@@ -654,16 +627,13 @@
             </plugin>
         </plugins>
     </build>
-
     <!-- 构建 Profile 配置 -->
     <profiles>
         <!-- 发布到 Maven Central Portal：mvn -Prelease deploy（GPG 签名 + 源码 + Javadoc + Central 发布插件） -->
-
         <profile>
             <id>release</id>
             <build>
                 <plugins>
-
                     <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
                     <plugin>
                         <!-- 源码插件：发布时自动将源码同时发布 -->
@@ -678,7 +648,6 @@
                             </execution>
                         </executions>
                     </plugin>
-
                     <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
                     <plugin>
                         <!-- 文档插件：发布时自动生成 Javadoc 并发布 -->
@@ -693,7 +662,6 @@
                             </execution>
                         </executions>
                     </plugin>
-
                     <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
                     <plugin>
                         <!-- 签名插件：对制品进行 PGP 签名 -->
@@ -709,7 +677,6 @@
                             </execution>
                         </executions>
                     </plugin>
-
                     <!-- https://mvnrepository.com/artifact/org.sonatype.central/central-publishing-maven-plugin -->
                     <plugin>
                         <!-- 发布插件：将制品发布到 Maven Central Portal -->
