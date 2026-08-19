@@ -366,8 +366,6 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven-compiler-plugin.version}</version>
                     <configuration>
-                        <source>${maven.compiler.source}</source>
-                        <target>${maven.compiler.target}</target>
                         <!-- 字符集编码 -->
                         <encoding>${project.build.sourceEncoding}</encoding>
                         <!-- 保留方法参数名，支持 Spring MVC 按参数名绑定 -->
