@@ -35,7 +35,7 @@
         <connection>scm:git:https://github.com/easy-4-java/mybatis-plus-enhance.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/easy-4-java/mybatis-plus-enhance.git</developerConnection>
         <url>https://github.com/easy-4-java/mybatis-plus-enhance</url>
-        <tag>HEAD</tag>
+        <tag>${project.artifactId}</tag>
     </scm>
     <issueManagement>
         <system>GitHub Issues</system>
@@ -75,11 +75,10 @@
 
     <!-- 版本属性定义：Java 版本、依赖版本与 Maven 插件版本统一管理 -->
     <properties>
+        <!-- ═══ 第一段: 基础属性（自然排序）═══ -->
         <java.version>1.8</java.version>
         <maven.compiler.release>${java.version}</maven.compiler.release>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-        <maven.version>3.0</maven.version>
+        <maven.version>3.9.16</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Dependency versions -->
         <allow.spring.dependencies>false</allow.spring.dependencies>
@@ -641,10 +640,6 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <!-- 源代码编译版本 -->
-                    <source>${java.version}</source>
-                    <!-- 目标平台编译版本 -->
-                    <target>${java.version}</target>
                     <parameters>true</parameters>
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <!-- 编译最大内存 -->
