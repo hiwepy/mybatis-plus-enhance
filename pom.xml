@@ -32,7 +32,7 @@
 
     <properties>
         <!-- ═══ 第一段: 基础属性（自然排序）═══ -->
-        <java.version>1.8</java.version>
+        <java.version>17</java.version>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <maven.version>3.9.16</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -41,27 +41,28 @@
         <!-- Dependency versions -->
         <allow.spring.dependencies>false</allow.spring.dependencies>
         <bcprov.version>1.81</bcprov.version>
+        <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
         <commons-lang.version>2.6</commons-lang.version>
-        <easy4j-mybatis-enhance.version>1.0.x.20260630-SNAPSHOT</easy4j-mybatis-enhance.version>
-        <h2.version>2.2.224</h2.version>
+        <easy4j-mybatis-enhance.version>2.0.x.20260630-SNAPSHOT</easy4j-mybatis-enhance.version>
+        <h2.version>2.3.232</h2.version>
         <hutool.version>5.8.40</hutool.version>
-        <jackson-bom.version>2.18.9</jackson-bom.version>
-        <javax-annotation.version>1.3.2</javax-annotation.version>
-        <jsqlparser.version>4.9</jsqlparser.version>
+        <jackson-bom.version>2.22.1</jackson-bom.version>
+        <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
+        <jakarta-annotation.version>2.1.1</jakarta-annotation.version>
+        <jsqlparser.version>5.2</jsqlparser.version>
         <assertj.version>3.27.3</assertj.version>
-        <junit-jupiter.version>5.11.4</junit-jupiter.version>
+        <junit-jupiter.version>6.1.0</junit-jupiter.version>
         <junit.version>4.13.2</junit.version>
         <lombok.version>1.18.46</lombok.version>
         <mybatis-plus.version>3.5.14</mybatis-plus.version>
         <mybatis.version>3.5.19</mybatis.version>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <revision>1.0.x.20260630-SNAPSHOT</revision>
+        <revision>2.0.x.20260630-SNAPSHOT</revision>
         <slf4j.version>2.0.18</slf4j.version>
-        <spring-framework.version>5.3.39</spring-framework.version>
+        <spring-framework.version>6.2.11</spring-framework.version>
         <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
         <!-- Maven Plugin versions -->
-        <maven-central-publishing-plugin.version>0.11.0</maven-central-publishing-plugin.version>
         <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version>
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
         <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
@@ -69,7 +70,6 @@
         <maven-flatten-plugin.version>1.7.3</maven-flatten-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <maven-install-plugin.version>3.1.4</maven-install-plugin.version>
-        <maven-jacoco-plugin.version>0.8.15</maven-jacoco-plugin.version>
         <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
         <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
         <maven-release-plugin.version>3.3.1</maven-release-plugin.version>
@@ -142,10 +142,10 @@
                 <artifactId>mybatis-plus-spring</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-jsqlparser-4.9 -->
+            <!-- https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-jsqlparser -->
             <dependency>
                 <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-jsqlparser-4.9</artifactId>
+                <artifactId>mybatis-plus-jsqlparser</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
             <!-- For JSqlParser -->
@@ -228,9 +228,9 @@
             </dependency>
             <!-- For Annotation Api -->
             <dependency>
-                <groupId>javax.annotation</groupId>
-                <artifactId>javax.annotation-api</artifactId>
-                <version>${javax-annotation.version}</version>
+                <groupId>jakarta.annotation</groupId>
+                <artifactId>jakarta.annotation-api</artifactId>
+                <version>${jakarta-annotation.version}</version>
             </dependency>
             <!-- For H2 -->
             <dependency>
@@ -305,22 +305,10 @@
         <repository>
             <id>2624322-release-6F6h6R</id>
             <url>https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-release-6f6h6r</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
         </repository>
         <snapshotRepository>
             <id>2624322-snapshot-3EoOv3</id>
             <url>https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
         </snapshotRepository>
     </distributionManagement>
 
@@ -343,10 +331,15 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven-compiler-plugin.version}</version>
                     <configuration>
+                        <release>${maven.compiler.release}</release>
+                        <proc>full</proc>
                         <!-- 字符集编码 -->
                         <encoding>${project.build.sourceEncoding}</encoding>
                         <!-- 保留方法参数名，支持 Spring MVC 按参数名绑定 -->
                         <parameters>true</parameters>
+                        <testExcludes>
+                            <testExclude>**/*.java</testExclude>
+                        </testExcludes>
                         <annotationProcessorPaths>
                             <path>
                                 <groupId>org.projectlombok</groupId>
@@ -487,7 +480,7 @@
                     <!-- 发布插件：将制品发布到 Maven Central Portal -->
                     <groupId>org.sonatype.central</groupId>
                     <artifactId>central-publishing-maven-plugin</artifactId>
-                    <version>${maven-central-publishing-plugin.version}</version>
+                    <version>${central-publishing-maven-plugin.version}</version>
                 </plugin>
 
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-enforcer-plugin -->
@@ -530,13 +523,15 @@
                                             <exclude>org.mybatis:mybatis-spring</exclude>
                                             <exclude>com.baomidou:mybatis-plus-spring</exclude>
                                         </excludes>
-                                        <message>非 Spring 模块禁止引入 Spring；请将集成代码放入 mybatis-plus-enhance-spring。</message>
+                                        <message>非 Spring 模块禁止引入 Spring；请将集成代码放入
+                                                                                mybatis-plus-enhance-spring。
+                                                                        </message>
                                     </bannedDependencies>
                                 </rules>
                             </configuration>
                         </execution>
                         <execution>
-                            <id>enforce-java8-dependency-line</id>
+                            <id>enforce-java17-dependency-line</id>
                             <phase>validate</phase>
                             <goals>
                                 <goal>enforce</goal>
@@ -546,13 +541,13 @@
                                     <bannedDependencies>
                                         <searchTransitive>true</searchTransitive>
                                         <excludes>
-                                            <exclude>org.springframework:*:[6,)</exclude>
-                                            <exclude>jakarta.annotation:*</exclude>
-                                            <exclude>jakarta.servlet:*</exclude>
-                                            <exclude>com.baomidou:mybatis-plus-jsqlparser</exclude>
-                                            <exclude>com.github.jsqlparser:jsqlparser:[5,)</exclude>
+                                            <exclude>org.springframework:*:(,6)</exclude>
+                                            <exclude>javax.annotation:*</exclude>
+                                            <exclude>javax.servlet:*</exclude>
+                                            <exclude>com.baomidou:mybatis-plus-jsqlparser-4.9</exclude>
+                                            <exclude>com.github.jsqlparser:jsqlparser:(,5)</exclude>
                                         </excludes>
-                                        <message>1.0.x 必须保持 JDK 8、Spring 5.3、javax API 和 JSqlParser 4.9 兼容。</message>
+                                        <message>2.0.x 必须保持 JDK 17、Spring 6、Jakarta API 和 JSqlParser 5 兼容。</message>
                                     </bannedDependencies>
                                 </rules>
                             </configuration>
@@ -568,7 +563,7 @@
                 <!-- 覆盖率插件：生成覆盖率报告并校验测试覆盖率（目标 90%） -->
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${maven-jacoco-plugin.version}</version>
+                <version>${jacoco-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
