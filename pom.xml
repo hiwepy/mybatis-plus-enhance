@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.1.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.1.0.xsd">
     <modelVersion>4.1.0</modelVersion>
     <groupId>io.github.easy4j</groupId>
     <artifactId>mybatis-plus-enhance</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
     <url>https://github.com/easy-4-java/${project.artifactId}</url>
-    <version>${revision}</version>
+    <version>3.0.x.20260630-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>MyBatis-Plus 模块化增强框架</description>
-    <!-- 开源协议采用 Apache 2.0 协议 -->
+    
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
             <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
-    <!-- 开发者信息 -->
+    
     <developers>
         <developer>
             <name>Loong Wan</name>
@@ -28,12 +28,12 @@
         </developer>
     </developers>
     <properties>
-        <!-- ═══ 第一段: 基础属性（自然排序）═══ -->
-        <java.version>17</java.version>
+        
+        <java.version>21</java.version>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <maven.version>4.0.0-rc-5</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- Dependency versions -->
+        
         <allow.spring.dependencies>false</allow.spring.dependencies>
         <bcprov.version>1.81</bcprov.version>
         <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
@@ -57,7 +57,7 @@
         <slf4j.version>2.0.18</slf4j.version>
         <spring-framework.version>6.2.11</spring-framework.version>
         <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
-        <!-- Maven Plugin versions -->
+        
         <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version>
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
         <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
@@ -74,7 +74,7 @@
     </properties>
     <dependencyManagement>
         <dependencies>
-            <!-- For Jackson BOM -->
+            
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
@@ -82,163 +82,163 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!-- Source: https://github.com/easy-4-java/mybatis-enhance-annotation — easy4j mybatis-enhance-annotation -->
+            
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>mybatis-enhance-annotation</artifactId>
                 <version>${easy4j-mybatis-enhance.version}</version>
             </dependency>
-            <!-- Source: https://github.com/easy-4-java/mybatis-plus-enhance-core — easy4j mybatis-plus-enhance-core -->
+            
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>mybatis-plus-enhance-core</artifactId>
                 <version>${revision}</version>
             </dependency>
-            <!-- Source: https://github.com/easy-4-java/mybatis-plus-enhance-extension — easy4j mybatis-plus-enhance-extension -->
+            
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>mybatis-plus-enhance-extension</artifactId>
                 <version>${revision}</version>
             </dependency>
-            <!-- Source: https://github.com/easy-4-java/mybatis-plus-enhance-spring — easy4j mybatis-plus-enhance-spring -->
+            
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>mybatis-plus-enhance-spring</artifactId>
                 <version>${revision}</version>
             </dependency>
-            <!-- For MyBatis -->
+            
             <dependency>
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis</artifactId>
                 <version>${mybatis.version}</version>
             </dependency>
-            <!-- For MyBatis Plus -->
+            
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-annotation</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
-            <!-- For MyBatis Plus -->
+            
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-core</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
-            <!-- For MyBatis Plus -->
+            
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-extension</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
-            <!-- For MyBatis Plus -->
+            
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-spring</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-jsqlparser -->
+            
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-jsqlparser</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
-            <!-- For JSqlParser -->
+            
             <dependency>
                 <groupId>com.github.jsqlparser</groupId>
                 <artifactId>jsqlparser</artifactId>
                 <version>${jsqlparser.version}</version>
             </dependency>
-            <!-- For Slf4j -->
+            
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
-            <!-- For Slf4j -->
+            
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
-            <!-- For Lombok -->
+            
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
             </dependency>
-            <!-- For Transmittable Thread Local -->
+            
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>transmittable-thread-local</artifactId>
                 <version>${transmittable-thread-local.version}</version>
             </dependency>
-            <!-- For Hutool -->
+            
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-core</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
-            <!-- For Hutool -->
+            
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-crypto</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
-            <!-- Bouncy Castle -->
+            
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk18on</artifactId>
                 <version>${bcprov.version}</version>
             </dependency>
-            <!-- For Commons Lang3 -->
+            
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
             </dependency>
-            <!-- For Spring Framework -->
+            
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-beans</artifactId>
                 <version>${spring-framework.version}</version>
             </dependency>
-            <!-- For Spring Framework -->
+            
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
                 <version>${spring-framework.version}</version>
             </dependency>
-            <!-- For Spring Framework -->
+            
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-tx</artifactId>
                 <version>${spring-framework.version}</version>
             </dependency>
-            <!-- For Spring Framework -->
+            
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-web</artifactId>
                 <version>${spring-framework.version}</version>
             </dependency>
-            <!-- For Annotation Api -->
+            
             <dependency>
                 <groupId>jakarta.annotation</groupId>
                 <artifactId>jakarta.annotation-api</artifactId>
                 <version>${jakarta-annotation.version}</version>
             </dependency>
-            <!-- For H2 -->
+            
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>${h2.version}</version>
             </dependency>
-            <!-- For Junit -->
+            
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
             </dependency>
-            <!-- For JUnit 5 Jupiter -->
+            
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
@@ -254,7 +254,7 @@
                 <artifactId>junit-jupiter-params</artifactId>
                 <version>${junit-jupiter.version}</version>
             </dependency>
-            <!-- For AssertJ -->
+            
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
@@ -263,31 +263,31 @@
         </dependencies>
     </dependencyManagement>
     <dependencies>
-        <!-- For Junit -->
+        
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- For JUnit 5 Jupiter -->
+        
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- For AssertJ -->
+        
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- For Lombok -->
+        
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!-- For Slf4j -->
+        
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -306,25 +306,25 @@
     <build>
         <pluginManagement>
             <plugins>
-                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-clean-plugin -->
+                
                 <plugin>
-                    <!-- 清理插件：清理构建输出目录 -->
+                    
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>${maven-clean-plugin.version}</version>
                 </plugin>
-                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+                
                 <plugin>
-                    <!-- 编译插件：编译主代码至主输出目录 -->
+                    
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven-compiler-plugin.version}</version>
                     <configuration>
                         <release>${maven.compiler.release}</release>
                         <proc>full</proc>
-                        <!-- 字符集编码 -->
+                        
                         <encoding>${project.build.sourceEncoding}</encoding>
-                        <!-- 保留方法参数名，支持 Spring MVC 按参数名绑定 -->
+                        
                         <parameters>true</parameters>
                         <testExcludes>
                             <testExclude>**/*.java</testExclude>
@@ -338,9 +338,9 @@
                         </annotationProcessorPaths>
                     </configuration>
                 </plugin>
-                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-resources-plugin -->
+                
                 <plugin>
-                    <!-- 资源插件：复制主资源文件至主输出目录 -->
+                    
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>${maven-resources-plugin.version}</version>
@@ -348,7 +348,7 @@
                         <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
                 </plugin>
-                <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/flatten-maven-plugin -->
+                
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
@@ -374,9 +374,9 @@
                         </execution>
                     </executions>
                 </plugin>
-                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
+                
                 <plugin>
-                    <!-- 单元测试插件：执行测试用例 -->
+                    
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
@@ -384,9 +384,9 @@
                         <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
                     </configuration>
                 </plugin>
-                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin -->
+                
                 <plugin>
-                    <!-- jar 包生成插件：创建项目 jar 包 -->
+                    
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>${maven-jar-plugin.version}</version>
@@ -399,9 +399,9 @@
                         </archive>
                     </configuration>
                 </plugin>
-                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
+                
                 <plugin>
-                    <!-- 文档插件：发布时自动生成 Javadoc 并发布 -->
+                    
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>${maven-javadoc-plugin.version}</version>
@@ -411,37 +411,37 @@
                         <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
                 </plugin>
-                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
+                
                 <plugin>
-                    <!-- 源码插件：发布时自动将源码同时发布 -->
+                    
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
                     <version>${maven-source-plugin.version}</version>
                 </plugin>
-                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-install-plugin -->
+                
                 <plugin>
-                    <!-- 安装插件：将项目输出构件安装到本地仓库 -->
+                    
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
                     <version>${maven-install-plugin.version}</version>
                 </plugin>
-                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
+                
                 <plugin>
-                    <!-- 发布插件：将项目输出构件部署到远程仓库 -->
+                    
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>${maven-deploy-plugin.version}</version>
                 </plugin>
-                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
+                
                 <plugin>
-                    <!-- 签名插件：对制品进行 PGP 签名 -->
+                    
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
                     <version>${maven-gpg-plugin.version}</version>
                 </plugin>
-                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-release-plugin -->
+                
                 <plugin>
-                    <!-- 发布管理插件：版本发布与标签管理 -->
+                    
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
                     <version>${maven-release-plugin.version}</version>
@@ -453,16 +453,16 @@
                         <useReleaseProfile>false</useReleaseProfile>
                     </configuration>
                 </plugin>
-                <!-- https://mvnrepository.com/artifact/org.sonatype.central/central-publishing-maven-plugin -->
+                
                 <plugin>
-                    <!-- 发布插件：将制品发布到 Maven Central Portal -->
+                    
                     <groupId>org.sonatype.central</groupId>
                     <artifactId>central-publishing-maven-plugin</artifactId>
                     <version>${central-publishing-maven-plugin.version}</version>
                 </plugin>
-                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-enforcer-plugin -->
+                
                 <plugin>
-                    <!-- 环境检查插件：代码编译前的环境监察 -->
+                    
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>${maven-enforcer-plugin.version}</version>
@@ -534,9 +534,9 @@
             </plugins>
         </pluginManagement>
         <plugins>
-            <!-- https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
+            
             <plugin>
-                <!-- 覆盖率插件：生成覆盖率报告并校验测试覆盖率（目标 90%） -->
+                
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco-maven-plugin.version}</version>
@@ -578,16 +578,16 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+            
             <plugin>
-                <!-- 编译插件：编译主代码至主输出目录 -->
+                
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <parameters>true</parameters>
                     <encoding>${project.build.sourceEncoding}</encoding>
-                    <!-- 编译最大内存 -->
+                    
                     <maxmem>512M</maxmem>
                     <annotationProcessorPaths>
                         <path>
@@ -601,14 +601,14 @@
         </plugins>
     </build>
     <profiles>
-        <!-- 发布到 Maven Central Portal：mvn -Prelease deploy（GPG 签名 + 源码 + Javadoc + Central 发布插件） -->
+        
         <profile>
             <id>release</id>
             <build>
                 <plugins>
-                    <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
+                    
                     <plugin>
-                        <!-- 源码插件：发布时自动将源码同时发布 -->
+                        
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
                         <executions>
@@ -620,9 +620,9 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
+                    
                     <plugin>
-                        <!-- 文档插件：发布时自动生成 Javadoc 并发布 -->
+                        
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <executions>
@@ -634,9 +634,9 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
+                    
                     <plugin>
-                        <!-- 签名插件：对制品进行 PGP 签名 -->
+                        
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
                         <executions>
@@ -649,9 +649,9 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <!-- https://mvnrepository.com/artifact/org.sonatype.central/central-publishing-maven-plugin -->
+                    
                     <plugin>
-                        <!-- 发布插件：将制品发布到 Maven Central Portal -->
+                        
                         <groupId>org.sonatype.central</groupId>
                         <artifactId>central-publishing-maven-plugin</artifactId>
                         <extensions>true</extensions>
