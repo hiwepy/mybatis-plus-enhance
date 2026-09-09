@@ -55,7 +55,7 @@
         <mybatis-plus.version>3.5.14</mybatis-plus.version>
         <mybatis.version>3.5.19</mybatis.version>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <revision>2.0.x.20260630-SNAPSHOT</revision>
+        <revision>3.0.x.20260630-SNAPSHOT</revision>
         <slf4j.version>2.0.18</slf4j.version>
         <spring-framework.version>6.2.11</spring-framework.version>
         <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
