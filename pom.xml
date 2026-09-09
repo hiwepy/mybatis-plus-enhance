@@ -45,6 +45,7 @@
         <h2.version>2.3.232</h2.version>
         <hutool.version>5.8.40</hutool.version>
         <jackson-bom.version>2.22.1</jackson-bom.version>
+        <tools-jackson-bom.version>3.2.1</tools-jackson-bom.version>
         <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
         <jakarta-annotation.version>2.1.1</jakarta-annotation.version>
         <jsqlparser.version>5.2</jsqlparser.version>
@@ -81,6 +82,14 @@
                 <groupId>com.fasterxml.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
                 <version>${jackson-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Jackson 3.x BOM (tools.jackson namespace) -->
+            <dependency>
+                <groupId>tools.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${tools-jackson-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
