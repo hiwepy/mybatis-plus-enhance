@@ -676,9 +676,9 @@
             </build>
         </profile>
     </profiles>
-    <modules>
-        <module>mybatis-plus-enhance-core</module>
-        <module>mybatis-plus-enhance-extension</module>
-        <module>mybatis-plus-enhance-spring</module>
-    </modules>
+    <subprojects>
+        <subproject>mybatis-plus-enhance-core</subproject>
+        <subproject>mybatis-plus-enhance-extension</subproject>
+        <subproject>mybatis-plus-enhance-spring</subproject>
+    </subprojects>
 </project>
